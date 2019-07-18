@@ -10,6 +10,7 @@
     <modules>
         <module>myflx-application</module>
         <module>myflx-common</module>
+        <module>myflx-servlet</module>
     </modules>
     <properties>
         <spring-boot.version>2.0.2.RELEASE</spring-boot.version>
