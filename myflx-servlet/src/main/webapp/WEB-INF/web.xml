@@ -6,7 +6,7 @@
     <servlet>
         <!--  声明Servlet -->
         <servlet-name>SayServlet</servlet-name>
-        <servlet-class>com.myflx.servlet.SayServlet</servlet-class>
+        <servlet-class>com.myflx.annotation.servlet.SayServlet</servlet-class>
     </servlet>
     <!-- 映射 -->
     <servlet-mapping>

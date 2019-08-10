@@ -1,4 +1,4 @@
-package com.myflx.server;
+package com.myflx.annotation.server;
 
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;

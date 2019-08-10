@@ -1,4 +1,4 @@
-package com.myflx.servlet;
+package com.myflx.annotation.servlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

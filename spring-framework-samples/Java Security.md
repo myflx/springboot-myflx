@@ -1,0 +1,1 @@
+Java Security 策略，必须具备 PropertyPermission
