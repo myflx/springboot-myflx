@@ -11,6 +11,8 @@
         <module>myflx-application</module>
         <module>myflx-common</module>
         <module>myflx-servlet</module>
+        <module>myflx-annotation</module>
+        <module>spring-framework-samples</module>
     </modules>
     <properties>
         <spring-boot.version>2.0.2.RELEASE</spring-boot.version>
