@@ -13,6 +13,7 @@
     <name>《Spring Boot 编程思想》Spring Framework 示例主工程</name>
     <modules>
         <module>spring-framework-2.5.6</module>
+        <module>spring-framework-5.0.x</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
