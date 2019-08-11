@@ -11,9 +11,11 @@
 
     <artifactId>spring-framework-2.5.6</artifactId>
     <properties>
-        <spring.version>2.5.6.SEC03</spring.version>
+        <!--<spring.version>2.5.6.SEC03</spring.version>-->
         <!-- 测试 @StringRepository  多层次 @Component 派生时，请将以下内容反注释，升级 Spring Framework 到 3.0.0.RELEASE  -->
         <!--<spring.version>3.0.0.RELEASE</spring.version>-->
+        <!-- 4.0.0 才开始支持递归扫描 -->
+        <spring.version>4.0.0.RELEASE</spring.version>
     </properties>
     <dependencies>
         <!-- Spring 上下文依赖 -->

@@ -1,11 +1,15 @@
 package com.myflx.repository;
 
+import com.myflx.annotation.FirstLevelRepository;
+import com.myflx.annotation.SecondLevelRepository;
 import com.myflx.annotation.StringRepository;
 
 import java.util.Arrays;
 import java.util.List;
 
-@StringRepository("nameRepository")
+//@StringRepository("nameRepository")
+//@FirstLevelRepository("nameRepository")
+@SecondLevelRepository("nameRepository")
 public class NameRepository {
 
     public List<String> getAll(){
