@@ -65,3 +65,5 @@ private void recursivelyCollectMetaAnnotations(Set<String> visited, Annotation a
 AnnotationMetadata 两个重要实现：
         ASM:org.springframework.core.type.classreading.AnnotationMetadataReadingVisitor
         Java Reflect:org.springframework.core.type.StandardAnnotationMetadata
+
+思考+提出问题->验证代码+结合javaDoc+wiki

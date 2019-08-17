@@ -1,4 +1,4 @@
-package com.myfllx.annotation;
+package com.myflx.annotation;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Service;
@@ -12,9 +12,29 @@ import java.lang.annotation.*;
 @Transactional
 @Service(value = "transactionalService")
 public @interface TransactionalService {
-    @AliasFor("name")
+
+    // version1.0
+    /*@AliasFor("name")
     String value() default "";
 
     @AliasFor("value")
+    String name() default "";*/
+
+
+    //version2.0
+
+    /**
+     * 服务bean的名称
+     * @return
+     */
+    /*String name() default "";
+
+    String transactionManager() default "txManager";*/
+
+
+    //version 3.0
     String name() default "";
+
+    String value() default "txManager";
+
 }

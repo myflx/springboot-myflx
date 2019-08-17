@@ -1,7 +1,7 @@
 package com.myflx.bootstrap;
 
 
-import com.myfllx.annotation.TransactionalService;
+import com.myflx.annotation.TransactionalService;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
