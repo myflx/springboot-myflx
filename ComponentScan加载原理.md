@@ -62,4 +62,6 @@ private void recursivelyCollectMetaAnnotations(Set<String> visited, Annotation a
 		this.includeFilters.add(new AnnotationTypeFilter(Component.class));
 	}
 ```
-
+AnnotationMetadata 两个重要实现：
+        ASM:org.springframework.core.type.classreading.AnnotationMetadataReadingVisitor
+        Java Reflect:org.springframework.core.type.StandardAnnotationMetadata
