@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>spring-framework-samples</artifactId>
-    <name>《Spring Boot 编程思想》Spring Framework 示例主工程</name>
+    <name>Spring Framework Project</name>
     <modules>
         <module>spring-framework-2.5.6</module>
         <module>spring-framework-5.0.x</module>
