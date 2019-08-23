@@ -8,6 +8,35 @@
 
 除非另有声明Bean Validation api的默认包名 ``javax.validation``
 
+- 约束的构成：一个或者多个约束
+
+- 什么是约束？
+
+  - 由``javax.validation.Constraint``元标注注解
+  - 注解保留策略为运行时（``RetentionPolicy.RUNTIME``）
+
+- 注解目标类型
+
+  - ```java
+    @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
+    ```
+
+    其他目标可以注解但是会被provider 忽略。
+
+  - JSR-303 鼓励开发者使用自定义注解。
+
+- 异常
+
+  - 注解Java doc都需要明确标注了注解的ClassType 否则会抛出异常`UnexpectedTypeException`
+  - 一系列的限制器应表意明确，特别注意注解和类型的匹配
+  - `ConstraintDefinitionException`一般是由于missing or illegal message or groups elements ，所以定义约束一定要注意属性的完整和合理性。
+
+- 约束属性
+
+  - 不能以valid 打头or 
+
+    
+
 
 
 how a JavaBean class is decorated with annotations to describe constraints?
