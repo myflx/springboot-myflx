@@ -1,0 +1,284 @@
+## 尽可能减少空指针
+
+- **使用安全的比较方法或明确调用值**
+
+通用对象的的比较：
+
+`java.util.Objects#equals`
+
+明确的调用值：
+
+```java
+String a = null;
+a.equals("123");//N
+"123".equals(a);
+```
+
+集合的比较：
+
+`org.apache.commons.collections.CollectionUtils#isEmpty`
+
+Map的比较：
+
+``org.apache.commons.collections.MapUtils#isEmpty``
+
+字符：
+
+`org.apache.commons.lang.StringUtils#isBlank`
+
+`org.apache.commons.lang.StringUtils#isEmpty`
+
+`String.valueOf(obj)`    代替  `obj.toString()`
+
+
+
+- **使用包装类接受值**
+
+```java
+Integer getOnWayNum(Map param);
+int getOnWayNum(Map param);
+```
+
+```xml
+SELECT SUM(num) FROM (
+			 SELECT ACTUAL_APPLY_NUM num FROM sf_product_fill_order_item i
+			 INNER JOIN sf_product_fill_order o ON o.ORDER_ID = i.ORDER_ID
+			 WHERE ORDER_STATUS = 1 AND i.SHELF_ID = #{shelfId} AND i.PRODUCT_ID = #{productId}
+			 UNION ALL
+			 SELECT ACTUAL_SEND_NUM num FROM sf_product_fill_order_item i
+			 INNER JOIN sf_product_fill_order o ON o.ORDER_ID = i.ORDER_ID
+			 WHERE ORDER_STATUS = 2 AND i.SHELF_ID = #{shelfId} AND i.PRODUCT_ID = #{productId}
+		) t
+```
+
+​	谨慎自动拆箱
+
+```java
+@Data
+public class Person {
+    private String name;
+    private Integer age;
+    public static void main(String[] args) {
+        Person person = new Person();
+        int p = person.getAge();
+    }
+}
+```
+
+- 合理工具类
+
+  ```java
+  //spring
+  StringUtils.delimitedListToStringArray(null,"-");//vs String.split("-");
+  //Apache
+  ArrayUtils.getLength(null);
+  ```
+
+
+
+- 加强数据的校验**
+
+API层合理使用注解校验，保证数据的合理性。
+
+```java
+/**
+ * JSR提供的校验注解：
+ * @author LuoShangLin
+ * @Null 被注释的元素必须为 null
+ * @NotNull 被注释的元素必须不为 null,不能为 null , 可以为 ""
+ * @AssertTrue 被注释的元素必须为 true
+ * @AssertFalse 被注释的元素必须为 false
+ * @Min(value) 被注释的元素必须是一个数字，其值必须大于等于指定的最小值
+ * @Max(value) 被注释的元素必须是一个数字，其值必须小于等于指定的最大值
+ * @DecimalMin(value) 被注释的元素必须是一个数字，其值必须大于等于指定的最小值
+ * @DecimalMax(value) 被注释的元素必须是一个数字，其值必须小于等于指定的最大值
+ * @Size(max=, min=)   验证对象（Array,Collection,Map,String）长度是否在给定的范围之内
+ * @Digits (integer, fraction)     被注释的元素必须是一个数字，其值必须在可接受的范围内
+ * @Past 被注释的元素必须是一个过去的日期
+ * @Future 被注释的元素必须是一个将来的日期
+ * @Pattern(regex=,flag=) 被注释的元素必须符合指定的正则表达式
+ *
+ * Hibernate Validator提供的校验注解：
+ * @NotBlank(message =)   只能作用在String上，不能为null，而且调用trim()后，长度必须大于0 ------做trim()操作
+ * @Email 被注释的元素必须是电子邮箱地址
+ * @Length(min=,max=) 被注释的字符串的大小必须在指定的范围内
+ * @NotEmpty 被注释的字符串的必须非空，不能为 null、"",可以为 " "
+ * @Range(min=,max=,message=) 被注释的元素必须在合适的范围内
+ * @Valid 校验关联的对象
+ * @JsonProperty 可以实现前端的属性名和后台实体类的属性名不一致问题
+ */
+```
+
+自定义注解：
+
+`com.feng1.adminapi.base.validation.annotation.DictsConstraint`
+
+`com.feng1.adminapi.base.validation.annotation.TypeConstraint`
+
+
+
+- 空值过滤保证数据有效性
+
+```java
+String[]  arr = {"Hello", null, "World"};
+Joiner joiner = Joiner.on(" ").useForNull("this");
+Joiner joiner2 = Joiner.on(" ").skipNulls();
+System.out.println(joiner.join(arr));
+System.out.println(joiner2.join(arr));
+//Hello this World
+//Hello World
+```
+
+```java
+List<String> list  = new ArrayList<>();
+list = list.stream().filter(Objects::nonNull).collect(Collectors.toList());
+```
+
+
+
+- 使用注解增加编译器提示
+
+  - 适当使用注解：
+
+`org.springframework.lang.Nullable`
+
+`org.springframework.lang.NonNull`
+
+```java
+public void doSomething(@Nullable Person teacher){
+        Integer age = teacher.getAge();//编译器会提示错误
+        System.out.println(age);
+    }
+```
+
+`	lombok.NonNull`
+
+> 源码
+
+```java
+public void doSomething1(@NonNull Person teacher){
+
+}
+```
+
+> 编译后结果
+
+```java
+public void doSomething1(@NonNull Person teacher) {
+        if (teacher == null) {
+            throw new NullPointerException("teacher");
+        }
+    }
+```
+
+
+
+- 适当的方法重载
+
+  ```java
+  public URL(String protocol, String host, String file)
+              throws MalformedURLException {
+          this(protocol, host, -1, file);
+  }
+  
+  public URL(String protocol, String host, int port, String file)
+          throws MalformedURLException{
+          this(protocol, host, port, file, null);
+  }
+  ```
+
+  
+
+- 正常情况下方法返回一个完整对象
+  - Collections.emptyList();
+  - Maps.newHashMap();
+  - StringUtils.EMPTY；
+
+- SpotBugs 与 `@NonNull`、`@CheckForNull` ,工具集成
+
+  [官网](https://spotbugs.readthedocs.io/en/latest/maven.html)：SpotBugs 是jsr305规范的实现，findBugs的继承。使用对应注解，打包时插件校验注解逻辑。
+
+  - 添加打包[插件](https://github.com/spotbugs/spotbugs-maven-plugin/)和依赖
+
+  >```xml
+  ><dependency>
+  >    <groupId>com.github.spotbugs</groupId>
+  >    <artifactId>spotbugs-annotations</artifactId>
+  >    <version>3.1.7</version>
+  ></dependency>
+  >```
+  >
+  >```xml
+  ><plugin>
+  >  <groupId>com.github.spotbugs</groupId>
+  >  <artifactId>spotbugs-maven-plugin</artifactId>
+  >  <version>3.1.11</version>
+  >  <dependencies>
+  >    <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+  >    <dependency>
+  >      <groupId>com.github.spotbugs</groupId>
+  >      <artifactId>spotbugs</artifactId>
+  >      <version>4.0.0-beta2</version>
+  >    </dependency>
+  >  </dependencies>
+  ></plugin>
+  >```
+
+  - 使用场景说明：
+
+  >```java
+  >@NonNull
+  >private Object returnNonNull() {
+  >  // 错误：returnNonNull() 可能返回空值，但其已声明为 @Nonnull
+  >  return null;
+  >}
+  >
+  >@CheckForNull
+  >private Object returnNullable() {
+  >  return null;
+  >}
+  >
+  >public void testReturnNullable() {
+  >  Object obj = returnNullable();
+  >  // 错误：方法的返回值可能为空
+  >  System.out.println(obj.toString());
+  >}
+  >
+  >private void argumentNonNull(@NonNull Object arg) {
+  >  System.out.println(arg.toString());
+  >}
+  >
+  >public void testArgumentNonNull() {
+  >  // 错误：不能将 null 传递给非空参数
+  >  argumentNonNull(null);
+  >}
+  >
+  >public void testNullableArgument(@CheckForNull Object arg) {
+  >  // 错误：参数可能为空
+  >  System.out.println(arg.toString());
+  >}
+  >```
+  
+  - 安装软件
+  - 命令：mvn install   -> mvn site  -> mvn mvn spotbugs:gui
+  - 代码分析工具区别
+
+>可以说都是代码静态分析工具，但侧重点不同。
+>pmd：基于源代码分析，主要面向安全编码规则，如“避免声明同名变量”，包括风格类、类型使用等等，具备一定的数据流分析和路径分析能力。
+>checkstyle：基于源代码，与pmd类似，但更侧重编码的语法风格，分析深度不及pmd。
+>findbugs：基于字节码分析，大量使用数据流分析技术，侧重运行时错误检测，如空指针引用等，分析深度大于前述两个。
+>
+>sonar：定位是代码质量平台，本身不进行代码分析，但可以集成各个静态分析工具以及其他软件开发测试工具，并基于集成工具的结果数据按照一定的质量模型，如iso-9126，对软件的质量进行评估。
+>
+>[参考](https://www.zhihu.com/question/19620900，
+>http://blog.csdn.net/ml5271169588/article/details/6975701,https://www.ibm.com/developerworks/cn/java/j-lo-statictest-tools/)
+
+
+
+- Checker Framework 与 `@NonNull`、`@Nullable`
+
+> Checker Framework 能够作为 javac 编译器的插件运行，对代码中的数据类型进行检测，预防各类问题。我们可以参照 官方文档，将 Checker Framework 与 maven-compiler-plugin 结合，之后每次执行 mvn compile 时就会进行检查。Checker Framework 的空值检测程序支持几乎所有的注解，包括 JSR 305、Eclipse、甚至 lombok.NonNull。
+
+
+
+[参考](https://blog.csdn.net/zjerryj/article/details/82817626)
