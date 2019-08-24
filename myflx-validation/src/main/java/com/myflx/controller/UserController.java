@@ -2,6 +2,7 @@ package com.myflx.controller;
 
 import com.myflx.validation.payload.dto.Author;
 import com.myflx.validation.payload.dto.Book;
+import com.myflx.validation.payload.dto.Reader;
 import com.myflx.validation.payload.severity.Address;
 import com.myflx.validation.payload.validator.ContextValidatorGetter;
 import com.myflx.vo.UserVO;
@@ -64,5 +65,11 @@ public class UserController {
             System.out.println("错误信息："+addressConstraintViolation.getMessage());
         });
         return book;
+    }
+
+
+    @RequestMapping("/showReader")
+    public Reader showAuthor(@Valid @RequestBody Reader author) {
+        return author;
     }
 }

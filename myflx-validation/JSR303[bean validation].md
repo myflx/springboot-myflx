@@ -44,9 +44,64 @@
     - 负载信息的读取
     
       ``javax.validation.metadata.ConstraintDescriptor``、`javax.validation.ConstraintViolation`、``
-    
-  - Applying multiple constraints of the same type   
   
+- Applying multiple constraints of the same type   
+
+  ​	同一约束的多重限制，可移植性不强，官方不推荐使用。
+  
+  ```java
+  @Documented
+  @Constraint(validatedBy = ZipCodeValidator.class)
+  @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
+  @Retention(RUNTIME)
+  public @interface ZipCode {
+      String countryCode();
+      String message() default "{com.acme.constraint.ZipCode.message}";
+      Class<?>[] groups() default {};
+      Class<? extends Payload>[] payload() default {};
+      @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
+      @Retention(RUNTIME)
+      @Documented
+      @interface List {
+          ZipCode[] value();
+      }
+  }
+  ```
+  
+  ```java
+  public class Address {
+   @ZipCode.List( {
+     @ZipCode(countryCode="fr", groups=Default.class,
+              message = "zip code is not valid"),
+          @ZipCode(countryCode="fr", groups=SuperUser.class,
+          message = "zip code invalid. Requires overriding before saving.")
+      } )
+   private String zipcode;
+  }
+  ```
+  
+  
+  
+- 组合约束
+
+  - 使用
+
+  	>运行使用多个约束合成更高级别的约束，有以下优点：
+  	>
+  	>1，避免自定义中的多余复制操作，促进基础约束的复用。
+  	>
+  	>2，将基础注解作为合成元注解的一部分，提高tool awareness.
+
+  ​	组合约束注解的所有元约束注解都会递归校验，生成校验报告。主注解的组会被继承，组合注解的约束被忽略。 payload 同理。所有约束的约束目标类型要匹配。
+
+  元注解：``@ReportAsSingleViolation`` 的标注只生成单个报告。只要注解校验失败存一，其他注解的错误报告都会被忽略，直接生成主注解错误报告。
+
+  - 
+
+  - 
+
+  - 
+
     
 
 

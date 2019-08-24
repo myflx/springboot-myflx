@@ -53,7 +53,7 @@ public class ErrorHandleAdvice {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ModelResult fieldErrorHandler(MethodArgumentNotValidException e) {
         logger.debug("参数校验异常! request path:{}, error  message:{}", getRequestPath(), e.getBindingResult().getFieldError().getField() + e.getBindingResult().getFieldError().getDefaultMessage());
-        //e.getBindingResult().getFieldError().getField() + */
+        //e.getBindingResult().getFieldError().getField()
         return new ModelResultClient().failFactory("9002", e.getBindingResult().getFieldError().getField() + e.getBindingResult().getFieldError().getDefaultMessage());
     }
 
