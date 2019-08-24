@@ -19,6 +19,7 @@ import java.lang.annotation.Target;
 public @interface TypeConstraint {
     Class<? extends IValidateEnum> type();
     String message() default "传入数据不存在";
-//    String validA() default "传入数据不存在";
-    Class<?>[] groups() default {}; Class<? extends Payload>[]  payload() default {};
+    String validA() default "传入数据不存在";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[]  payload() default {};
 }

@@ -33,8 +33,20 @@
 
 - 约束属性
 
-  - 不能以valid 打头or 
+  - 不能以valid 打头否则会抛出异常 ``javax.validation.ConstraintDefinitionException: HV000073: Parameters starting with 'valid' are not allowed in a constraint``
 
+  - message  必要属性 一般用于错误信息提示，建议对其进行资源绑定有助于使用国际化，命名建议：约束类全名+.message。
+  
+  -  groups  必要属性，用于指定约束一起运行的组，通常用于控制约束的顺序和执行校验。默认空数组
+  
+  -  payload  必要属性，指定约束的负载。默认空数组，每个关联的负载必须继承 ``javax.validation.Payload``，主要用于携带校验客户端消费的元数据。``javax.validation.valueextraction.Unwrapping``用于标记值抽取时是否包装对象。Payload 的使用可移植性不强。
+  
+    - 负载信息的读取
+    
+      ``javax.validation.metadata.ConstraintDescriptor``、`javax.validation.ConstraintViolation`、``
+    
+  - Applying multiple constraints of the same type   
+  
     
 
 
