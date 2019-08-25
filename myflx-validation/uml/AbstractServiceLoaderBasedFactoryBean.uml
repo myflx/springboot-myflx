@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.springframework.beans.factory.serviceloader.AbstractServiceLoaderBasedFactoryBean</OriginalElement>
+  <nodes>
+    <node x="469.78333333333325" y="334.0">org.springframework.beans.factory.serviceloader.ServiceLoaderFactoryBean</node>
+    <node x="749.3796296296296" y="334.0">org.springframework.beans.factory.serviceloader.ServiceListFactoryBean</node>
+    <node x="329.99999999999994" y="81.0">org.springframework.beans.factory.FactoryBean</node>
+    <node x="0.0" y="81.0">org.springframework.beans.factory.BeanFactoryAware</node>
+    <node x="531.8046296296296" y="81.0">org.springframework.beans.factory.DisposableBean</node>
+    <node x="472.12962962962956" y="0.0">org.springframework.beans.factory.Aware</node>
+    <node x="950.3796296296296" y="334.0">org.springframework.beans.factory.serviceloader.ServiceFactoryBean</node>
+    <node x="743.6296296296296" y="81.0">org.springframework.beans.factory.BeanClassLoaderAware</node>
+    <node x="175.99999999999994" y="81.0">org.springframework.beans.factory.InitializingBean</node>
+    <node x="620.1296296296296" y="253.0">org.springframework.beans.factory.serviceloader.AbstractServiceLoaderBasedFactoryBean</node>
+    <node x="298.7916666666665" y="172.0">org.springframework.beans.factory.config.AbstractFactoryBean</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.springframework.beans.factory.serviceloader.ServiceListFactoryBean" target="org.springframework.beans.factory.BeanClassLoaderAware">
+      <point x="45.25" y="-15.5" />
+      <point x="885.1296296296296" y="314.0" />
+      <point x="916.6296296296296" y="314.0" />
+      <point x="916.6296296296296" y="152.0" />
+      <point x="871.0296296296295" y="152.0" />
+      <point x="36.39999999999998" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.serviceloader.ServiceFactoryBean" target="org.springframework.beans.factory.BeanClassLoaderAware">
+      <point x="40.25" y="-15.5" />
+      <point x="1071.1296296296296" y="142.0" />
+      <point x="907.4296296296296" y="142.0" />
+      <point x="72.80000000000007" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.config.AbstractFactoryBean" target="org.springframework.beans.factory.BeanFactoryAware">
+      <point x="-67.19999999999999" y="-15.5" />
+      <point x="315.5916666666665" y="152.0" />
+      <point x="78.0" y="152.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.serviceloader.AbstractServiceLoaderBasedFactoryBean" target="org.springframework.beans.factory.BeanClassLoaderAware">
+      <point x="71.5" y="-15.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.serviceloader.ServiceListFactoryBean" target="org.springframework.beans.factory.serviceloader.AbstractServiceLoaderBasedFactoryBean">
+      <point x="-45.25" y="-15.5" />
+      <point x="794.6296296296296" y="314.0" />
+      <point x="763.1296296296296" y="314.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.BeanClassLoaderAware" target="org.springframework.beans.factory.Aware">
+      <point x="0.0" y="-15.5" />
+      <point x="834.6296296296296" y="56.0" />
+      <point x="535.1296296296296" y="56.0" />
+      <point x="21.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.config.AbstractFactoryBean" target="org.springframework.beans.factory.InitializingBean">
+      <point x="-33.599999999999966" y="-15.5" />
+      <point x="349.19166666666655" y="142.0" />
+      <point x="242.99999999999994" y="142.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.config.AbstractFactoryBean" target="org.springframework.beans.factory.DisposableBean">
+      <point x="33.60000000000002" y="-15.5" />
+      <point x="416.39166666666654" y="132.0" />
+      <point x="601.3046296296296" y="132.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.config.AbstractFactoryBean" target="org.springframework.beans.factory.FactoryBean">
+      <point x="0.0" y="-15.5" />
+      <point x="382.7916666666665" y="152.0" />
+      <point x="389.49999999999994" y="152.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.serviceloader.ServiceFactoryBean" target="org.springframework.beans.factory.serviceloader.AbstractServiceLoaderBasedFactoryBean">
+      <point x="-40.25" y="-15.5" />
+      <point x="990.6296296296296" y="304.0" />
+      <point x="858.4629629629629" y="304.0" />
+      <point x="95.33333333333337" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.config.AbstractFactoryBean" target="org.springframework.beans.factory.BeanClassLoaderAware">
+      <point x="67.19999999999999" y="-15.5" />
+      <point x="449.9916666666665" y="142.0" />
+      <point x="761.8296296296296" y="142.0" />
+      <point x="-72.79999999999995" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.serviceloader.ServiceLoaderFactoryBean" target="org.springframework.beans.factory.serviceloader.AbstractServiceLoaderBasedFactoryBean">
+      <point x="50.5" y="-15.5" />
+      <point x="621.2833333333333" y="314.0" />
+      <point x="667.7962962962962" y="314.0" />
+      <point x="-95.33333333333337" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.serviceloader.ServiceLoaderFactoryBean" target="org.springframework.beans.factory.BeanClassLoaderAware">
+      <point x="-50.5" y="-15.5" />
+      <point x="520.2833333333333" y="314.0" />
+      <point x="541.6999999999999" y="314.0" />
+      <point x="541.6999999999999" y="152.0" />
+      <point x="798.2296296296296" y="152.0" />
+      <point x="-36.39999999999998" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.BeanFactoryAware" target="org.springframework.beans.factory.Aware">
+      <point x="0.0" y="-15.5" />
+      <point x="78.0" y="56.0" />
+      <point x="493.12962962962956" y="56.0" />
+      <point x="-21.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.beans.factory.serviceloader.AbstractServiceLoaderBasedFactoryBean" target="org.springframework.beans.factory.config.AbstractFactoryBean">
+      <point x="-71.5" y="-15.5" />
+      <point x="691.6296296296296" y="228.0" />
+      <point x="382.7916666666665" y="228.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="628.0" y="152.0" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
