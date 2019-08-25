@@ -32,4 +32,3 @@ public @interface FrenchZipCode {
         FrenchZipCode[] value();
     }
 }
-

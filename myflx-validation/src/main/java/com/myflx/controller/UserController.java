@@ -1,5 +1,6 @@
 package com.myflx.controller;
 
+import com.myflx.validation.annotation.ValidParam;
 import com.myflx.validation.payload.dto.Author;
 import com.myflx.validation.payload.dto.Book;
 import com.myflx.validation.payload.dto.Reader;
@@ -37,7 +38,7 @@ public class UserController {
     private ContextValidatorGetter contextValidatorGetter;
 
     @RequestMapping("/create")
-    public UserVO hello(@Valid @RequestBody UserVO user) {
+    public UserVO hello(@ValidParam @RequestBody UserVO user) {
         return user;
     }
 
