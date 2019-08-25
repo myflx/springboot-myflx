@@ -4,4 +4,4 @@ spring service loader 实现：
 
 `org.springframework.beans.factory.serviceloader`   package下
 
-![1](.\uml\1.png)
+![1](.\uml\AbstractServiceLoaderBasedFactoryBean.png)
