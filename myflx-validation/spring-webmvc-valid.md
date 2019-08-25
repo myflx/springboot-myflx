@@ -1,9 +1,3 @@
----
-typora-copy-images-to: pic
----
-
-
-
 #### spring-webmvc 整合JSR303原理
 
 首先要从spring-boot mvc驱动注解``@EnableWebMvc`` 说起 ，自动装配对象为``org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration``继承了

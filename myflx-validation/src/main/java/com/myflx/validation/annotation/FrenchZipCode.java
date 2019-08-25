@@ -21,6 +21,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({ANNOTATION_TYPE, METHOD, FIELD, CONSTRUCTOR, PARAMETER})
 @Retention(RUNTIME)
 public @interface FrenchZipCode {
+    String countryCode() default "CN";
     String message() default "Wrong zipCode";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

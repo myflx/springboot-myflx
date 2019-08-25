@@ -23,7 +23,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = TypeConstraintValidator.class)
 public @interface TypeConstraint {
     Class<? extends IValidateEnum> type();
-    String message() default "传入数据不存在";
+    String message() default "传入数据%s不存在";
 //    String validA() default "传入数据不存在";
     Class<?>[] groups() default {};
     Class<? extends Payload>[]  payload() default {};

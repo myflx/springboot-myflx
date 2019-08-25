@@ -19,6 +19,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Payload;
 import javax.validation.Valid;
 import javax.validation.Validator;
+import javax.validation.metadata.BeanDescriptor;
 import java.util.Set;
 
 /**
@@ -64,6 +65,7 @@ public class UserController {
         constraintViolations.forEach(addressConstraintViolation -> {
             System.out.println("错误信息："+addressConstraintViolation.getMessage());
         });
+//        BeanDescriptor constraintsForClass = contextValidatorGetter.getValidator().getConstraintsForClass(Book.class);
         return book;
     }
 

@@ -2,6 +2,7 @@ package com.myflx.vo;
 
 import com.myflx.validation.annotation.TypeConstraint;
 import com.myflx.validation.constant.OpenTypeEnum;
+import com.myflx.validation.constant.OpenTypeEnum2;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -26,6 +27,17 @@ public class UserVO implements Serializable {
 
     @TypeConstraint(type = OpenTypeEnum.class)
     private Integer openType;
+
+    @TypeConstraint(type = OpenTypeEnum.class)
+    private Integer openType2;
+
+    public Integer getOpenType2() {
+        return openType2;
+    }
+
+    public void setOpenType2(Integer openType2) {
+        this.openType2 = openType2;
+    }
 
     public Integer getOpenType() {
         return openType;
