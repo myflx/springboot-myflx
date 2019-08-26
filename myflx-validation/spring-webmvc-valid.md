@@ -2,7 +2,7 @@
 
 ##### 如何整合校验器？
 
-首先要从spring-boot mvc驱动注解``@EnableWebMvc`` 说起 ，自动装配对象为``org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration``继承了
+首先要从spring-boot mvc驱动注解``@EnableWebMvc`` 看起 ，自动装配对象为``org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration``继承了
 
 ``org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport``对象。想springContext中注入了Validator对象
 
@@ -144,6 +144,62 @@ protected void validateIfApplicable(WebDataBinder binder, MethodParameter parame
 
 
 ##### MethodParameter 如何加载的？
+
+​		``org.springframework.core.MethodParameter#getParameterAnnotations`` 主要是从方法参数对象中获取参数注解数组。具体获取的代理对象是：private final Executable executable; 继续查看而这个Executable 对象的实现还是当前的Method。Executable 是对方法（包括构造方法）的抽象，主要是对方法的相关操作。
+
+```java
+public HandlerMethod(Object bean, Method method) {
+    Assert.notNull(bean, "Bean is required");
+    Assert.notNull(method, "Method is required");
+    this.bean = bean;
+    this.beanFactory = null;
+    this.beanType = ClassUtils.getUserClass(bean);
+    this.method = method;
+    this.bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
+    this.parameters = initMethodParameters();
+    evaluateResponseStatus();
+}
+
+private MethodParameter[] initMethodParameters() {
+    int count = this.bridgedMethod.getParameterCount();
+    MethodParameter[] result = new MethodParameter[count];
+    for (int i = 0; i < count; i++) {
+        HandlerMethodParameter parameter = new HandlerMethodParameter(i);
+        GenericTypeResolver.resolveParameterType(parameter, this.beanType);
+        result[i] = parameter;
+    }
+    return result;
+}
+
+public HandlerMethodParameter(int index) {
+    super(HandlerMethod.this.bridgedMethod, index);
+}
+```
+
+​		在上面校验开关的中的方法validateIfApplicable 就会调用获取注解方法Annotation[] annotations = parameter.getParameterAnnotations();   注意到其中可执行返回的是二维数组，然后将其解析为一维数组。
+
+```java
+public Annotation[] getParameterAnnotations() {
+    Annotation[] paramAnns = this.parameterAnnotations;
+    if (paramAnns == null) {
+        Annotation[][] annotationArray = this.executable.getParameterAnnotations();
+        int index = this.parameterIndex;
+        if (this.executable instanceof Constructor &&
+            ClassUtils.isInnerClass(this.executable.getDeclaringClass()) &&
+            annotationArray.length == this.executable.getParameterCount() - 1) {
+            // Bug in javac in JDK <9: annotation array excludes enclosing instance parameter
+            // for inner classes, so access it with the actual parameter index lowered by 1
+            index = this.parameterIndex - 1;
+        }
+        paramAnns = (index >= 0 && index < annotationArray.length ?
+                     adaptAnnotationArray(annotationArray[index]) : EMPTY_ANNOTATION_ARRAY);
+        this.parameterAnnotations = paramAnns;
+    }
+    return paramAnns;
+}
+```
+
+
 
 
 

@@ -28,7 +28,7 @@ public enum OpenTypeEnum implements IValidateEnum {
      */
     @Override
     public Integer getCode() {
-        return null;
+        return code;
     }
 
     /**
@@ -40,6 +40,6 @@ public enum OpenTypeEnum implements IValidateEnum {
      */
     @Override
     public String getMessage() {
-        return null;
+        return message;
     }
 }
