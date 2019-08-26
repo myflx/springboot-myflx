@@ -2,7 +2,7 @@
 
 ##### 如何整合校验器？
 
-首先要从spring-boot mvc驱动注解``@EnableWebMvc`` 看起 ，注解自动装配的对象为：
+首先从springframe-mvc驱动注解``@EnableWebMvc`` 看起 ，注解自动装配的对象为：
 
 ``org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration``继承了
 
@@ -36,7 +36,7 @@ public Validator mvcValidator() {
 
 `org.springframework.validation.beanvalidation.OptionalValidatorFactoryBean` 主要是实现了：
 
-`javax.validation.ValidatorFactory`。
+`javax.validation.ValidatorFactory`，`javax.validation.Validator`。。。
 
 
 
