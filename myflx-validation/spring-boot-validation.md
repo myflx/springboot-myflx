@@ -38,7 +38,7 @@ public class ValidationAutoConfiguration {
 
 > \repository\org\springframework\boot\spring-boot-autoconfigure\2.0.2.RELEASE\spring-boot-autoconfigure-2.0.2.RELEASE.jar!\META-INF\spring.factories
 
-![1566828471237](.\uml\1566828471237.png)
+![1566828471237](uml/1566828471237.png)
 
 ### apache common bean validator
 
