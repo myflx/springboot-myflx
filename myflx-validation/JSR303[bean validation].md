@@ -95,9 +95,9 @@
   ​	组合约束注解的所有元约束注解都会递归校验，生成校验报告。主注解的组会被继承，组合注解的约束被忽略。 payload 同理。所有约束的约束目标类型要匹配。
 
   - 单报告
-   
+  
    > 使用元注解@ReportAsSingleViolation`` 的标注只生成单个报告。特性是只要注解校验失败存一，其他注解的错误报告都会被忽略，直接生成主注解错误报告。不加该注解会校验会生成所有约束的报告，并且报告顺序是随机的（why? 需要看Validator的实现）。
-   
+  
   - 属性覆盖
   
   >• OverridesAttribute.constraint
@@ -187,12 +187,16 @@
   }
   ```
 
-  
+  - 
 
-- 
+  - 约束组合约束组序
 
-how a JavaBean class is decorated with annotations to describe constraints?
+    一般组都是用接口表示，将校验目标字段或者属性分组执行校验。没有显示指定组的都是属于jsr303默认分组，Default.class。组执行执行是没有顺序的，如果有按顺序执行的要求，可通过对组使用注解表示：
 
-how to programmatically validate a JavaBean?
+    ```java
+    @GroupSequence({Default.class, HighLevelCoherence.class})
+    public interface Complete {}
+    ```
 
-how to programmatically validate a JavaBean.
+    同时校验组也有继承性，子组执行所有父组都一起执行。同时也可以对目标对象重定义默认组。
+
