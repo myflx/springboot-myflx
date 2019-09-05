@@ -4,8 +4,6 @@
 
 
 
-#### 如何定义约束（how constraints are defined）?
-
 除非另有声明Bean Validation api的默认包名 ``javax.validation``
 
 - 约束的构成：一个或者多个约束
@@ -212,5 +210,46 @@ javax.validation.ValidationException: HV000045: A group has to be an interface. 
     ```
   
     同时校验组也有继承性，子组执行所有父组都一起执行。同时也可以对目标对象重定义默认组。
-    
   
+
+
+
+**Bean Validation 2.0和1.1之间的变化**[[官方]](https://beanvalidation.org/2.0/)   [[标准](https://beanvalidation.org/2.0/spec/#builtinconstraints-negativeorzero)]
+
+Bean Validation 2.0主要关注以下主题：
+
+- 通过注释参数化类型的类型参数来支持验证容器元素，例如`List<@Positive Integer> positiveNumbers`。这还包括：
+
+  - 更灵活的容器类型级联验证
+  - 支持 `java.util.Optional`
+  - 支持JavaFX声明的属性类型
+  - 支持自定义容器类型
+
+- 为新的日期/时间数据类型的支持（JSR 310）`@Past`和`@Future`
+
+- 新的内置限制：`@Email`，`@NotEmpty`，`@NotBlank`，`@Positive`， `@PositiveOrZero`，`@Negative`，`@NegativeOrZero`，`@PastOrPresent`和 `@FutureOrPresent`
+
+- 利用JDK 8新功能（内置约束标记为可重复，参数名称通过反射检索）
+
+  
+
+  
+
+##### 好用，不被常用`@Digits`
+
+功能之一：判断字符串是不是数字
+
+功能之二：判断数值位数
+
+校验实现：
+
+```java
+org.hibernate.validator.internal.constraintvalidators.bv.DigitsValidatorForCharSequence
+org.hibernate.validator.internal.constraintvalidators.bv.DigitsValidatorForNumber
+```
+
+##### 属性替换
+
+```java
+@Digits(integer = 32,fraction = 0,message = "uuid必须为不超过{integer}位的数字",groups = DigitGroup.class)
+```

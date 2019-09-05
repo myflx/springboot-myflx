@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.ConstraintViolation;
 import javax.validation.Payload;
 import javax.validation.Valid;
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -81,6 +80,8 @@ public class UserController {
     public String valid() {
         Address address = new Address();
         validatorService.validBase(address);
+
+        validatorService.valid(address);
         return address.getCity();
     }
 
@@ -93,5 +94,17 @@ public class UserController {
     @RequestMapping("/group")
     public UserVO2 group(@ValidParam(UserVO2.AddUserGroup.class) @RequestBody UserVO2 user) {
         return user;
+    }
+
+
+    @RequestMapping("/failFast")
+    public String failFast(@ValidParam(UserVO2.AddUserGroup.class) @RequestBody UserVO2 user) {
+        return "hello word!";
+    }
+
+
+    @RequestMapping("/testDigits")
+    public String testDigits(@ValidParam(UserVO2.DigitGroup.class) @RequestBody UserVO2 user) {
+        return "";
     }
 }

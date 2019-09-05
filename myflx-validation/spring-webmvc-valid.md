@@ -2,6 +2,8 @@
 
 ##### 如何整合校验器？
 
+spring使用jsr-303的hibernate实现整合bean-validation【[文档](https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#preface)】[[spring -validtion](https://docs.spring.io/spring/docs/5.1.9.RELEASE/spring-framework-reference/core.html#validation)]
+
 首先从springframe-mvc驱动注解``@EnableWebMvc`` 看起 ，注解自动装配的对象为：
 
 ``org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration``继承了
@@ -211,10 +213,6 @@ public Annotation[] getParameterAnnotations() {
 
 
 
-
-
-##### 列表 ``org.springframework.validation.DataBinder#validators`` 是如何初始化的？
-
 经过翻看源码，DataBinderFactory和DataBinder 在每次请求都会新创建，每次创建DataBinder 主要通过初始化对象`private final WebBindingInitializer initializer;`装载Validator。经过debug发现这个对象地址是一直不变的，肯定是在应用启动的时候加载的。查找DefaultDataBinderFactory的实例化过程发现他是从处理器适配器中获取的。那么就继续查看适配器的加载过程。
 
 ```java
@@ -330,5 +328,101 @@ org.springframework.web.servlet.RequestToViewNameTranslator=org.springframework.
 org.springframework.web.servlet.ViewResolver=org.springframework.web.servlet.view.InternalResourceViewResolver
 
 org.springframework.web.servlet.FlashMapManager=org.springframework.web.servlet.support.SessionFlashMapManager
+```
+
+
+
+
+
+##### 列表 ``org.springframework.validation.DataBinder#validators`` 是如何初始化的？
+
+``org.hibernate.validator.internal.engine.ValidatorContextImpl#ValidatorContextImpl``
+
+##### validContext failFast 策略？
+
+``org.hibernate.validator.internal.engine.ValidatorFactoryImpl#ValidatorFactoryImpl``
+
+```java
+org.hibernate.validator.HibernateValidatorConfiguration#FAIL_FAST
+```
+
+##### JSR-303-hibernate实现主要配置
+
+```java
+public interface HibernateValidatorConfiguration extends Configuration<HibernateValidatorConfiguration> {
+	/**
+	 * Property corresponding to the {@link #failFast} method.
+	 * Accepts {@code true} or {@code false}. Defaults to {@code false}.
+	 */
+	String FAIL_FAST = "hibernate.validator.fail_fast";
+
+	/**
+	 * Property corresponding to the {@link #allowOverridingMethodAlterParameterConstraint} method.
+	 * Accepts {@code true} or {@code false}.
+	 * Defaults to {@code false}.
+	 */
+	String ALLOW_PARAMETER_CONSTRAINT_OVERRIDE = "hibernate.validator.allow_parameter_constraint_override";
+
+	/**
+	 * Property corresponding to the {@link #allowMultipleCascadedValidationOnReturnValues} method.
+	 * Accepts {@code true} or {@code false}.
+	 * Defaults to {@code false}.
+	 */
+	String ALLOW_MULTIPLE_CASCADED_VALIDATION_ON_RESULT = "hibernate.validator.allow_multiple_cascaded_validation_on_result";
+
+	/**
+	 * Property corresponding to the {@link #allowParallelMethodsDefineParameterConstraints} method.
+	 * Accepts {@code true} or {@code false}.
+	 * Defaults to {@code false}.
+	 */
+	String ALLOW_PARALLEL_METHODS_DEFINE_PARAMETER_CONSTRAINTS = "hibernate.validator.allow_parallel_method_parameter_constraint";
+
+	/**
+	 * @deprecated planned for removal. Use hibernate.validator.constraint_mapping_contributors instead.
+	 * @since 5.2
+	 */
+	@Deprecated
+	String CONSTRAINT_MAPPING_CONTRIBUTOR = "hibernate.validator.constraint_mapping_contributor";
+
+	/**
+	 * Property for configuring constraint mapping contributors, allowing to set up one or more constraint mappings for
+	 * the default validator factory. Accepts a String with the comma separated fully-qualified class names of one or more
+	 * {@link org.hibernate.validator.spi.cfg.ConstraintMappingContributor} implementations.
+	 *
+	 * @since 5.3
+	 */
+	String CONSTRAINT_MAPPING_CONTRIBUTORS = "hibernate.validator.constraint_mapping_contributors";
+
+	/**
+	 * Property corresponding to the {@link #enableTraversableResolverResultCache(boolean)}.
+	 * Accepts {@code true} or {@code false}.
+	 * Defaults to {@code true}.
+	 *
+	 * @since 6.0.3
+	 */
+	String ENABLE_TRAVERSABLE_RESOLVER_RESULT_CACHE = "hibernate.validator.enable_traversable_resolver_result_cache";
+
+	/**
+	 * Property for configuring the script evaluator factory, allowing to set up which factory will be used to create
+	 * {@link ScriptEvaluator}s for evaluation of script expressions in
+	 * {@link ScriptAssert} and {@link ParameterScriptAssert}
+	 * constraints. A fully qualified name of a class implementing {@link ScriptEvaluatorFactory} is expected as a value.
+	 *
+	 * @since 6.0.3
+	 */
+	@Incubating
+	String SCRIPT_EVALUATOR_FACTORY_CLASSNAME = "hibernate.validator.script_evaluator_factory";
+
+	/**
+	 * Property for configuring temporal validation tolerance, allowing to set the acceptable margin of error when
+	 * comparing date/time in temporal constraints. In milliseconds.
+	 *
+	 * @since 6.0.5
+	 */
+	@Incubating
+	String TEMPORAL_VALIDATION_TOLERANCE = "hibernate.validator.temporal_validation_tolerance";
+
+	....
+}
 ```
 
