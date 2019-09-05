@@ -2,8 +2,8 @@ package com.myflx.vo;
 
 import com.myflx.validation.annotation.TypeConstraint;
 import com.myflx.validation.constant.OpenTypeEnum;
-import com.myflx.validation.constant.OpenTypeEnum2;
 
+import javax.validation.Payload;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +12,10 @@ import java.io.Serializable;
 /**
  * @author LuoShangLin
  */
-public class UserVO implements Serializable {
+public class UserVO implements Serializable, Payload {
+
+    public interface AddUserGroup {
+    }
 
     private static final long serialVersionUID = -6084419847851348876L;
 
@@ -25,10 +28,10 @@ public class UserVO implements Serializable {
 
     private String companyCode;
 
-    @TypeConstraint(type = OpenTypeEnum.class)
+    @TypeConstraint(type = OpenTypeEnum.class, groups = AddUserGroup.class, payload = UserVO.class)
     private Integer openType;
 
-    @TypeConstraint(type = OpenTypeEnum.class)
+    @TypeConstraint(type = OpenTypeEnum.class, groups = AddUserGroup.class, payload = UserVO.class)
     private Integer openType2;
 
     public Integer getOpenType2() {

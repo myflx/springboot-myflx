@@ -8,6 +8,7 @@ import com.myflx.validation.payload.severity.Address;
 import com.myflx.validation.payload.validator.ContextValidatorGetter;
 import com.myflx.validator.ValidatorService;
 import com.myflx.vo.UserVO;
+import com.myflx.vo.UserVO2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.ConstraintViolation;
 import javax.validation.Payload;
 import javax.validation.Valid;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -27,7 +29,6 @@ import java.util.Set;
  * @since 1.0
  **/
 @RestController
-@RequestMapping("/user")
 public class UserController {
 
     @Autowired
@@ -37,7 +38,7 @@ public class UserController {
     private ValidatorService validatorService;
 
     @RequestMapping("/create")
-    public UserVO hello(@ValidParam @RequestBody UserVO user) {
+    public UserVO hello(@ValidParam(UserVO.AddUserGroup.class) @RequestBody UserVO user) {
         return user;
     }
 
@@ -81,5 +82,16 @@ public class UserController {
         Address address = new Address();
         validatorService.validBase(address);
         return address.getCity();
+    }
+
+
+    @RequestMapping("/wrongGroup")
+    public UserVO2 wrongGroup(@ValidParam(UserVO2.class) @RequestBody UserVO2 user) {
+        return user;
+    }
+
+    @RequestMapping("/group")
+    public UserVO2 group(@ValidParam(UserVO2.AddUserGroup.class) @RequestBody UserVO2 user) {
+        return user;
     }
 }

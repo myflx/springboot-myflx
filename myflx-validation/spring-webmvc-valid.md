@@ -120,7 +120,13 @@ public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewC
 
 ``WebDataBinder``对象持有对请求方法对象参数校验的结果
 
-##### 如何识别校验开关？
+
+
+##### SpringValidatorAdapter.targetValidator中的实现为ValidatorImpl，是如何初始化的？
+
+
+
+##### 如何识别校验开关、校验组？
 
 在参数处理的方法中存在调用：
 
@@ -142,6 +148,8 @@ protected void validateIfApplicable(WebDataBinder binder, MethodParameter parame
 ```
 
 > 一目了然：既支持@Validated 的又兼容所有名字以Valid打头的注解。
+>
+> 同时取注解的value作为校验组，默认Default.class（可以做什么？）
 
 
 

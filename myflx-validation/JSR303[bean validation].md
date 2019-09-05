@@ -12,7 +12,7 @@
 
 - 什么是约束？
 
-  - 由``javax.validation.Constraint``元标注注解
+  - 由``javax.validation.Constraint``[元标注](https://github.com/spring-projects/spring-framework/wiki/Spring-Annotation-Programming-Model)注解
   - 注解保留策略为运行时（``RetentionPolicy.RUNTIME``）
 
 - 注解目标类型
@@ -187,16 +187,30 @@
   }
   ```
 
-  - 
+- 校验组
 
-  - 约束组合约束组序
+  - 规则：必须为纯接口否则会报错
 
+  ```tiki wiki
+javax.validation.ValidationException: HV000045: A group has to be an interface. com.myflx.vo.UserVO2 is not.
+  	at org.hibernate.validator.internal.engine.groups.ValidationOrderGenerator.getValidationOrder(ValidationOrderGenerator.java:80) ~[hibernate-validator-6.1.0.Alpha6.jar:6.1.0.Alpha6]
+  	at org.hibernate.validator.internal.engine.ValidatorImpl.determineGroupValidationOrder(ValidatorImpl.java:370) ~[hibernate-validator-6.1.0.Alpha6.jar:6.1.0.Alpha6]
+  ```
+  
+  - 校验组继承规则
+  
+    - 一个组是可以继承其他组的。
+    - 子组的校验会导致所有父组的校验。
+  
+  - 校验组组序
+  
     一般组都是用接口表示，将校验目标字段或者属性分组执行校验。没有显示指定组的都是属于jsr303默认分组，Default.class。组执行执行是没有顺序的，如果有按顺序执行的要求，可通过对组使用注解表示：
-
+  
     ```java
     @GroupSequence({Default.class, HighLevelCoherence.class})
     public interface Complete {}
     ```
-
+  
     同时校验组也有继承性，子组执行所有父组都一起执行。同时也可以对目标对象重定义默认组。
-
+    
+  

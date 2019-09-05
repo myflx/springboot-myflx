@@ -9,6 +9,7 @@ import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintVa
 import javax.validation.ClockProvider;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import javax.validation.Payload;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Objects;
@@ -16,11 +17,13 @@ import java.util.Objects;
 /**
  * @author LuoShangLin
  */
-public class TypeConstraintValidator implements ConstraintValidator<TypeConstraint, Integer>, Annotation {
+public class TypeConstraintValidator implements ConstraintValidator<TypeConstraint, Integer> {
 
     @Override
     public void initialize(TypeConstraint myFormValidator) {
         System.out.println("初始化：com.myflx.validation.validator.TypeConstraintValidator.initialize");
+        final Class<? extends Payload>[] payload = myFormValidator.payload();
+
     }
 
     @Override
@@ -35,13 +38,8 @@ public class TypeConstraintValidator implements ConstraintValidator<TypeConstrai
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(format).addConstraintViolation();
             return false;
-        }else {
+        } else {
             return true;
         }
-    }
-
-    @Override
-    public Class<? extends Annotation> annotationType() {
-        return TypeConstraint.class;
     }
 }
