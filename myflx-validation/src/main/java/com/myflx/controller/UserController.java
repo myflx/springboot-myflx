@@ -9,6 +9,8 @@ import com.myflx.validation.payload.validator.ContextValidatorGetter;
 import com.myflx.validator.ValidatorService;
 import com.myflx.vo.UserVO;
 import com.myflx.vo.UserVO2;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,7 @@ import java.util.Set;
  * @since 1.0
  **/
 @RestController
+@Api(tags = {"用户控制器", "用户", "V1.0"})
 public class UserController {
 
     @Autowired
@@ -37,6 +40,7 @@ public class UserController {
     private ValidatorService validatorService;
 
     @RequestMapping("/create")
+    @ApiOperation(value = "新增", notes = "新增", tags = {"V1.0"}, httpMethod = "POST")
     public UserVO hello(@ValidParam(UserVO.AddUserGroup.class) @RequestBody UserVO user) {
         return user;
     }
