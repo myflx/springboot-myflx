@@ -41,4 +41,28 @@ https://github.com/spring-projects/spring-framework/wiki/Spring-Annotation-Progr
 
 > @AliasFor 相同注解中的两个属性显性覆盖必须互相互相覆盖，默认值必须相同
 
+- 层次覆盖：只能从低层次到高层次覆盖
+
+  ```java
+  @Target(ElementType.TYPE)
+  @Retention(RetentionPolicy.RUNTIME)
+  @Documented
+  @Inherited
+  @SpringBootConfiguration
+  @EnableAutoConfiguration
+  @ComponentScan(excludeFilters = {
+  		@Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+  		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+  public @interface SpringBootApplication {
+      //....//
+  	@AliasFor(annotation = EnableAutoConfiguration.class)
+  	Class<?>[] exclude() default {};
+      //....//
+  }
+  ```
+
+  
+
+
+
 https://github.com/spring-projects/spring-framework/wiki/Spring-Annotation-Programming-Model
