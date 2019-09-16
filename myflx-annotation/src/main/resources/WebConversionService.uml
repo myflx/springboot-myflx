@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.springframework.boot.autoconfigure.web.format.WebConversionService</OriginalElement>
+  <nodes>
+    <node x="259.5" y="405.0">org.springframework.boot.autoconfigure.web.format.WebConversionService</node>
+    <node x="486.5" y="81.0">org.springframework.format.FormatterRegistry</node>
+    <node x="235.5" y="81.0">org.springframework.core.convert.support.ConfigurableConversionService</node>
+    <node x="220.0" y="324.0">org.springframework.format.support.DefaultFormattingConversionService</node>
+    <node x="0.0" y="162.0">org.springframework.context.EmbeddedValueResolverAware</node>
+    <node x="73.5" y="81.0">org.springframework.beans.factory.Aware</node>
+    <node x="448.0" y="0.0">org.springframework.core.convert.converter.ConverterRegistry</node>
+    <node x="251.0" y="162.0">org.springframework.core.convert.support.GenericConversionService</node>
+    <node x="241.0" y="243.0">org.springframework.format.support.FormattingConversionService</node>
+    <node x="215.25" y="0.0">org.springframework.core.convert.ConversionService</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.springframework.format.support.FormattingConversionService" target="org.springframework.format.FormatterRegistry">
+      <point x="73.33333333333331" y="-15.5" />
+      <point x="424.3333333333333" y="218.0" />
+      <point x="563.5" y="218.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.context.EmbeddedValueResolverAware" target="org.springframework.beans.factory.Aware">
+      <point x="0.0" y="-15.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.core.convert.support.ConfigurableConversionService" target="org.springframework.core.convert.ConversionService">
+      <point x="-57.75" y="-15.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.format.FormatterRegistry" target="org.springframework.core.convert.converter.ConverterRegistry">
+      <point x="0.0" y="-15.5" />
+      <point x="38.5" y="15.5" />
+    </edge>
+    <edge source="org.springframework.boot.autoconfigure.web.format.WebConversionService" target="org.springframework.format.support.DefaultFormattingConversionService">
+      <point x="0.0" y="-15.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.core.convert.support.ConfigurableConversionService" target="org.springframework.core.convert.converter.ConverterRegistry">
+      <point x="57.75" y="-15.5" />
+      <point x="408.75" y="56.0" />
+      <point x="486.5" y="56.0" />
+      <point x="-38.5" y="15.5" />
+    </edge>
+    <edge source="org.springframework.format.support.FormattingConversionService" target="org.springframework.core.convert.support.GenericConversionService">
+      <point x="0.0" y="-15.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.format.support.DefaultFormattingConversionService" target="org.springframework.format.support.FormattingConversionService">
+      <point x="0.0" y="-15.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.format.support.FormattingConversionService" target="org.springframework.context.EmbeddedValueResolverAware">
+      <point x="-73.33333333333331" y="-15.5" />
+      <point x="277.6666666666667" y="218.0" />
+      <point x="115.5" y="218.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="org.springframework.core.convert.support.GenericConversionService" target="org.springframework.core.convert.support.ConfigurableConversionService">
+      <point x="0.0" y="-15.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="0.9100877192982456" x="457.84939759036143" y="214.59277108433741" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
