@@ -4,6 +4,7 @@ import com.myflx.validation.annotation.TypeConstraint;
 import com.myflx.validation.constant.OpenTypeEnum;
 
 import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
@@ -15,6 +16,9 @@ public class UserVO2 implements Serializable {
     }
 
     public interface DigitGroup {
+    }
+
+    public interface I18nGroup {
     }
     private static final long serialVersionUID = 594502982799815861L;
 
@@ -29,6 +33,9 @@ public class UserVO2 implements Serializable {
 
     @Digits(integer = 32,fraction = 0,message = "必须为不超过{integer}位的数字",groups = DigitGroup.class)
     private String uuid;
+
+    @NotBlank(message = "国际化信息（{javax.validation.constraints.NotBlank.message}）",groups = I18nGroup.class)
+    private String i18n;
 
     public Integer getOpenType() {
         return openType;
@@ -60,5 +67,13 @@ public class UserVO2 implements Serializable {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getI18n() {
+        return i18n;
+    }
+
+    public void setI18n(String i18n) {
+        this.i18n = i18n;
     }
 }

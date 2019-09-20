@@ -1,7 +1,6 @@
 package com.myflx.validator;
 
 import org.hibernate.validator.internal.engine.ConfigurationImpl;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.Configuration;
@@ -12,7 +11,6 @@ import javax.validation.Configuration;
  * @Date 2019/9/5 18:34
  * @Since V2.13.0
  */
-@Component
 public class ConfiguredValidatorFactoryBean extends LocalValidatorFactoryBean {
 
     /**

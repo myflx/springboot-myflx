@@ -111,4 +111,10 @@ public class UserController {
     public String testDigits(@ValidParam(UserVO2.DigitGroup.class) @RequestBody UserVO2 user) {
         return "";
     }
+
+
+    @RequestMapping("/testI18n")
+    public String testI18n(@ValidParam(UserVO2.I18nGroup.class) @RequestBody UserVO2 user) {
+        return "";
+    }
 }
