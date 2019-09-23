@@ -1,0 +1,20 @@
+server:
+  port: 8080
+  tomcat:
+    basedir: .
+    accesslog:
+      buffered: false
+      directory: logs
+      enabled: true
+      file-date-format: .yyyy-MM-dd
+      pattern: "%{yyyy-MM-dd HH:mm:ss.SSS}t %h %A %l %user \"%r\" %s %b %D"
+      prefix: access
+      rename-on-rotate: false
+      request-attributes-enabled: true
+      rotate: true
+      suffix: .log
+spring:
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10s

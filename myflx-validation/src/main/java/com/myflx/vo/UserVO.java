@@ -1,7 +1,11 @@
 package com.myflx.vo;
 
+import com.myflx.validation.IValid;
+import com.myflx.validation.MyflxParamException;
 import com.myflx.validation.annotation.TypeConstraint;
+import com.myflx.validation.annotation.UserConstraint;
 import com.myflx.validation.constant.OpenTypeEnum;
+import org.springframework.util.StringUtils;
 
 import javax.validation.Payload;
 import javax.validation.constraints.Max;
@@ -12,7 +16,8 @@ import java.io.Serializable;
 /**
  * @author LuoShangLin
  */
-public class UserVO implements Serializable, Payload {
+@UserConstraint(groups = IValid.class)
+public class UserVO implements Serializable, Payload ,IValid{
 
     public interface AddUserGroup {
     }
@@ -33,6 +38,14 @@ public class UserVO implements Serializable, Payload {
 
     @TypeConstraint(type = OpenTypeEnum.class, groups = AddUserGroup.class, payload = UserVO.class)
     private Integer openType2;
+
+
+    @Override
+    public void valid() {
+        if (StringUtils.isEmpty(name)){
+            throw new MyflxParamException(name+":不符合校验规则！");
+        }
+    }
 
     public Integer getOpenType2() {
         return openType2;

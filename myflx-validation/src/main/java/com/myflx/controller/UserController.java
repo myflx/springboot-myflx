@@ -1,5 +1,6 @@
 package com.myflx.controller;
 
+import com.myflx.validation.IValid;
 import com.myflx.validation.annotation.ValidParam;
 import com.myflx.validation.payload.dto.Author;
 import com.myflx.validation.payload.dto.Book;
@@ -116,5 +117,11 @@ public class UserController {
     @RequestMapping("/testI18n")
     public String testI18n(@ValidParam(UserVO2.I18nGroup.class) @RequestBody UserVO2 user) {
         return "";
+    }
+
+
+    @RequestMapping("/testTypeValid")
+    public String testTypeValid(@ValidParam(IValid.class) @RequestBody UserVO user) {
+        return "ok";
     }
 }
