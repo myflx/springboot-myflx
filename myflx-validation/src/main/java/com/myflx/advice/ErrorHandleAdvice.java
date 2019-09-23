@@ -2,6 +2,7 @@ package com.myflx.advice;
 
 import com.myflx.dto.ModelResult;
 import com.myflx.dto.ModelResultClient;
+import com.myflx.validation.MyflxParamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -52,10 +53,11 @@ public class ErrorHandleAdvice {
     @ResponseBody
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ModelResult fieldErrorHandler(MethodArgumentNotValidException e) {
-        logger.debug("参数校验异常! request path:{}, error  message:{}", getRequestPath(), e.getBindingResult().getFieldError().getField() + e.getBindingResult().getFieldError().getDefaultMessage());
+//        logger.debug("参数校验异常! request path:{}, error  message:{}", getRequestPath(), e.getBindingResult().getFieldError().getField() + e.getBindingResult().getFieldError().getDefaultMessage());
         //e.getBindingResult().getFieldError().getField()
-        System.out.println("错误字段数量："+e.getBindingResult().getErrorCount());
-        return new ModelResultClient().failFactory("9002", e.getBindingResult().getFieldError().getField() + e.getBindingResult().getFieldError().getDefaultMessage());
+        System.out.println("错误字段数量：" + e.getBindingResult().getErrorCount());
+//        return new ModelResultClient().failFactory("9002", e.getBindingResult().getFieldError().getField() + e.getBindingResult().getFieldError().getDefaultMessage());
+        return new ModelResultClient().failFactory("9002", e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
     }
 
 
@@ -65,4 +67,12 @@ public class ErrorHandleAdvice {
         logger.warn("Request method not supported error! request path:{}, error message:{}", getRequestPath(), e.getMessage());
         return new ModelResultClient().failFactory("9003", "Request method not supported");
     }
+
+    @ResponseBody
+    @ExceptionHandler(value = MyflxParamException.class)
+    public ModelResult dealMyflxParamException(MyflxParamException e) {
+        logger.warn("Request method not supported error! request path:{}, error message:{}", getRequestPath(), e.getMessage());
+        return new ModelResultClient().failFactory("9004", "Request method not supported");
+    }
+
 }

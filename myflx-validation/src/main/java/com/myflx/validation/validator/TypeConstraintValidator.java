@@ -6,11 +6,9 @@ import com.myflx.validation.annotation.TypeConstraint;
 import com.myflx.validation.util.EnumUtil;
 import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorContextImpl;
 
-import javax.validation.ClockProvider;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.Objects;
 

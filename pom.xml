@@ -15,6 +15,7 @@
         <module>spring-framework-samples</module>
         <module>myflx-validation</module>
         <module>myflx-discovery</module>
+        <module>myflx-cache</module>
     </modules>
     <properties>
         <spring-boot.version>2.0.2.RELEASE</spring-boot.version>
