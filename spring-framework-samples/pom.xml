@@ -14,6 +14,7 @@
     <modules>
         <module>spring-framework-2.5.6</module>
         <module>spring-framework-5.0.x</module>
+        <module>spring-framework-3.2.x</module>
     </modules>
     <packaging>pom</packaging>
     <properties>
