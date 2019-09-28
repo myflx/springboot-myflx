@@ -14,6 +14,7 @@ public class CacheBootstrap {
 
     public static void main(String[] args) {
         final ConfigurableApplicationContext run = SpringApplication.run(CacheBootstrap.class, args);
-        System.out.println(run);
+        System.out.println(CacheBootstrap.class);
+        System.out.println(run.getBean(CacheBootstrap.class));
     }
 }
