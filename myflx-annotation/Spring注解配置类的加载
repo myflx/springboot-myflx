@@ -224,7 +224,15 @@ spring-boot 对配置类的加载底层是依赖spring的，启动类启动的�
 
 ``AnnotationConfigUtils.registerAnnotationConfigProcessors``
 
-上下文：``AnnotationConfigApplicationContext`` 持有对象``AnnotatedBeanDefinitionReader``
+- spring-boot上下文：
+
+  ``AnnotationConfigServletWebServerApplicationContext``
+
+- 独立上下文：
+
+  ``AnnotationConfigApplicationContext/ ClassPathXmlApplicationContext``
+
+其中sb上下文和独立注解上下文均以同样的方式持有：注解类型的bean定义读取对象``AnnotatedBeanDefinitionReader``
 
 其构造方法对后置处理器进行注册：
 
