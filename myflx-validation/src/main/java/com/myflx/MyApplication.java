@@ -8,6 +8,8 @@ import org.springframework.validation.beanvalidation.OptionalValidatorFactoryBea
 
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 
 /**
  * @author LuoShangLin
@@ -20,5 +22,8 @@ public class MyApplication {
         System.out.println(bean);///org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
         System.out.println(run.getBean(Validator.class) instanceof OptionalValidatorFactoryBean);
         System.out.println(run.getBean(Validator.class));
+
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        System.out.println(runtimeMXBean.getStartTime());
     }
 }

@@ -10,10 +10,9 @@ import java.util.Objects;
 
 
 @RestController
-@SpringBootApplication
 public class DemoApplication {
     public static void main(String[] args) {
-        ConfigurableApplicationContext run = SpringApplication.run(DemoApplication.class, args);
+        ConfigurableApplicationContext run = SpringApplication.run(DemoApplicationConfiguration.class, args);
         DemoApplication bean = run.getBean(DemoApplication.class);
         System.out.println(Objects.nonNull(bean));
     }

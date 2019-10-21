@@ -253,3 +253,9 @@ org.hibernate.validator.internal.constraintvalidators.bv.DigitsValidatorForNumbe
 ```java
 @Digits(integer = 32,fraction = 0,message = "uuid必须为不超过{integer}位的数字",groups = DigitGroup.class)
 ```
+
+##### i18n
+
+
+
+`ContriantHelper`
