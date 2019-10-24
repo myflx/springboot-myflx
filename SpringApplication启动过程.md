@@ -240,7 +240,7 @@ public ConfigurableApplicationContext run(String... args) {
 
 #### 4.2 headless 模式
 
-​	Headless模式是系统的一种配置模式。在该模式下，系统缺少了显示设备、键盘或鼠标。spring-boot默认将系统设置在该模式下。
+​	Headless模式是系统的一种配置模式。在该模式下，系统缺少了显示设备、键盘或鼠标。spring-boot默认将系统设置在该模式下。在一些有需要生成图片的系统中出现，设置为true 避免X11GraphicsEnvironment调用的报错，同时headless工具包会被使用做一些其他相关操作，如获取字体，渲染图片的颜色等操作。
 
 ```java
 private static final String SYSTEM_PROPERTY_JAVA_AWT_HEADLESS = "java.awt.headless";
