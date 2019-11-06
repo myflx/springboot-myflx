@@ -13,6 +13,7 @@
     <modules>
         <module>first-app</module>
         <module>embedded-server</module>
+        <module>application-run</module>
     </modules>
     <name>myflx-application</name>
     <description>关于spring-boot-application</description>

@@ -261,11 +261,83 @@ org.springframework.boot.SpringApplicationRunListener=\
 
 ``EventPublishingRunListener`` 初始化时也会初始化 事件发布器 ``SimpleApplicationEventMulticaster`` 并持有**2.6** 所说的 ``ApplicationListener``  。在调用时将事件类型和事件源作为key缓存在 ``org.springframework.context.event.AbstractApplicationEventMulticaster#retrieverCache`` 中。
 
+#### 4.4 参数对象ApplicationArguments
+
+​		spring将参数（args）分为选项参数和非选项参数，被包装在``ApplicationArguments``对象中，实现类为``DefaultApplicationArguments``
+
+##### 4.4.1 外部应用参数获取
+
+- 注入应用参数
+
+```java
+import org.springframework.boot.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
+@Component
+public class MyBean {
+@Autowired
+public MyBean(ApplicationArguments args) {
+    boolean debug = args.containsOption("debug");
+    List<String> files = args.getNonOptionArgs();
+    // if run with "--debug logfile.txt" debug=true, files=["logfile.txt"]
+    }
+}
+```
+
+- 环境变量``@Value``注入获取
+
+在构建环境的时候原始参数会被包装成``CommandLinePropertySource``对象（实现类为``SimpleCommandLinePropertySource``）统一走spring 定义的``PropertySource`` 标准被添加到环境中。
+
+```java
+protected void configurePropertySources(ConfigurableEnvironment environment,
+			String[] args) {
+		MutablePropertySources sources = environment.getPropertySources();
+		if (this.defaultProperties != null && !this.defaultProperties.isEmpty()) {
+			sources.addLast(
+					new MapPropertySource("defaultProperties", this.defaultProperties));
+		}
+		if (this.addCommandLineProperties && args.length > 0) {
+			String name = CommandLinePropertySource.COMMAND_LINE_PROPERTY_SOURCE_NAME;
+			if (sources.contains(name)) {
+				PropertySource<?> source = sources.get(name);
+				CompositePropertySource composite = new CompositePropertySource(name);
+				composite.addPropertySource(new SimpleCommandLinePropertySource(
+						"springApplicationCommandLineArgs", args));
+				composite.addPropertySource(source);
+				sources.replace(name, composite);
+			}
+			else {
+				sources.addFirst(new SimpleCommandLinePropertySource(args));
+			}
+		}
+	}
+```
+
+#### 4.5 忽略BeanInfo
+
+```java
+private void configureIgnoreBeanInfo(ConfigurableEnvironment environment) {
+    if (System.getProperty(
+        CachedIntrospectionResults.IGNORE_BEANINFO_PROPERTY_NAME) == null) {
+        Boolean ignore = environment.getProperty("spring.beaninfo.ignore",
+                                                 Boolean.class, Boolean.TRUE);
+        System.setProperty(CachedIntrospectionResults.IGNORE_BEANINFO_PROPERTY_NAME,
+                           ignore.toString());
+    }
+}
+```
+
+默认不查找Beaninfo类型的类，减小启动的开销。spring 中``org.springframework.beans.CachedIntrospectionResults#getBeanInfo(java.lang.Class<?>)``
+
+的调用 ``java.beans.Introspector#getBeanInfo(java.lang.Class<?>)`
 
 
-构建SpringBootApplication对象并运行org.springframework.boot.SpringApplication#run(java.lang.Class<?>, java.lang.String...)
-命令行入参被包装成对象：org.springframework.boot.ApplicationArguments（org.springframework.boot.DefaultApplicationArguments）同时被进一步包装成org.springframework.core.env.PropertySource（EnumerablePropertySource,CommandLinePropertySource,SimpleCommandLinePropertySource,Source）
-配置获取BeanInfo的方式:默认从Introspector.getBeanInfo(); spring.beaninfo.ignore默认true
+
+#### 4.6 Banner打印对象
+
+​		可以自定义，显示图片，仅展示没有实际意义。
+
+#### 4.7 异常诊断报告
 
 构建异常报告（只告诉应用是否有指定的异常，为了保证程序正常启动其他异常是忽略的）：
 org.springframework.boot.SpringBootExceptionReporter（org.springframework.boot.diagnostics.FailureAnalyzers）
@@ -315,7 +387,7 @@ org.springframework.boot.diagnostics.analyzer.InvalidConfigurationPropertyValueF
 		启动上下文中的监听器来源spring.factories
 
 		# Application Listeners
-​		
+
 ​		
 
 ```java
