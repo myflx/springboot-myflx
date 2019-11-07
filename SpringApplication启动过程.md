@@ -313,6 +313,10 @@ protected void configurePropertySources(ConfigurableEnvironment environment,
 	}
 ```
 
+##### 4.4.2 外部应用参数回调
+
+​		在应用启动之后（生命周期：运行中事件发布之前）会将``ApplicationArguments``作为参数，调用环境中的    ``ApplicationRunner`` ,``CommandLineRunner``   实现应用启动之后的回调，二者基本功能一样，回调参数不一样。都要由spring管理，通过Order控制运行顺序。
+
 #### 4.5 忽略BeanInfo
 
 ```java
@@ -337,11 +341,45 @@ private void configureIgnoreBeanInfo(ConfigurableEnvironment environment) {
 
 ​		可以自定义，显示图片，仅展示没有实际意义。
 
-#### 4.7 异常诊断报告
+#### 4.7 运行异常处理
 
-构建异常报告（只告诉应用是否有指定的异常，为了保证程序正常启动其他异常是忽略的）：
-org.springframework.boot.SpringBootExceptionReporter（org.springframework.boot.diagnostics.FailureAnalyzers）
-	持有异常报告分析器：List<FailureAnalyzer> analyzers;
+​		在启动过程中出现异常，会将环境中的``SpringBootExceptionReporter`` 作为参数传递下去进行异常处理``org.springframework.boot.SpringApplication#handleRunFailure``。异常报告持有应用中所有的``FailureAnalyzer``。
+
+
+
+##### 4.7.1 退出码处理
+
+```java
+private void handleExitCode(ConfigurableApplicationContext context,
+                            Throwable exception) {
+    int exitCode = getExitCodeFromException(context, exception);
+    if (exitCode != 0) {
+        if (context != null) {
+            context.publishEvent(new ExitCodeEvent(context, exitCode));
+        }
+        SpringBootExceptionHandler handler = getSpringBootExceptionHandler();
+        if (handler != null) {
+            handler.registerExitCode(exitCode);
+        }
+    }
+}
+```
+
+- 退出码获取
+  - 通过匹配环境中的``ExitCodeExceptionMapper`` 获取。
+  - 通过判断异常是否继承了接口``ExitCodeGenerator`` 直接从异常中获取退出码。
+- 发布退出码事件
+  - ``org.springframework.boot.ExitCodeEvent`` spring没有该事件监听的实现。应用启动时可自定义退出码并予以监听。
+- 异常处理器注册退出码
+  - 了解线程异常处理器：``java.lang.Thread.UncaughtExceptionHandler``  Thead API当线程因异常中断时会通过``java.lang.Thread#getUncaughtExceptionHandler`` 回调所有的异常处理器。``org.springframework.boot.SpringBootExceptionHandler``实现了该处理器接口，该处理会保存在当前线程中同时持有原有的处理器作为父处理。处理异常时发现logback配置异常时会将异常向上传递，其他自行处理。
+
+##### 4.7.2 异常报告
+
+```properties
+# Error Reporters
+org.springframework.boot.SpringBootExceptionReporter=\
+org.springframework.boot.diagnostics.FailureAnalyzers
+# Failure Analyzers
 org.springframework.boot.diagnostics.FailureAnalyzer=\
 org.springframework.boot.diagnostics.analyzer.BeanCurrentlyInCreationFailureAnalyzer,\
 org.springframework.boot.diagnostics.analyzer.BeanNotOfRequiredTypeFailureAnalyzer,\
@@ -354,6 +392,12 @@ org.springframework.boot.diagnostics.analyzer.PortInUseFailureAnalyzer,\
 org.springframework.boot.diagnostics.analyzer.ValidationExceptionFailureAnalyzer,\
 org.springframework.boot.diagnostics.analyzer.InvalidConfigurationPropertyNameFailureAnalyzer,\
 org.springframework.boot.diagnostics.analyzer.InvalidConfigurationPropertyValueFailureAnalyzer
+```
+
+启动发生异常时，异常被分析处理之后会将满足条件的异常汇聚在处理器中``SpringBootExceptionHandler``
+
+
+
 主线程绑定异常处理器：org.springframework.boot.SpringBootExceptionHandler
 
 异常是时处理退出码：org.springframework.boot.SpringApplication#handleExitCode
