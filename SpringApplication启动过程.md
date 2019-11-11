@@ -396,24 +396,38 @@ org.springframework.boot.diagnostics.analyzer.InvalidConfigurationPropertyValueF
 
 启动发生异常时，异常被分析处理之后会将满足条件的异常汇聚在处理器中``SpringBootExceptionHandler``
 
+#### 4.8 环境准备
 
-
-主线程绑定异常处理器：org.springframework.boot.SpringBootExceptionHandler
-
-异常是时处理退出码：org.springframework.boot.SpringApplication#handleExitCode
-
-
-启动Banner打印：org.springframework.boot.SpringApplicationBannerPrinter.PrintedBanner
-
-启动时上下文准备的操作：org.springframework.boot.SpringApplication#prepareContext
+启动时上下文准备的操作：``org.springframework.boot.SpringApplication#prepareContext``
 	1，关联环境
 	2，上下文后置处理：注册beanNameGenerator，resourceLoader（以SpringBootApplicationBuilder方式设置的时候调用否则是空没有注册）
-	3，启动前应用上下文初始器（ ApplicationContextInitializer ） 
+	3，启动前应用上下文初始器  ``ApplicationContextInitializer ``
 
-		# Application Context Initializers
+```properties
+# spring-boot-2.0.2.RELEASE.jar
+# Application Context Initializers
+org.springframework.context.ApplicationContextInitializer=\
+//判断启动类包名是否有误（包名是org/org.springframework是错误配置打印警告日志）
+org.springframework.boot.context.ConfigurationWarningsApplicationContextInitializer,\
+//设置上下文的id 并ContextId对象存入工厂
+org.springframework.boot.context.ContextIdApplicationContextInitializer,\
+//代理基于属性context.initializer.classes的应用初始化器
+org.springframework.boot.context.config.DelegatingApplicationContextInitializer,\
+//设置属性 local.server.port 为当前服务端口供注入使用
+org.springframework.boot.web.context.ServerPortInfoApplicationContextInitializer
+# spring-boot-autoconfigure-2.0.2.RELEASE.jar
+# Initializers
+org.springframework.context.ApplicationContextInitializer=\
+//主要用于注册ConcurrentReferenceCachingMetadataReaderFactory来缓存MetadataReader
+org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitializer,\
+//主要将ConditionEvaluationReport添加到上下文。
+org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener
+```
+
+
 
 ​	4，通知监听器环境以及准备好org.springframework.boot.SpringApplicationRunListeners#contextPrepared	
-​		
+​
 ​		发布事件（空）
 ​	5，注册基础单例
 ​		命令行包装对象(ApplicationArguments)注册为spring bean:springApplicationArguments	

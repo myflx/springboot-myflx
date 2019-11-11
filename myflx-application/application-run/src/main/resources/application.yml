@@ -1,0 +1,5 @@
+server:
+  port: 9090
+context:
+  initializer:
+  classes: com.myflx.application.run.args.initializers.ApplicationContextTestInitializer
