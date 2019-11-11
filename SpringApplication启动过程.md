@@ -335,8 +335,6 @@ private void configureIgnoreBeanInfo(ConfigurableEnvironment environment) {
 
 的调用 ``java.beans.Introspector#getBeanInfo(java.lang.Class<?>)`
 
-
-
 #### 4.6 Banner打印对象
 
 ​		可以自定义，显示图片，仅展示没有实际意义。
@@ -399,9 +397,16 @@ org.springframework.boot.diagnostics.analyzer.InvalidConfigurationPropertyValueF
 #### 4.8 环境准备
 
 启动时上下文准备的操作：``org.springframework.boot.SpringApplication#prepareContext``
-	1，关联环境
-	2，上下文后置处理：注册beanNameGenerator，resourceLoader（以SpringBootApplicationBuilder方式设置的时候调用否则是空没有注册）
-	3，启动前应用上下文初始器  ``ApplicationContextInitializer ``
+
+##### 4.8.1 关联环境
+
+##### 4.8.2 上下文后置处理
+
+​		注册beanNameGenerator，resourceLoader（以SpringBootApplicationBuilder方式设置的时候调用否则是空没有注册）
+
+##### 4.8.3 启动前应用上下文初始器 
+
+ ``ApplicationContextInitializer ``
 
 ```properties
 # spring-boot-2.0.2.RELEASE.jar
@@ -424,54 +429,46 @@ org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitial
 org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener
 ```
 
+##### 4.8.4 注册boot特殊单例
+
+​		springApplicationArguments->``ApplicationArguments``，springBootBanner->``Banner``
+
+##### 4.8.5 资源加载
+
+​		创建bean定义加载对象 ``BeanDefinitionLoader`` 会关联创建关键类：``AnnotatedBeanDefinitionReader``,``XmlBeanDefinitionReader``,``ClassPathBeanDefinitionScanner``,
+
+``GroovyBeanDefinitionReader`` spring-boot启动主要使用``AnnotatedBeanDefinitionReader``对象解析。将启动配置类注册到BeanFactory中。
+
+##### 4.8.6 发布事件
+
+​		回调实现``ApplicationContextAware``接口的监听器，发布``ApplicationPreparedEvent``事件。
+
+``org.springframework.boot.SpringApplicationRunListeners#contextPrepared``。
+
+#### 4.9 refresh(启动)上下文
+
+​	启动上下文并注册回调hook。
+
+>嵌入式容器启动点在上下文refresh()中org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext#onRefresh 实现，其中创建WebServer之后会回调容器中的ServletContextInitializer对象，实现点在：org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext#createWebServer#getSelfInitializer().onStartup(servletContext);
+>DipatcherServlet的加载来源于：org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration.DispatcherServletRegistrationConfiguration#dispatcherServletRegistration
+>同时属性资源的加载也在创建WebServer的中方法#initPropertySources();
+>注册钩（org.springframework.context.support.AbstractApplicationContext#registerShutdownHook） 主要执行上下文关闭之后的资源回收操作。
+
+#### 5.0 afterRefresh
+
+​		``org.springframework.boot.SpringApplication#afterRefresh``空实现，留待子类实现。
+
+#### 5.1 发布事件
+
+启动完毕之后依次发布事件：``ApplicationStartedEvent``  ,``ApplicationReadyEvent`` 
+
+启动失败发布失败事件：``ApplicationFailedEvent``
 
 
-​	4，通知监听器环境以及准备好org.springframework.boot.SpringApplicationRunListeners#contextPrepared	
-​
-​		发布事件（空）
-​	5，注册基础单例
-​		命令行包装对象(ApplicationArguments)注册为spring bean:springApplicationArguments	
-​		注册banner对象：springBootBanner
-​	6，加载资源
-​		获取启动类数组
-​		创建org.springframework.boot.BeanDefinitionLoader 加载资源org.springframework.boot.BeanDefinitionLoader#load(java.lang.Class<?>)。
-​		调用org.springframework.context.annotation.AnnotatedBeanDefinitionReader#register(Class<?>... annotatedClasses) 注册所有注解驱动的资源。
-​		实际注册操作是在org.springframework.context.annotation.AnnotatedBeanDefinitionReader#doRegisterBean里边
-​	7，通知监听器上下文资源以及加载：org.springframework.boot.SpringApplicationRunListeners#contextLoaded
-​		发布事件：ApplicationPreparedEvent
 
-开始启动上下文：
-	启动上下文
-		启动上下文中的监听器来源spring.factories
-
-		# Application Listeners
-
-​		
-
-```java
-	嵌入式容器启动点在上下文refresh()中org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext#onRefresh 实现，其中创建WebServer之后会回调容器中的ServletContextInitializer对象，实现点在：org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext#createWebServer#getSelfInitializer().onStartup(servletContext);
-	DipatcherServlet的加载来源于：org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration.DispatcherServletRegistrationConfiguration#dispatcherServletRegistration
-	同时属性资源的加载也在创建WebServer的中方法#initPropertySources();
-注册钩子（org.springframework.context.support.AbstractApplicationContext#registerShutdownHook） 主要执行上下文关闭之后的资源回收操作。
-```
-
-上下文刷新之后的子类实现后门：org.springframework.boot.SpringApplication#afterRefresh
-关闭stopWatch
-通知监听器环境已经启动完毕：org.springframework.boot.SpringApplicationRunListeners#started
-	发布事件：ApplicationStartedEvent
-回调runner：org.springframework.boot.SpringApplication#callRunners
-	Runner类型：org.springframework.boot.ApplicationRunner，org.springframework.boot.CommandLineRunner
-通知监听器环境运行中:org.springframework.boot.SpringApplicationRunListeners#running
-	发布事件：ApplicationReadyEvent	
-		
-		
-
-​		
-
-其他：
-	处理泛型：org.springframework.core.GenericTypeResolver
-
-ResolveType
+>处理泛型：org.springframework.core.GenericTypeResolver 
+>
+>ResolveType
 
 
 
