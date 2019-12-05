@@ -24,7 +24,7 @@ public class UserVO implements Serializable, Payload ,IValid{
 
     private static final long serialVersionUID = -6084419847851348876L;
 
-    @NotBlank
+    @NotBlank(message = "名称不能为空")
     private String name;
 
     @Min(value = 18, message = "对不起，经验不够丰富~")

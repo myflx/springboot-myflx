@@ -1,6 +1,7 @@
 package com.myflx.validator;
 
 import org.hibernate.validator.internal.engine.ConfigurationImpl;
+import org.springframework.boot.validation.MessageInterpolatorFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
@@ -12,7 +13,7 @@ import javax.validation.Configuration;
  * @Date 2019/9/5 18:34
  * @Since V2.13.0
  */
-@Service
+/*@Service*/
 public class ConfiguredValidatorFactoryBean extends LocalValidatorFactoryBean {
 
     /**
@@ -26,7 +27,16 @@ public class ConfiguredValidatorFactoryBean extends LocalValidatorFactoryBean {
     @Override
     protected void postProcessConfiguration(Configuration<?> configuration) {
         ((ConfigurationImpl) configuration).failFast(true);
+        //设置消息截断
+        MessageInterpolatorFactory interpolatorFactory = new MessageInterpolatorFactory();
+        this.setMessageInterpolator(interpolatorFactory.getObject());
 //        ((ConfigurationImpl) configuration).failFast(false);
         super.postProcessConfiguration(configuration);
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        super.afterPropertiesSet();
+
     }
 }
