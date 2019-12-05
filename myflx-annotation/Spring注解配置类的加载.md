@@ -212,6 +212,8 @@ private Enhancer newEnhancer(Class<?> configSuperClass, @Nullable ClassLoader cl
 }
 ```
 
+增强类命名策略：``SpringNamingPolicy.INSTANCE``
+
 ###### 重量级别判断
 
 - 重量级判断
