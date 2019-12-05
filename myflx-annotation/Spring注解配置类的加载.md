@@ -212,6 +212,24 @@ private Enhancer newEnhancer(Class<?> configSuperClass, @Nullable ClassLoader cl
 }
 ```
 
+###### 重量级别判断
+
+```org.springframework.context.annotation.ConfigurationClassUtils#isLiteConfigurationCandidate```
+
+```java
+private static final Set<String> candidateIndicators = new HashSet<>(8);
+static {
+    candidateIndicators.add(Component.class.getName());
+    candidateIndicators.add(ComponentScan.class.getName());
+    candidateIndicators.add(Import.class.getName());
+    candidateIndicators.add(ImportResource.class.getName());
+}
+```
+
+
+
+
+
 
 
 
