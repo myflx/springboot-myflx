@@ -214,7 +214,19 @@ private Enhancer newEnhancer(Class<?> configSuperClass, @Nullable ClassLoader cl
 
 ###### 重量级别判断
 
-```org.springframework.context.annotation.ConfigurationClassUtils#isLiteConfigurationCandidate```
+- 重量级判断
+
+  ``ConfigurationClassUtils#isFullConfigurationCandidate``
+
+  ```java
+  public static boolean isFullConfigurationCandidate(AnnotationMetadata metadata) {
+      return metadata.isAnnotated(Configuration.class.getName());
+  }
+  ```
+
+- 轻量级判断
+
+  ```ConfigurationClassUtils#isLiteConfigurationCandidate```
 
 ```java
 private static final Set<String> candidateIndicators = new HashSet<>(8);
