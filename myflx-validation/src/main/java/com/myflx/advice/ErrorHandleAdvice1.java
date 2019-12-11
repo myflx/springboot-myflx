@@ -22,6 +22,7 @@ public class ErrorHandleAdvice1 {
     public static String validHandler(ConstraintViolationException e) {
         final List<ConstraintViolation> objects = Lists.newArrayList();
         objects.addAll(e.getConstraintViolations());
+        /*System.out.println(1/0);*/
         return objects.get(0).getMessage();
     }
 
