@@ -327,3 +327,18 @@ handlerMappings
 
 
 
+DispatcherServlet 中的处理器适配器是初始化
+private List<HandlerAdapter> handlerAdapters;
+HandlerExecutionChain
+RequestMappingHandlerAdapter 适配的时候对请求参数和返回值不做处理另由其他对象处理
+HandlerMethodArgumentResolver 处理参数
+HandlerMethodReturnValueHandler 处理返回值
+DefaultParameterNameDiscoverer 参数名处理器
+参数处理集合类
+org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.initBinderArgumentResolvers
+HandlerMethodReturnValueHandlerComposite
+
+private CallableProcessingInterceptor[] callableInterceptors = new CallableProcessingInterceptor[0];
+private AsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor("MvcAsync");
+private DeferredResultProcessingInterceptor[] deferredResultInterceptors = new DeferredResultProcessingInterceptor[0];
+private List<HandlerExceptionResolver> handlerExceptionResolvers;

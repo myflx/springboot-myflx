@@ -1,6 +1,5 @@
 package com.myflx.controller;
 
-import com.google.common.collect.Lists;
 import com.myflx.validation.IValid;
 import com.myflx.validation.annotation.ValidParam;
 import com.myflx.validation.payload.dto.Author;
@@ -15,18 +14,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Payload;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -41,12 +36,6 @@ import java.util.Set;
 @Api(tags = {"用户控制器", "用户", "V1.0"})
 public class UserController {
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public String validHandler(ConstraintViolationException e){
-        final List<ConstraintViolation> objects = Lists.newArrayList();
-        objects.addAll(e.getConstraintViolations());
-        return objects.get(0).getMessage();
-    }
 
     @Autowired
     private ContextValidatorGetter contextValidatorGetter;
@@ -144,9 +133,9 @@ public class UserController {
     UserService userService;
     @RequestMapping("/testMethodValid")
     @ApiOperation(value = "新增", notes = "新增", tags = {"V1.0"}, httpMethod = "POST")
-    public String testMethodValid(@RequestBody @Validated UserVO user) {
+    public String testMethodValid() {
         final String language = userService.getLanguage("1");
-        final String aDefault = userService.getDefault();
+        final String aDefault = userService.getDefault0();
         System.out.println(language);
         System.out.println(aDefault);
         return "Hello,world!";

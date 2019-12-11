@@ -23,6 +23,10 @@ public class UserService implements BaseService {
     }
 
     @NotBlank(message = "未配置默认版本")
+    public String getDefault0() {
+        return getDefault();
+    }
+
     public String getDefault() {
         return "";
     }

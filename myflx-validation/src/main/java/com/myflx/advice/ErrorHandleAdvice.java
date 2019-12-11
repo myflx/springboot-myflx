@@ -26,6 +26,7 @@ public class ErrorHandleAdvice {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
+        System.out.println("binder");
     }
 
     @ResponseBody
