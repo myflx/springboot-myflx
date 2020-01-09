@@ -1,0 +1,39 @@
+server:
+  port: 9090
+  tomcat:
+    basedir: .
+    accesslog:
+      buffered: false
+      directory: logs
+      enabled: true
+      file-date-format: .yyyy-MM-dd
+      pattern: "%{yyyy-MM-dd HH:mm:ss.SSS}t %h %A %l %user \"%r\" %s %b %D"
+      prefix: access
+      rename-on-rotate: false
+      request-attributes-enabled: true
+      rotate: true
+      suffix: .log
+spring:
+  jackson:
+    time-zone: GMT+8
+  profiles:
+    active: default
+  application:
+    name: validtion-service
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+swagger:
+  markdowns:
+    classpath:markdown/*
+  production: false
+  basic:
+    enable: true
+    username: admin
+    password: 111
+  enable: true
