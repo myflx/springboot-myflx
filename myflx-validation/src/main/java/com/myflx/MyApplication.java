@@ -5,15 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.EventListener;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.OptionalValidatorFactoryBean;
+import org.springframework.web.context.support.ServletRequestHandledEvent;
 
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author LuoShangLin
@@ -45,5 +46,11 @@ public class MyApplication {
 
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         System.out.println(runtimeMXBean.getStartTime());
+    }
+
+    @EventListener
+    public void onHandle(ServletRequestHandledEvent event) {
+        // 如果处理失败会重新调度一次 接口 /error 返回错误页面
+        System.out.println(event);
     }
 }
