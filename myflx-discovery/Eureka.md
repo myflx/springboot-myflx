@@ -77,3 +77,73 @@ eureka:
 通过配置：``eureka.client.healthcheck.enable.true`` 将auctor的端点 /health 传递到服务端。要是实现更细粒度的检查可以实现接口``com.netflix.appinfo.HealthCheckHandler``
 
 #### Eureka 源码分析
+
+##### eureka client 服务启动
+
+主要关注 ``@EnableEurekaClient`` 如何装配及其自动的对象。
+
+##### eureka client 服务注册流程
+
+​	为了了解服务注册的功能实现在不存在eureka server 的情况下客户端启动类只注解 ``@EnableEurekaClient`` 然后启动服务时，会出现报错信息，从报错信息入手和注解启动入口进行源码分析。
+
+```text
+com.sun.jersey.api.client.ClientHandlerException: java.net.ConnectException: Connection refused: connect
+	at com.sun.jersey.client.apache4.ApacheHttpClient4Handler.handle(ApacheHttpClient4Handler.java:187) ~[jersey-apache-client4-1.19.1.jar:1.19.1]
+	at com.sun.jersey.api.client.filter.GZIPContentEncodingFilter.handle(GZIPContentEncodingFilter.java:123) ~[jersey-client-1.19.1.jar:1.19.1]
+	at com.netflix.discovery.EurekaIdentityHeaderFilter.handle(EurekaIdentityHeaderFilter.java:27) ~[eureka-client-1.9.13.jar:1.9.13]
+	at com.sun.jersey.api.client.Client.handle(Client.java:652) ~[jersey-client-1.19.1.jar:1.19.1]
+	at com.sun.jersey.api.client.WebResource.handle(WebResource.java:682) ~[jersey-client-1.19.1.jar:1.19.1]
+	at com.sun.jersey.api.client.WebResource.access$200(WebResource.java:74) ~[jersey-client-1.19.1.jar:1.19.1]
+	at com.sun.jersey.api.client.WebResource$Builder.post(WebResource.java:570) ~[jersey-client-1.19.1.jar:1.19.1]
+	at com.netflix.discovery.shared.transport.jersey.AbstractJerseyEurekaHttpClient.register(AbstractJerseyEurekaHttpClient.java:56) ~[eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.MetricsCollectingEurekaHttpClient.execute(MetricsCollectingEurekaHttpClient.java:73) ~[eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:118) ~[eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:79) ~[eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$1.execute(EurekaHttpClientDecorator.java:59) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:77) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.register(EurekaHttpClientDecorator.java:56) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.DiscoveryClient.register(DiscoveryClient.java:847) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.InstanceInfoReplicator.run(InstanceInfoReplicator.java:121) [eureka-client-1.9.13.jar:1.9.13]
+	at com.netflix.discovery.InstanceInfoReplicator$1.run(InstanceInfoReplicator.java:101) [eureka-client-1.9.13.jar:1.9.13]
+```
+
+​	定位到对象``DiscoveryClient`` 其关联的实例信息复制对象 ``InstanceInfoReplicator`` 该对象是个线程任务，会在一个定时的守护线程中执行。
+
+``DiscoveryClient``:服务发现客户端对象。由对象 ``ApplicationInfoManager``，``EurekaClientConfig``，`AbstractDiscoveryClientOptionalArgs(MutableDiscoveryClientOptionalArgs)`，
+
+`Provider<BackupRegistry>`，``EndpointRandomizer``构建。
+
+``ApplicationInfoManager`` :应用信息管理对象持有配置对象``EurekaInstanceConfig``，实例信息``InstanceInfo``，可选参数``OptionalArgs``，状态变更监听器列表。	
+
+``DiscoveryClient``对象（spring cloud实现类``CloudEurekaClient``）：
+
+​	持有Eureka事件监听器列表：``EurekaEventListener``，
+
+​	持有健康检查处理器回调:``Provider<HealthCheckCallback>``，
+
+​	持有健康检查处理器```Provider<HealthCheckHandler>``
+
+​	持有定时线程``ScheduledExecutorService``用来刷新服务地址，检测心跳，刷新缓存。
+
+​	心跳线程``new HeartbeatThread()``, 缓存刷新线程``new CacheRefreshThread()``;
+
+​	持有对象``InstanceRegionChecker``  -->  其持有的``AzToRegionMapper`` 通过不同配置使用不同实现。
+
+​	``DiscoveryClient`` 在所有准备工作做完之后调用方法:
+
+``com.netflix.discovery.DiscoveryClient#initScheduledTasks``进行初始化工作。主要是
+
+- 启动缓存刷新线程
+- 启动心跳线程检测服务端的生命特征并更新检测时间
+- 构建实例复制对象 ``InstanceInfoReplicator`` 
+- 构建应用状态变更监听器``ApplicationInfoManager.StatusChangeListener``
+- 启用 ``InstanceInfoReplicator`` 复制对象的定时线程来刷新实例信息，同时判断如果是脏信息就重新注册并清楚脏信息标记。然后设置下次备份任务（默认延迟40s）
+
+``DiscoveryManager`` 单例对象持有服务发现对象和EurekaClientConfig配置对象。

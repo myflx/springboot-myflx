@@ -67,3 +67,5 @@ AnnotationMetadata 两个重要实现：
         Java Reflect:org.springframework.core.type.StandardAnnotationMetadata
 
 思考+提出问题->验证代码+结合javaDoc+wiki
+
+spring自动注入同时支持jsr:330 java.inject.*的注解。
