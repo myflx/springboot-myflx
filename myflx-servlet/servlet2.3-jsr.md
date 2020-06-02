@@ -138,6 +138,109 @@ springboot 的请求使用 ``RequestFacade``包装。
 
 #### 4.Response
 
+​		所有服务端返回给客户端的信息都封装在改对象中，http协议中，信息携带者为头或者体。
+
+##### 4.1 Buffering
+
+​		servlet 容器允许但不强制使用缓冲，缓冲可以提升效率。一般都使用默认，同时也可以设置以下参数来控制其缓冲行为。getBufferSize，setBufferSize， isCommitted， reset， resetBuffer， flushBuffer
+
+``setBufferSize``：servlet可以通过该方法自定义缓冲池的大小。为了保证缓存空间的复用，响应缓冲大小不应低于请求数据的大小。该方法需要再``ServletOutputStream`` /``Writer``使用前使用否则异常``IllegalStateException`` 会被抛出。
+
+``isCommitted`` ：方法返回是否有任何字节的数据写到客户端。
+
+``flushBuffer`` :方法强制将缓冲区的数据写到客户端。
+
+``reset``：方法会在响应未提交之前清除缓冲数据和头部以及状态码。
+
+``resetBuffer``：同reset比，只会清除缓冲区数据。
+
+​		一旦响应发生提交之后缓冲区大小不可改变，如果调用了改变缓冲区的方法如：``setBufferSize``   ,``reset`` 或者``resetBuffer`` 会抛出``IllegalStateException``异常。
+
+##### 4.2 Headers
+
+​		``HttpServletResponse`` 可以通过方法`addHeader`  ` setHeader` 来设置头部信息。
+
+##### 4.3 Convenience Methods
+
+​		``sendRedirect``，``sendError``均通过设置特殊的头部和当前body实现``sendError``  可传入可选参数用content  body。``sendRedirect``会设置一个名字为Location的header对应重定向的绝对路径。相当于一下设置：
+
+```java
+response.addHeader("Location","http://localhost:9090/test1/");
+response.setStatus(HttpStatus.FOUND.value());
+```
+
+##### 4.4 国际化
+
+​		为了更方便准确的和客户端沟通语言类型 响应对象提供该方法``setLocale`` 设置语言默认编码是`ISO-8859-1`
+
+spring-boot 默认utf-8。
+
+##### 4.5 响应关闭
+
+​		响应对象即将关闭节点：service方法结束  `setContentLength`  `sendError`  `sendRedirect` 调用之后。
+
+##### 4.6 响应生命周期
+
+​		同请求对象一样响应对象仅存活与servlet#service ,filter#doFilter方法之中。出于性能考虑容器可能会回收对象，所以响应对象不能存在其他范围内。
+
+#### 5.过滤器
+
+##### 功能
+
+- 请求调用前获取资源
+- 请求调用前获取请求对象
+- 通过请求包装类处理请求的数据（头，体数据）
+- 修改响应的头和响应数据
+- 拦截调用的资源
+- 过滤器可以不存在，存在多个，可以在一个或者多个Servlet的环境 中运行
+
+​		过滤器种类：认证 ，日志，图像转换，数据压缩，编解码，令牌管理，发送资源接触事件，XML转换，缓存，mimeType过滤链。
+
+​		过滤器抛出``UnavailableException`` 异常，容器可能会重试整个过滤链（如果这个异常没有被标记为永久的permanent= true）。
+
+​		容器会在最后移除过滤器的时候调用destroy 方法，一般用来释放资源。
+
+​		对请求和响应的封装是过滤器的核心概念，提供开发者
+
+
+
+#### 6.Sessions	
+
+​		Http协议是基于请求响应的，是无状态的协议。保证系统的有效运行，必须建立客户端和服务器之间的联系。Servlet规范定义了接口`HttpSession` 来跟踪用户的会话。不需要开发人员的额外处理。
+
+##### 会话跟踪机制的实现
+
+- Cookies
+- SSL Session
+- URL 重写机制 exp：`http://www.myserver.com/catalog/index.html;jsessionid=1234`
+
+Sesstion 可以绑定和解绑attribute通过方法：`valueBound`,`valueUnBound`。可以设置超时时间，最后使用时间。
+
+#### 7.Dispatching Requests
+
+[source code](https://github.com/javaee/servlet-spec/blob/master/src/main/java/javax/servlet/RequestDispatcher.java)
+
+
+
+同名带参数的获取请求派发器在处理的过程中优先是什么意思？
+
+Servlet属性负载是在forward ，include 的时候进行设置的。
+
+includ Servlet的RequestDispatcher 是通过getNamedDispatcher获取的included属性不会设置。
+
+
+
+
+
+参数查询字符串中指定用于创建RequestDispatcher
+优先于其他参数相同的名称传递给包括在内
+servlet。相关的参数用RequestDispatcher是应用范围
+只包括向前或调用的持续时间。
+
+https://blog.csdn.net/weixin_38809962/article/details/79300558
+
+[状态码](https://tools.ietf.org/html/rfc7231#section-6.4.3)
+
 
 
 
