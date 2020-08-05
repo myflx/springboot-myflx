@@ -12,6 +12,7 @@
 
     <groupId>com.myflx.discovery</groupId>
     <artifactId>myflx-eureka</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <properties>
         <java.version>1.8</java.version>
