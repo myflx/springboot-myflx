@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.myflx.discovery</groupId>
-    <artifactId>myflx-discovery</artifactId>
+    <artifactId>myflx-eureka</artifactId>
     <packaging>jar</packaging>
     <properties>
         <java.version>1.8</java.version>

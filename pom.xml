@@ -14,7 +14,7 @@
         <module>myflx-annotation</module>
         <module>spring-framework-samples</module>
         <module>myflx-validation</module>
-        <module>myflx-discovery</module>
+        <module>myflx-eureka</module>
         <module>myflx-cache</module>
     </modules>
     <properties>
