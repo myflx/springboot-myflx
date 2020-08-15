@@ -29,3 +29,125 @@
 仔细看该类的继承结构他是一个``BeanPostProcessor`` ， `BeanPostProcessor`会在AbtractApplicationContext#refresh()的中调用后置处理器，所以要重点关注AopProxyCreater后置处理器的实现。
 
 后置处理器中会遍历ClassLoader中的标记了Advice，aop相关的注解并将原始的类进行动态代理最终实现了实际的功能。
+
+
+
+#### AnnotationAwareAspectJAutoProxyCreator
+
+在搞清该AOP原理之前需要先梳理清楚[spring-bean的生命周期](./SpringBean生命周期.md)。查看实现我们可以得知我们需要关注两个点：
+
+``org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#postProcessBeforeInstantiation``
+
+``org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#postProcessAfterInitialization``
+
+##### 实例化之前
+
+如果存在targetClass会直接对他进行代理。
+
+```java
+@Override
+	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+		Object cacheKey = getCacheKey(beanClass, beanName);
+
+		if (!StringUtils.hasLength(beanName) || !this.targetSourcedBeans.contains(beanName)) {
+			if (this.advisedBeans.containsKey(cacheKey)) {
+				return null;
+			}
+			if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
+				this.advisedBeans.put(cacheKey, Boolean.FALSE);
+				return null;
+			}
+		}
+
+		// Create proxy here if we have a custom TargetSource.
+		// Suppresses unnecessary default instantiation of the target bean:
+		// The TargetSource will handle target instances in a custom fashion.
+		TargetSource targetSource = getCustomTargetSource(beanClass, beanName);
+		if (targetSource != null) {
+			if (StringUtils.hasLength(beanName)) {
+				this.targetSourcedBeans.add(beanName);
+			}
+			Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(beanClass, beanName, targetSource);
+			Object proxy = createProxy(beanClass, beanName, specificInterceptors, targetSource);
+			this.proxyTypes.put(cacheKey, proxy.getClass());
+			return proxy;
+		}
+
+		return null;
+	}
+```
+
+
+
+##### 初始化之后
+
+```java
+public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) throws BeansException {
+    if (bean != null) {
+        Object cacheKey = getCacheKey(bean.getClass(), beanName);
+        if (!this.earlyProxyReferences.contains(cacheKey)) {
+            return wrapIfNecessary(bean, beanName, cacheKey);
+        }
+    }
+    return bean;
+}
+
+protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+    if (StringUtils.hasLength(beanName) && this.targetSourcedBeans.contains(beanName)) {
+        return bean;
+    }
+    if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
+        return bean;
+    }
+    if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
+        this.advisedBeans.put(cacheKey, Boolean.FALSE);
+        return bean;
+    }
+
+    // Create proxy if we have advice.
+    Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
+    if (specificInterceptors != DO_NOT_PROXY) {
+        this.advisedBeans.put(cacheKey, Boolean.TRUE);
+        Object proxy = createProxy(
+            bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+        this.proxyTypes.put(cacheKey, proxy.getClass());
+        return proxy;
+    }
+
+    this.advisedBeans.put(cacheKey, Boolean.FALSE);
+    return bean;
+}
+```
+
+##### 总结
+
+所以spring-aop的原理主要是结合通过注入bean后置器在bean创建的过程中进行切面逻辑的植入。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
