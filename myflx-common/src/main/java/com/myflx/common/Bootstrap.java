@@ -1,6 +1,8 @@
 package com.myflx.common;
 
 
+import sun.misc.Launcher;
+
 /**
  * @author LuoShangLin
  */
@@ -33,5 +35,12 @@ public class Bootstrap {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+
+
+
+        ClassLoader classLoader2 = Launcher.class.getClassLoader();
+        System.out.println(classLoader2);
     }
 }
