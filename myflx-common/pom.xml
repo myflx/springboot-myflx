@@ -59,19 +59,23 @@
             <version>${spring-boot.version}</version>
         </dependency>
 
+<!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
+-->
+<!--
         <dependency>
-            <!-- Import dependency management from Spring Boot -->
+            &lt;!&ndash; Import dependency management from Spring Boot &ndash;&gt;
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-dependencies</artifactId>
             <version>2.0.2.RELEASE</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
+-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
