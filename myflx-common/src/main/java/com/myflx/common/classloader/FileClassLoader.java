@@ -1,4 +1,4 @@
-package com.myflx.common;
+package com.myflx.common.classloader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

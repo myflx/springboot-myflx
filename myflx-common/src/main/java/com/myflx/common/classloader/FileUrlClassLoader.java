@@ -1,4 +1,4 @@
-package com.myflx.common;
+package com.myflx.common.classloader;
 
 import java.io.File;
 import java.net.MalformedURLException;
