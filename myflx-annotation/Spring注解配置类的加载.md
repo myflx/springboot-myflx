@@ -110,7 +110,7 @@ public void refresh() throws BeansException, IllegalStateException {
 				throw ex;
 			}
 			finally {
-				// Reset common introspection caches in Spring's core, since we
+				// Reset com.myflx.common introspection caches in Spring's core, since we
 				// might not ever need metadata for singleton beans anymore...
 				resetCommonCaches();
 			}

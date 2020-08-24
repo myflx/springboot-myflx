@@ -15,7 +15,7 @@ public class Bootstrap {
         System.out.println("ExtClassLoader的父类加载器: " + ClassLoader.getSystemClassLoader().getParent().getParent());
 
 
-        String rootDir = System.getProperty("user.dir") + "/myflx-common/lib/target/classes/";
+        String rootDir = System.getProperty("user.dir") + "/myflx-com.myflx.common/lib/target/classes/";
         //创建自定义文件类加载器
         FileClassLoader loader = new FileClassLoader(rootDir);
         FileClassLoader loader1 = new FileClassLoader(rootDir);

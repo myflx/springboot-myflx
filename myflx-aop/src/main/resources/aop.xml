@@ -4,10 +4,10 @@
 
     <!--要织入切面的目标类-->
     <weaver>
-        <include within="com.myflx.common.ltw.LtwBean" />
+        <include within="com.myflx.aop.ltw.LtwBean" />
     </weaver>
     <!--切面类-->
     <aspects>
-        <aspect name="com.myflx.common.ltw.LogMethodInvokeAspect" />
+        <aspect name="com.myflx.aop.ltw.LogMethodInvokeAspect" />
     </aspects>
 </aspectj>

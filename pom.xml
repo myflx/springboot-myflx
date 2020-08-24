@@ -9,13 +9,14 @@
     <packaging>pom</packaging>
     <modules>
         <module>myflx-application</module>
-        <module>myflx-common</module>
+        <module>myflx-com.myflx.common</module>
         <module>myflx-servlet</module>
         <module>myflx-annotation</module>
         <module>spring-framework-samples</module>
         <module>myflx-validation</module>
         <module>myflx-eureka</module>
         <module>myflx-cache</module>
+        <module>myflx-aop</module>
     </modules>
     <properties>
         <spring-boot.version>2.0.2.RELEASE</spring-boot.version>

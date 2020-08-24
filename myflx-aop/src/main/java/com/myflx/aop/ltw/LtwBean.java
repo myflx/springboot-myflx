@@ -1,4 +1,4 @@
-package com.myflx.common.ltw;
+package com.myflx.aop.ltw;
 
 import org.springframework.stereotype.Component;
 

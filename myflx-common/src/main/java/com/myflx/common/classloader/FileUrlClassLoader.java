@@ -27,7 +27,7 @@ public class FileUrlClassLoader extends URLClassLoader {
 
 
     public static void main(String[] args) throws MalformedURLException {
-        String rootDir = System.getProperty("user.dir") + "/myflx-common/lib/target/classes/";
+        String rootDir = System.getProperty("user.dir") + "/myflx-com.myflx.common/lib/target/classes/";
         //创建自定义文件类加载器
         File file = new File(rootDir);
         //File to URI

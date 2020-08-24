@@ -1,4 +1,4 @@
-package com.myflx.common.ltw;
+package com.myflx.aop.ltw;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
