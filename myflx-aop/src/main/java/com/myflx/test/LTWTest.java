@@ -1,5 +1,7 @@
-package com.myflx.aop.ltw;
+package com.myflx.test;
 
+import com.myflx.aop.ltw.CustomLtwConfig;
+import com.myflx.aop.ltw.LtwBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
