@@ -7,7 +7,7 @@
         <groupId>com.myflx</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <groupId>com.myflx.com.myflx.common</groupId>
+    <groupId>com.myflx.common</groupId>
     <properties>
         <settings.localRepository>C:\Users\10394\.m2\repository</settings.localRepository>
         <aspectj.version>1.8.13</aspectj.version>
@@ -51,7 +51,7 @@
     </build>
     <modelVersion>4.0.0</modelVersion>
     
-    <artifactId>myflx-com.myflx.common</artifactId>
+    <artifactId>myflx-common</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
