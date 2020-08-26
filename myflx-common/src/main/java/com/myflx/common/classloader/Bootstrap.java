@@ -7,7 +7,13 @@ import sun.misc.Launcher;
  * @author LuoShangLin
  */
 public class Bootstrap {
+    private static String bootClassPath = System.getProperty("sun.boot.class.path");
+    private static String ext = System.getProperty("java.ext.dirs");
+
     public static void main(String[] args) {
+        System.out.println(bootClassPath);
+        System.out.println(ext);
+
         FileClassLoader classLoader = new FileClassLoader("/");
         System.out.println("自定义类加载器的父加载器: " + classLoader.getParent());
         System.out.println("系统默认的AppClassLoader: " + ClassLoader.getSystemClassLoader());
@@ -15,7 +21,7 @@ public class Bootstrap {
         System.out.println("ExtClassLoader的父类加载器: " + ClassLoader.getSystemClassLoader().getParent().getParent());
 
 
-        String rootDir = System.getProperty("user.dir") + "/myflx-com.myflx.common/lib/target/classes/";
+        String rootDir = System.getProperty("user.dir") + "/myflx-common/lib/target/classes/";
         //创建自定义文件类加载器
         FileClassLoader loader = new FileClassLoader(rootDir);
         FileClassLoader loader1 = new FileClassLoader(rootDir);
@@ -35,9 +41,6 @@ public class Bootstrap {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
 
 
         ClassLoader classLoader2 = Launcher.class.getClassLoader();
