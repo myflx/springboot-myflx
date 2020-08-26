@@ -55,6 +55,34 @@ public static <S> ServiceLoader<S> load(Class<S> service) {
 }
 ```
 
+## springboot/LaunchedURLClassLoader
+
+springboot启动入口是``JarLauncher``
+
+- 主要主要工作是重新注册了jar的URL协议处理器的位置、清除``URLStreamHandlerFactory``
+- 创建`LaunchedURLClassLoader` 并设置到当前线程的上下文线程中。
+- 创建`MainRunner` 反射运行main方法。
+
+本次重点关注的是：``LaunchedURLClassLoader``
+
+```java
+protected ClassLoader createClassLoader(URL[] urls) throws Exception {
+    return new LaunchedURLClassLoader(urls, getClass().getClassLoader());
+}
+```
+
+​		加载器将fatjar包中的BOOT-INF文件的文件包装成URL[]，并取当前类加载器即`Launcher&AppClassLoader`作为父类。创建完成之后将改加载器设置到线程上下文。这是一种对双亲委派模式的违背。
+
+​		``LaunchedURLClassLoader``作为线程上下文类加载器主要重写了查找资源：`findResource`，`findResources`。和加载类`loadClass`。
+
+​		查资源和加载类都增加了资源不存在时候的failfast机制。加载类在加载之前在ClassLoader中对包进行注册定义避免重复加载。
+
+
+
+
+
+
+
 
 
 
