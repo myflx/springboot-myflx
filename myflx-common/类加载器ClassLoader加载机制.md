@@ -61,7 +61,7 @@ springboot启动入口是``JarLauncher``
 
 - 主要主要工作是重新注册了jar的URL协议处理器的位置、清除``URLStreamHandlerFactory``
 - 创建`LaunchedURLClassLoader` 并设置到当前线程的上下文线程中。
-- 创建`MainRunner` 反射运行main方法。
+- 创建`MainRunner` 使用上下文类加载器加载main方法并反射调用。
 
 本次重点关注的是：``LaunchedURLClassLoader``
 
@@ -77,11 +77,112 @@ protected ClassLoader createClassLoader(URL[] urls) throws Exception {
 
 ​		查资源和加载类都增加了资源不存在时候的failfast机制。加载类在加载之前在ClassLoader中对包进行注册定义避免重复加载。
 
+## tomcat类加载器
+
+![1598507586911](..\doc\image\tomcat-classloader.png)
+
+tomcat为何要自定义类加载器？
+
+- 首先各个webapp中的**class和lib，需要相互隔离**，app之间相同的**lib共享加载**不造成资源浪费。
+- 对tomcat的加载的包进行隔离，类似jvm解决安全性的问题。
+- **热部署**的问题，tomcat修改配置文件不需要重启。
+
+tomcat classloader的标准实现是`org.apache.catalina.loader.StandardClassLoader`。会按照名字的不同对加载器进行分层级。可查看`org.apache.catalina.startup.Bootstrap#initClassLoaders`方法。
+
+```java
+private void initClassLoaders() {
+    try {
+        commonLoader = createClassLoader("common", null);
+        if( commonLoader == null ) {
+            // no config file, default to this loader - we might be in a 'single' env.
+            commonLoader=this.getClass().getClassLoader();
+        }
+        catalinaLoader = createClassLoader("server", commonLoader);
+        sharedLoader = createClassLoader("shared", commonLoader);
+    } catch (Throwable t) {
+        handleThrowable(t);
+        log.error("Class loader creation threw exception", t);
+        System.exit(1);
+    }
+}
+```
+
+同样在tomcat启动初始化的时候将`catalinaLoader`作为线程上下文加载器。然后调用启动类启动方法。
 
 
 
+对于每个webapp应用，都会对应唯一的StandContext，在StandContext中会引用WebappLoader，该类又会引用WebappClassLoader，WebappClassLoader就是真正加载webapp的classloader。
+
+`org.apache.catalina.core.StandardWrapper#loadServlet`
 
 
+
+[tomcat-classloader参考](https://blog.csdn.net/liweisnake/article/details/8470285)
+
+## ClassLoader分析
+
+并行处理。为当前的ClassLoader实现类 在`ClassLoader`中注册并行处理标记。如果没有可能会导致死锁。因为loadClass方法中在加载类时会获取类加载锁。如果没有注册并行处理，获取的锁为当前对象否则是个新对象。由于没有细粒度的锁当前加载器作为锁，在双亲委托和线程上下文加载器同时存在的情况下可能会出现死锁。
+
+```java
+static {
+    ClassLoader.registerAsParallelCapable();
+}
+```
+
+
+
+注册本地方法。注册除registerNatives以外的所有本地方法。这段代码很多类如，Object，Class中都能见到。主要是在类初始化阶段将本地方法和虚拟加载的动态文件进行连接。
+
+```java
+private static native void registerNatives();
+static {
+    registerNatives();
+}
+```
+
+
+
+loadClass()。加载类是按照双亲委托机制加载，如果要打破这种机会需要重写该方法。正常自定义类加载器只需要重写findClass()方法。
+
+```java
+protected Class<?> loadClass(String name, boolean resolve)
+    throws ClassNotFoundException
+    {
+        synchronized (getClassLoadingLock(name)) {
+            // First, check if the class has already been loaded
+            Class<?> c = findLoadedClass(name);
+            if (c == null) {
+                long t0 = System.nanoTime();
+                try {
+                    if (parent != null) {
+                        c = parent.loadClass(name, false);
+                    } else {
+                        c = findBootstrapClassOrNull(name);
+                    }
+                } catch (ClassNotFoundException e) {
+                    // ClassNotFoundException thrown if class not found
+                    // from the non-null parent class loader
+                }
+
+                if (c == null) {
+                    // If still not found, then invoke findClass in order
+                    // to find the class.
+                    long t1 = System.nanoTime();
+                    c = findClass(name);
+
+                    // this is the defining class loader; record the stats
+                    sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
+                    sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);
+                    sun.misc.PerfCounter.getFindClasses().increment();
+                }
+            }
+            if (resolve) {
+                resolveClass(c);
+            }
+            return c;
+        }
+    }
+```
 
 
 
