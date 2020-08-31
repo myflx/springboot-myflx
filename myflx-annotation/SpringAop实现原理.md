@@ -26,7 +26,7 @@
 
 
 
-仔细看该类的继承结构他是一个``BeanPostProcessor`` ， `BeanPostProcessor`会在AbtractApplicationContext#refresh()的中调用后置处理器，所以要重点关注AopProxyCreater后置处理器的实现。
+仔细看该类的继承结构他实现了`InstantiationAwareBeanPostProcessor`,而他实现了``BeanPostProcessor`` ， `BeanPostProcessor`会在AbtractApplicationContext#refresh()的中调用后置处理器，所以要重点关注AopProxyCreater后置处理器的实现。
 
 后置处理器中会遍历ClassLoader中的标记了Advice，aop相关的注解并将原始的类进行动态代理最终实现了实际的功能。
 
