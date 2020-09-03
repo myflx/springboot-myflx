@@ -82,7 +82,7 @@ A，B服务会在容器启动的时候解析成``BeanDefinition``并注册到IOC
 
 
 
-[参考]()
+[参考](https://blog.csdn.net/jackcheng1117/article/details/102860412)
 
 
 

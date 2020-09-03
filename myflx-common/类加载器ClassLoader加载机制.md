@@ -10,6 +10,9 @@
 
 ## 类加载器
 
+所有的程序入口为main方法，当执行java命令的时候会创建虚拟机会创建主线程并初始化Luncher会初始化类加载器。将系统类加载器设置到上下文中。
+
+
 - Bootstrap加载器，主要加载的是JVM自身需要的类，C++语言实现的，是虚拟机自身的一部分。它负责将 `<JAVA_HOME>/lib`路径下的核心类库或`-Xbootclasspath`参数指定的路径下的jar包加载到内存中。
 
 - 扩展（Extension）类加载器（```sun.misc.Launcher$ExtClassLoader```），Launcher的静态内部类，它负责加载`<JAVA_HOME>/lib/ext`目录下或者由系统变量-Djava.ext.dir指定位路径中的类库，开发者可以直接使用标准扩展类加载器。
