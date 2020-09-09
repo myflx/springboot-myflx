@@ -1,6 +1,7 @@
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
@@ -9,6 +10,125 @@ import java.util.PriorityQueue;
  * 忘掉语言，使用最基础的，没有则自己构建
  */
 public class Lekou {
+    public static void main(String[] args) {
+        /*int[] ints = new Lekou().topKFrequent(new int[]{0, 1, 0, 0, 0, 3, 3, 3, 3, 1, 1, 1, 1}, 2);
+        System.out.println(Arrays.toString(ints));*/
+
+        /*System.out.println(new Lekou().longestPalindrome("abacabbacaba"));*/
+
+        /*System.out.println(new Lekou().countSubstrings("abacabbacaba"));*/
+
+        System.out.println(new Lekou().combinationSum(new int[]{2, 3, 1, 5}, 6));
+    }
+
+
+    /**
+     * https://leetcode-cn.com/problems/combination-sum/
+     * 给定一个无重复元素的数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+     * <p>
+     * candidates 中的数字可以无限制重复被选取。
+     * 说明：
+     * 所有数字（包括 target）都是正整数。
+     * 解集不能包含重复的组合。
+     * <p>
+     * candidates = [2,3,5], target = 8
+     * a*x^n + b*y^m + c*z^l
+     * [
+     * [2,2,2,2],2^4
+     * [2,3,3],1*2^1 +2*3^1
+     * [3,5] 1*3^1 +1*5^1
+     * ]
+     */
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        List<List<Integer>> resultSet = new ArrayList<>();
+        for (int i = 0; i < candidates.length; i++) {
+            int x = candidates[i];
+            List<Integer> combineList = getCombineList(candidates, i, x, target);
+            if (!combineList.isEmpty()) {
+                resultSet.add(combineList);
+            }
+
+            int diff = target - x;
+            if (diff > 0) {
+                for (int j = i + 1; j < candidates.length; j++) {
+                    int next = candidates[j];
+                    combineList = getCombineList(candidates, j, next, diff);
+                    if (!combineList.isEmpty()) {
+                        List<Integer> combineList2 = new ArrayList<>();
+                        combineList2.add(x);
+                        combineList2.addAll(combineList);
+                        resultSet.add(combineList2);
+                    }
+
+                }
+            }
+        }
+        return resultSet;
+    }
+
+
+    private List<Integer> getCombineList(int[] candidates, int index, int x, int target) {
+        List<Integer> combineList = new ArrayList<>();
+        if (x == target) {
+            combineList.add(x);
+            return combineList;
+        }
+        if (x > target) {
+            return combineList;
+        }
+        int n = 0;
+        if (target % x == 0) {
+            n = target / x;
+        }
+        for (int i = 0; i < n; i++) {
+            combineList.add(x);
+        }
+        return combineList;
+    }
+
+    private Integer getNOfCandidate(int x, int target) {
+        if (x == target) {
+            return 1;
+        }
+        if (x > target) {
+            return null;
+        }
+        int n = 0;
+        if (target % x == 0) {
+            n = target / x;
+        }
+        return n;
+    }
+
+    /**
+     * 给定一个字符串，你的任务是计算这个字符串中有多少个回文子串。
+     * <p>
+     * 具有不同开始位置或结束位置的子串，即使是由相同的字符组成，也会被视作不同的子串
+     *
+     * @param s s
+     * @return len
+     */
+    public int countSubstrings(String s) {
+        if (s == null || s.length() < 1) {
+            return 0;
+        }
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            count += expandAroundCenterAndRtCount(s, i, i);
+            count += expandAroundCenterAndRtCount(s, i, i + 1);
+        }
+        return count;
+    }
+
+    private int expandAroundCenterAndRtCount(String s, int left, int right) {
+        int count = 0;
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            left--;
+            right++;
+            count++;
+        }
+        return count;
+    }
 
     /**
      * 给定一个字符串 s，找到 s 中最长的回文子串。你可以假设 s 的最大长度为 1000。
@@ -26,22 +146,21 @@ public class Lekou {
         for (int i = 0; i < s.length(); i++) {
             int len1 = expandAroundCenter(s, i, i);
             int len2 = expandAroundCenter(s, i, i + 1);
-            int len = Math.max(len1, len2);
-            if (len > end - start + 1) {
-                start = i - (len - 1) / 2;
-                end = i + len / 2;
+            int maxLen = Math.max(len1, len2);
+            if (maxLen > (end - start + 1)) {
+                start = i - (maxLen - 1) / 2;
+                end = i + maxLen / 2;
             }
         }
         return s.substring(start, end + 1);
     }
 
     private int expandAroundCenter(String s, int left, int right) {
-        int L = left, R = right;
-        while (L >= 0 && R < s.length() && s.charAt(L) == s.charAt(R)) {
-            L--;
-            R++;
+        while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+            left--;
+            right++;
         }
-        return R - L - 1;
+        return right - left - 1;
     }
 
     /**
@@ -88,14 +207,5 @@ public class Lekou {
             ret[i] = queue.poll()[0];
         }
         return ret;
-    }
-
-    public static void main(String[] args) {
-        /*int[] ints = new Lekou().topKFrequent(new int[]{0, 1, 0, 0, 0, 3, 3, 3, 3, 1, 1, 1, 1}, 2);
-        System.out.println(Arrays.toString(ints));*/
-
-        System.out.println(new Lekou().longestPalindrome("abacabbacaba"));
-
-
     }
 }
