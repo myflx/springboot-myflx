@@ -18,7 +18,7 @@ public class Lekou {
 
         /*System.out.println(new Lekou().countSubstrings("abacabbacaba"));*/
 
-        System.out.println(new Lekou().combinationSum(new int[]{2, 3, 1, 5}, 6));
+        System.out.println(new Lekou().combinationSum(new int[]{2, 3, 6, 7}, 7));
     }
 
 
@@ -41,49 +41,28 @@ public class Lekou {
      */
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
         List<List<Integer>> resultSet = new ArrayList<>();
-        for (int i = 0; i < candidates.length; i++) {
-            int x = candidates[i];
-            List<Integer> combineList = getCombineList(candidates, i, x, target);
-            if (!combineList.isEmpty()) {
-                resultSet.add(combineList);
-            }
-
-            int diff = target - x;
-            if (diff > 0) {
-                for (int j = i + 1; j < candidates.length; j++) {
-                    int next = candidates[j];
-                    combineList = getCombineList(candidates, j, next, diff);
-                    if (!combineList.isEmpty()) {
-                        List<Integer> combineList2 = new ArrayList<>();
-                        combineList2.add(x);
-                        combineList2.addAll(combineList);
-                        resultSet.add(combineList2);
-                    }
-
-                }
-            }
-        }
+        List<Integer> combine = new ArrayList<>();
+        getCombineFromIndex(candidates, 0, target, resultSet, combine);
         return resultSet;
     }
 
+    private void getCombineFromIndex(int[] candidates, int i, int target, List<List<Integer>> resultSet, List<Integer> combine) {
+        if (i >= candidates.length) {
+            return;
+        }
+        int x = candidates[i];
+        if (target == 0) {
+            resultSet.add(new ArrayList<>(combine));
+            return;
+        }
+        getCombineFromIndex(candidates, i + 1, target, resultSet, combine);
 
-    private List<Integer> getCombineList(int[] candidates, int index, int x, int target) {
-        List<Integer> combineList = new ArrayList<>();
-        if (x == target) {
-            combineList.add(x);
-            return combineList;
+        if (target >= x) {
+            combine.add(x);
+            getCombineFromIndex(candidates, i, target - x, resultSet, combine);
+            combine.remove(combine.size() - 1);
         }
-        if (x > target) {
-            return combineList;
-        }
-        int n = 0;
-        if (target % x == 0) {
-            n = target / x;
-        }
-        for (int i = 0; i < n; i++) {
-            combineList.add(x);
-        }
-        return combineList;
+
     }
 
     private Integer getNOfCandidate(int x, int target) {
