@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -18,9 +20,61 @@ public class Lekou {
 
         /*System.out.println(new Lekou().countSubstrings("abacabbacaba"));*/
 
-        System.out.println(new Lekou().combinationSum(new int[]{2, 3, 6, 7}, 7));
+        /*System.out.println(new Lekou().combinationSum(new int[]{2, 3, 6, 7}, 7));*/
+
+        /*System.out.println(new Lekou().combinationSum2(new int[]{10, 1, 2, 7, 6, 1, 5}, 8));*/
+        /*System.out.println(new Lekou().combinationSum2(new int[]{4, 4, 2, 1, 4, 2, 2, 1, 3}, 6));*/
+        System.out.println(new Lekou().combinationSum2(new int[]{2, 5, 1, 1, 2, 3, 3, 3, 1, 2, 2}, 5));
     }
 
+
+    /**
+     * 给定一个数组 candidates 和一个目标数 target ，找出 candidates 中所有可以使数字和为 target 的组合。
+     * <p>
+     * candidates 中的每个数字在每个组合中只能使用一次。
+     * <p>
+     * 说明：
+     * 所有数字（包括目标数）都是正整数。
+     * 解集不能包含重复的组合。
+     */
+    public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+        Arrays.sort(candidates);
+        Map<String, List<Integer>> listMap = new HashMap<>();
+        List<Integer> container = new ArrayList<>();
+        List<Integer> userIndexed = new ArrayList<>();
+        getCombineFromIndex2(candidates, 0, target, container, listMap, userIndexed);
+        List<List<Integer>> outList = new ArrayList<>();
+        for (Map.Entry<String, List<Integer>> stringListEntry : listMap.entrySet()) {
+            outList.add(stringListEntry.getValue());
+        }
+        return outList;
+    }
+
+    private void getCombineFromIndex2(int[] candidates,
+                                      int i, int target, List<Integer> container, Map<String, List<Integer>> listMap, List<Integer> userIndexed) {
+        if (i >= candidates.length) {
+            return;
+        }
+        if (!userIndexed.isEmpty() && userIndexed.subList(0, userIndexed.size() - 1).contains(i)) {
+            return;
+        }
+        if (target == 0) {
+            ArrayList<Integer> integers = new ArrayList<>(container);
+            Collections.sort(integers);
+            listMap.put(integers.toString(), integers);
+            return;
+        }
+        if (target >= candidates[i]) {
+            container.add(candidates[i]);
+            userIndexed.add(i);
+            getCombineFromIndex2(candidates, i, target - candidates[i], container, listMap, userIndexed);
+            container.remove(container.size() - 1);
+            userIndexed.remove(userIndexed.size() - 1);
+        } else {
+            return;
+        }
+        getCombineFromIndex2(candidates, i + 1, target, container, listMap, userIndexed);
+    }
 
     /**
      * https://leetcode-cn.com/problems/combination-sum/
