@@ -1,47 +1,39 @@
-import java.util.Arrays;
-import java.util.List;
-
 public class StringDealer {
 
     public static void main(String[] args) {
-
-        final List<String> list = Arrays.asList("1", "2", "3");
-        System.out.println(Arrays.toString(list.toArray(new String[0])));
-        System.out.println(new StringDealer().longestCommonSubsequence("ezupkr", "ubmrapg"));
+        System.out.println(new StringDealer().longestCommonSubsequence("pmjghexybyrgzczy"
+                , "hafcdqbgncrcbihkd"));
     }
 
     public int longestCommonSubsequence(String text1, String text2) {
-        char[] longger = text1.toCharArray();
-        char[] smaller = text2.toCharArray();
-        int maxLen = Math.max(text1.length(), text2.length());
-        if (longger.length < maxLen) {
-            longger = text2.toCharArray();
-            smaller = text1.toCharArray();
-        }
-        int max = 0;
-        int i = 0;
-        while (i < smaller.length && smaller.length - i - 1 > max) {
-            int k = 0;
-            int length = 0;
-            for (int j = i; j < smaller.length; j++) {
-                char c = smaller[j];
-                int m = k;
-                while (m < longger.length) {
-                    if (c == longger[m++]) {
-                        length++;
-                        k++;
-                        break;
-                    }
-                }
-                if (length > max) {
-                    max = length;
-                    if (m >= longger.length) {
-                        length--;
-                    }
+        //构建动态规划缓存数组
+        int i = text1.length();
+        int j = text2.length();
+        int[][] dpTables = new int[i + 1][j + 1];
+        //初始化基础数据
+        for (int i1 = 1; i1 < i + 1; i1++) {
+            for (int i2 = 1; i2 < j + 1; i2++) {
+                if (text1.charAt(i1 - 1) == text2.charAt(i2 - 1)) {
+                    dpTables[i1][i2] = dpTables[i1 - 1][i2 - 1] + 1;
+                }else {
+                    dpTables[i1][i2] = Math.max(dpTables[i1][i2-1],dpTables[i1-1][i2]);
                 }
             }
-            i++;
         }
-        return max;
+        return dpTables[i][j];
+    }
+
+    /**
+     * 暴力递归的方式
+     */
+    private int dp(String text1, String text2, int i, int j) {
+        if (i == -1 || j == -1) {
+            return 0;
+        }
+        if (text1.charAt(i) == text2.charAt(j)) {
+            return 1 + dp(text1, text2, i - 1, j - 1);
+        } else {
+            return Math.max(dp(text1, text2, i - 1, j), dp(text1, text2, i, j - 1));
+        }
     }
 }
