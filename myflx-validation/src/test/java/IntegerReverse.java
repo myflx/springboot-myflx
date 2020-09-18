@@ -17,17 +17,10 @@ public class IntegerReverse {
             binaryArr[0] = 1;
         }
         StringBuilder str = new StringBuilder(String.valueOf(x));
-        boolean allSame = true;
-        for (int i = 1; i < str.length(); i++) {
-            if (!str.substring(i, i + 1).equals(str.substring(0, 1))) {
-                allSame = false;
-                break;
-            }
-        }
-        if (allSame) {
-            return binaryArr[0] == 1 ? 0 - x : x;
-        }
         str.reverse();
+        if (str.toString().equals(String.valueOf(x))) {
+            return binaryArr[0] == 1 ? -x : x;
+        }
         while (str.substring(0, 1).equals("0")) {
             str.deleteCharAt(0);
         }
@@ -38,6 +31,6 @@ public class IntegerReverse {
         int k = 0;
 
         //处理翻转
-        return binaryArr[0] == 1 ? 0 - x : x;
+        return binaryArr[0] == 1 ? -x : x;
     }
 }
