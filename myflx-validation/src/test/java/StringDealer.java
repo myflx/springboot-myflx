@@ -47,15 +47,17 @@ public class StringDealer {
         if (numRows <= 1 || s.length() <= numRows) {
             return s;
         }
+        char[] chars = s.toCharArray();
+        int length = chars.length;
         int maxLen = 2 * (numRows - 1);
         StringBuilder rev = new StringBuilder();
         for (int i = 0; i < numRows; i++) {
             int startIndex = i;
             int currentLen = (numRows - i - 1) * 2;
-            while (startIndex < s.length()) {
-                rev.append(s.charAt(startIndex));
-                if (currentLen != 0 && currentLen != maxLen && startIndex + currentLen < s.length()) {
-                    rev.append(s.charAt(startIndex + currentLen));
+            while (startIndex < length) {
+                rev.append(chars[startIndex]);
+                if (currentLen != 0 && currentLen != maxLen && startIndex + currentLen < length) {
+                    rev.append(chars);
                 }
                 startIndex += maxLen;
             }
