@@ -57,7 +57,7 @@ public class StringDealer {
             while (startIndex < length) {
                 rev.append(chars[startIndex]);
                 if (currentLen != 0 && currentLen != maxLen && startIndex + currentLen < length) {
-                    rev.append(chars);
+                    rev.append(chars[startIndex + currentLen]);
                 }
                 startIndex += maxLen;
             }
