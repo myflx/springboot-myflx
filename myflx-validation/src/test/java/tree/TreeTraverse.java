@@ -46,7 +46,7 @@ public class TreeTraverse {
     /**
      * 中序遍历
      */
-    public static void midOrderTravel(TreeNode treeNode){
+    public static void midOrderTravel(TreeNode treeNode) {
         if (treeNode == null) {
             return;
         }
@@ -58,7 +58,7 @@ public class TreeTraverse {
     /**
      * 后序遍历
      */
-    public static void postOrderTravel(TreeNode treeNode){
+    public static void postOrderTravel(TreeNode treeNode) {
         if (treeNode == null) {
             return;
         }
@@ -89,6 +89,9 @@ public class TreeTraverse {
     }
 
     /**
+     *         3
+     *    2        8
+     * 9   10  nil    4
      * 中序遍历(利用栈实现)
      */
     public static void midOrderTravelWithStack(TreeNode treeNode) {
@@ -98,20 +101,52 @@ public class TreeTraverse {
         Stack<TreeNode> stack = new Stack<>();
         stack.push(treeNode);
         while (!stack.isEmpty()) {
-            final TreeNode peek = stack.peek();
-            if (peek.rightChild != null) {
-                stack.push(peek.rightChild);
+            //新节点开始遍历的时候添加所有的左节孩子入栈
+            TreeNode r = stack.peek().leftChild;
+            while (r != null) {
+                stack.push(r);
+                r = r.leftChild;
             }
-            if (peek.leftChild != null) {
-                stack.push(peek.leftChild);
+            //所有左孩子入栈完毕，一直pop
+            while (!stack.isEmpty()){
+                TreeNode pop = stack.pop();
+                System.out.println(pop.getData());
+                if (pop.rightChild != null){
+                    //如果某个节点存在右孩子那么结束弹栈，从头开始进入下个循环
+                    stack.push(pop.rightChild);
+                    break;
+                }
             }
         }
     }
 
     /**
-     *           3
-     *       2        8
-     *    9   10  nil    4
+     *         3
+     *    2        8
+     * 9   10  nil    4
+     * 后序遍历(利用栈实现)
+     */
+    public static void postOrderTravelWithStack(TreeNode treeNode) {
+        if (treeNode == null) {
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(treeNode);
+        while (!stack.isEmpty()) {
+            TreeNode pop = stack.peek();
+            if (pop.rightChild != null){
+                stack.push(pop.rightChild);
+            }
+            if (pop.leftChild != null){
+                stack.push(pop.leftChild);
+            }
+
+        }
+    }
+    /**
+     * 3
+     * 2        8
+     * 9   10  nil    4
      */
     public static void main(String[] args) {
         final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(3, 2, 9, null, null, 10, null, null, 8, null, 4)));
