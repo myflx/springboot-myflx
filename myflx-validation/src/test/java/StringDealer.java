@@ -3,8 +3,8 @@ public class StringDealer {
     public static void main(String[] args) {
         /*System.out.println(new StringDealer().longestCommonSubsequence("pmjghexybyrgzczy"
                 , "hafcdqbgncrcbihkd"));*/
-        /*System.out.println(new StringDealer().convert("LEE", 3).equals("LEE"));
-        System.out.println(new StringDealer().convert("LEETCODEISHIRING", 3).equals("LCIRETOESIIGEDHN"));*/
+        System.out.println(new StringDealer().convert("LEE", 3).equals("LEE"));
+        System.out.println(new StringDealer().convert("LEETCODEISHIRING", 3).equals("LCIRETOESIIGEDHN"));
         System.out.println(new StringDealer().convert("LEETCODEISHIRING", 4).equals("LDREOEIIECIHNTSG"));
     }
 
@@ -44,18 +44,22 @@ public class StringDealer {
      * z子形转换
      */
     public String convert(String s, int numRows) {
-        if (s.length() <= numRows) {
+        if (numRows <= 1 || s.length() <= numRows) {
             return s;
         }
+        char[] chars = s.toCharArray();
+        int length = chars.length;
         int maxLen = 2 * (numRows - 1);
         StringBuilder rev = new StringBuilder();
         for (int i = 0; i < numRows; i++) {
-            int index = i;
-            int j = maxLen - i;
-            int currentLen = j - i == 0 ? maxLen : j - i;
-            while (index < s.length()) {
-                rev.append(s.charAt(index));
-                index += currentLen;
+            int startIndex = i;
+            int currentLen = (numRows - i - 1) * 2;
+            while (startIndex < length) {
+                rev.append(chars[startIndex]);
+                if (currentLen != 0 && currentLen != maxLen && startIndex + currentLen < length) {
+                    rev.append(chars[startIndex + currentLen]);
+                }
+                startIndex += maxLen;
             }
         }
         return rev.toString();
