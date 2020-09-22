@@ -2,6 +2,7 @@ package tree;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Stack;
 
 /**
  * 对二叉树进行遍历
@@ -67,7 +68,48 @@ public class TreeTraverse {
     }
 
     /**
-     *            3
+     * 前序遍历(利用栈实现)
+     */
+    public static void preOrderTravelWithStack(TreeNode treeNode) {
+        if (treeNode == null) {
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(treeNode);
+        while (!stack.isEmpty()) {
+            final TreeNode pop = stack.pop();
+            System.out.println(pop.getData());
+            if (pop.rightChild != null) {
+                stack.push(pop.rightChild);
+            }
+            if (pop.leftChild != null) {
+                stack.push(pop.leftChild);
+            }
+        }
+    }
+
+    /**
+     * 中序遍历(利用栈实现)
+     */
+    public static void midOrderTravelWithStack(TreeNode treeNode) {
+        if (treeNode == null) {
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(treeNode);
+        while (!stack.isEmpty()) {
+            final TreeNode peek = stack.peek();
+            if (peek.rightChild != null) {
+                stack.push(peek.rightChild);
+            }
+            if (peek.leftChild != null) {
+                stack.push(peek.leftChild);
+            }
+        }
+    }
+
+    /**
+     *           3
      *       2        8
      *    9   10  nil    4
      */
@@ -79,5 +121,10 @@ public class TreeTraverse {
         midOrderTravel(binaryTree);
         System.out.println("后序遍历：  ");
         postOrderTravel(binaryTree);
+
+        System.out.println("栈前序遍历：  ");
+        preOrderTravelWithStack(binaryTree);
+        System.out.println("栈中序遍历：  ");
+        midOrderTravelWithStack(binaryTree);
     }
 }
