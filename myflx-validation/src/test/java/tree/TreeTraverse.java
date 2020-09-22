@@ -119,6 +119,31 @@ public class TreeTraverse {
             }
         }
     }
+    public static void midOrderTravelWithStack2(TreeNode treeNode) {
+        if (treeNode == null) {
+            return;
+        }
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(treeNode);
+        while (!stack.isEmpty()) {
+            //新节点开始遍历的时候添加所有的左节孩子入栈
+            TreeNode r = stack.peek().leftChild;
+            while (r != null) {
+                stack.push(r);
+                r = r.leftChild;
+            }
+            //所有左孩子入栈完毕，一直pop
+            while (!stack.isEmpty()){
+                TreeNode pop = stack.pop();
+                System.out.println(pop.getData());
+                if (pop.rightChild != null){
+                    //如果某个节点存在右孩子那么结束弹栈，从头开始进入下个循环
+                    stack.push(pop.rightChild);
+                    break;
+                }
+            }
+        }
+    }
 
     /**
      *         3
@@ -133,12 +158,18 @@ public class TreeTraverse {
         Stack<TreeNode> stack = new Stack<>();
         stack.push(treeNode);
         while (!stack.isEmpty()) {
-            TreeNode pop = stack.peek();
-            if (pop.rightChild != null){
-                stack.push(pop.rightChild);
-            }
-            if (pop.leftChild != null){
-                stack.push(pop.leftChild);
+            TreeNode peek = stack.peek();
+            if (peek.leftChild != null){
+                stack.push(peek.leftChild);
+            }else {
+                while (!stack.isEmpty()){
+                    TreeNode pop = stack.pop();
+                    System.out.println(pop.getData());
+                    if (pop.rightChild != null){
+                        stack.push(pop.rightChild);
+                        break;
+                    }
+                }
             }
 
         }
@@ -161,5 +192,7 @@ public class TreeTraverse {
         preOrderTravelWithStack(binaryTree);
         System.out.println("栈中序遍历：  ");
         midOrderTravelWithStack(binaryTree);
+        System.out.println("栈后序遍历：  ");
+        postOrderTravelWithStack(binaryTree);
     }
 }
