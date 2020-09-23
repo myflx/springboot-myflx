@@ -181,6 +181,33 @@ public class TreeTraverse {
 
         }
     }
+
+
+    public static void postOrderTravelWithStack2(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        //使用空节点记录是否回溯过
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()){
+            TreeNode peek = stack.peek();
+            if (peek == null){
+                stack.pop();
+                final TreeNode pop = stack.pop();
+                System.out.println(pop.getData());
+                continue;
+            }
+            stack.push(null);
+            if (peek.rightChild != null){
+                stack.push(peek.rightChild);
+            }
+
+            if (peek.leftChild != null){
+                stack.push(peek.leftChild);
+            }
+        }
+    }
     /**
      * 3
      * 2        8
@@ -200,6 +227,6 @@ public class TreeTraverse {
         System.out.println("栈中序遍历：  ");
         midOrderTravelWithStack(binaryTree);
         System.out.println("栈后序遍历：  ");
-        postOrderTravelWithStack(binaryTree);
+        postOrderTravelWithStack2(binaryTree);
     }
 }
