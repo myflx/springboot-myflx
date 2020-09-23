@@ -1,7 +1,9 @@
 package tree;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -151,23 +153,28 @@ public class TreeTraverse {
      * 9   10  nil    4
      * 后序遍历(利用栈实现)
      */
-    public static void postOrderTravelWithStack(TreeNode treeNode) {
-        if (treeNode == null) {
+    public static void postOrderTravelWithStack(TreeNode root) {
+        if (root == null) {
             return;
         }
+        //记录是否回溯过
+        List<TreeNode> traced = new ArrayList<>();
         Stack<TreeNode> stack = new Stack<>();
-        stack.push(treeNode);
+        stack.push(root);
         while (!stack.isEmpty()) {
             TreeNode peek = stack.peek();
             if (peek.leftChild != null){
                 stack.push(peek.leftChild);
             }else {
                 while (!stack.isEmpty()){
-                    TreeNode pop = stack.pop();
-                    System.out.println(pop.getData());
-                    if (pop.rightChild != null){
+                    TreeNode pop = stack.peek();
+                    if (!traced.contains(pop) && pop.rightChild != null){
+                        traced.add(pop);
                         stack.push(pop.rightChild);
                         break;
+                    }else {
+                        stack.pop();
+                        System.out.println(pop.getData());
                     }
                 }
             }
