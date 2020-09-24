@@ -1,9 +1,12 @@
 package tree;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.Stack;
 
 /**
@@ -208,14 +211,176 @@ public class TreeTraverse {
             }
         }
     }
+
+
     /**
-     * 3
-     * 2        8
+     *         3
+     *    2        8
+     * 9   10  nil    4
+     * 层序遍历(队列实现)
+     */
+    public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> ret = new ArrayList<>();
+        if (Objects.isNull(root)){
+            return ret;
+        }
+        TreeNode split = new TreeNode(0);
+        Queue<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+        queue.offer(split);
+        while (!queue.isEmpty()){
+            List<Integer> out = new ArrayList<>();
+            TreeNode poll = queue.poll();
+            while (poll != null && split != poll){
+                out.add(poll.getData());
+                if (poll.leftChild != null){
+                    queue.offer(poll.leftChild);
+                }
+                if (poll.rightChild != null){
+                    queue.offer(poll.rightChild);
+                }
+                poll = queue.poll();
+            }
+            if (!queue.isEmpty()){
+                queue.offer(split);
+            }
+            ret.add(out);
+        }
+        return ret;
+    }
+
+
+    /**
+     *         3
+     *    2        8
+     * 9   10  nil    4
+     * 层序遍历(递归实现)
+     */
+    public List<List<Integer>> levelOrder2(TreeNode root) {
+        if (Objects.isNull(root)){
+            return null;
+        }
+        List<List<Integer>> ret = new ArrayList<>();
+        doLevelOrder(root,ret,0);
+        return ret;
+    }
+
+    public void doLevelOrder(TreeNode node, List<List<Integer>> ret, int level) {
+        if (Objects.isNull(node)) {
+            return;
+        }
+        if (ret.size() <= level) {
+            ret.add(new ArrayList<>());
+        }
+        ret.get(level).add(node.getData());
+        doLevelOrder(node.leftChild, ret, level + 1);
+        doLevelOrder(node.rightChild, ret, level + 1);
+    }
+    class QueueNode {
+        TreeNode node;
+        int depth;
+
+        public QueueNode(TreeNode node, int depth) {
+            this.node = node;
+            this.depth = depth;
+        }
+    }
+
+
+    /***
+     * 第一个搜索到的叶子节点一定是最小深度
+     * @param root
+     * @return
+     */
+    public int minDepth1(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+
+        Queue<QueueNode> queue = new LinkedList<QueueNode>();
+        queue.offer(new QueueNode(root, 1));
+        while (!queue.isEmpty()) {
+            QueueNode nodeDepth = queue.poll();
+            TreeNode node = nodeDepth.node;
+            int depth = nodeDepth.depth;
+            if (node.leftChild == null && node.rightChild == null) {
+                return depth;
+            }
+            if (node.leftChild != null) {
+                queue.offer(new QueueNode(node.leftChild, depth + 1));
+            }
+            if (node.rightChild != null) {
+                queue.offer(new QueueNode(node.rightChild, depth + 1));
+            }
+        }
+
+        return 0;
+    }
+    public int minDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        if (root.leftChild == null && root.rightChild == null) {
+            return 1;
+        }
+        final int leftLen = minDepth(root.leftChild);
+        final int rightLen = minDepth(root.rightChild);
+        int len = 1;
+        if (leftLen * rightLen > 0) {
+            len += Math.min(rightLen, leftLen);
+        } else if (leftLen > 0) {
+            len += leftLen;
+        } else {
+            len += rightLen;
+        }
+        return len;
+    }
+
+    /**
+     * 广度遍历到最后才知道那条路最长
+     * @param root root
+     * @return int
+     */
+    public int maxDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+        int len = 0;
+        while (!queue.isEmpty()){
+            int size = queue.size();
+            while (size-- > 0){
+                final TreeNode poll = queue.poll();
+                if (poll.leftChild!= null){
+                    queue.offer(poll.leftChild);
+                }
+                if (poll.rightChild != null){
+                    queue.offer(poll.rightChild);
+                }
+            }
+            len++;
+        }
+        return len;
+    }
+    public int maxDepth2(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        if (root.leftChild == null && root.rightChild == null) {
+            return 1;
+        }
+        return 1 + Math.max(maxDepth(root.leftChild), maxDepth(root.rightChild));
+    }
+    /**
+     *      3
+     *    2        8
      * 9   10  nil    4
      */
     public static void main(String[] args) {
         final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(3, 2, 9, null, null, 10, null, null, 8, null, 4)));
-        System.out.println("前序遍历：  ");
+        /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(1, 2)));*/
+        /*System.out.println("前序遍历：  ");
         preOrderTravel(binaryTree);
         System.out.println("中序遍历：  ");
         midOrderTravel(binaryTree);
@@ -228,5 +393,11 @@ public class TreeTraverse {
         midOrderTravelWithStack(binaryTree);
         System.out.println("栈后序遍历：  ");
         postOrderTravelWithStack2(binaryTree);
+
+        System.out.println("层序遍历队列实现：  " + new TreeTraverse().levelOrder(binaryTree));
+        System.out.println("层序遍历递归实现：  " + new TreeTraverse().levelOrder2(binaryTree));*/
+
+        final TreeTraverse treeTraverse = new TreeTraverse();
+        System.out.println(treeTraverse.maxDepth(binaryTree));
     }
 }
