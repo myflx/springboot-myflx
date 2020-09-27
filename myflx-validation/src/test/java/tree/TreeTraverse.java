@@ -30,8 +30,8 @@ public class TreeTraverse {
         final Integer data = inputList.removeFirst();
         if (data != null) {
             treeNode = new TreeNode(data);
-            treeNode.leftChild = createBinaryTree(inputList);
-            treeNode.rightChild = createBinaryTree(inputList);
+            treeNode.left = createBinaryTree(inputList);
+            treeNode.right = createBinaryTree(inputList);
         }
         return treeNode;
     }
@@ -43,9 +43,9 @@ public class TreeTraverse {
         if (treeNode == null) {
             return;
         }
-        System.out.print(treeNode.getData());
-        preOrderTravel(treeNode.leftChild);
-        preOrderTravel(treeNode.rightChild);
+        System.out.print(treeNode.val);
+        preOrderTravel(treeNode.left);
+        preOrderTravel(treeNode.right);
     }
 
     /**
@@ -55,9 +55,9 @@ public class TreeTraverse {
         if (treeNode == null) {
             return;
         }
-        midOrderTravel(treeNode.leftChild);
-        System.out.print(treeNode.getData());
-        midOrderTravel(treeNode.rightChild);
+        midOrderTravel(treeNode.left);
+        System.out.print(treeNode.val);
+        midOrderTravel(treeNode.right);
     }
 
     /**
@@ -67,9 +67,9 @@ public class TreeTraverse {
         if (treeNode == null) {
             return;
         }
-        postOrderTravel(treeNode.leftChild);
-        postOrderTravel(treeNode.rightChild);
-        System.out.print(treeNode.getData());
+        postOrderTravel(treeNode.left);
+        postOrderTravel(treeNode.right);
+        System.out.print(treeNode.val);
     }
 
     /**
@@ -83,19 +83,19 @@ public class TreeTraverse {
         stack.push(treeNode);
         while (!stack.isEmpty()) {
             final TreeNode pop = stack.pop();
-            System.out.println(pop.getData());
-            if (pop.rightChild != null) {
-                stack.push(pop.rightChild);
+            System.out.println(pop.val);
+            if (pop.right != null) {
+                stack.push(pop.right);
             }
-            if (pop.leftChild != null) {
-                stack.push(pop.leftChild);
+            if (pop.left != null) {
+                stack.push(pop.left);
             }
         }
     }
 
     /**
-     *         3
-     *    2        8
+     * 3
+     * 2        8
      * 9   10  nil    4
      * 中序遍历(利用栈实现)
      */
@@ -107,23 +107,24 @@ public class TreeTraverse {
         stack.push(treeNode);
         while (!stack.isEmpty()) {
             //新节点开始遍历的时候添加所有的左节孩子入栈
-            TreeNode r = stack.peek().leftChild;
+            TreeNode r = stack.peek().left;
             while (r != null) {
                 stack.push(r);
-                r = r.leftChild;
+                r = r.left;
             }
             //所有左孩子入栈完毕，一直pop
-            while (!stack.isEmpty()){
+            while (!stack.isEmpty()) {
                 TreeNode pop = stack.pop();
-                System.out.println(pop.getData());
-                if (pop.rightChild != null){
+                System.out.println(pop.val);
+                if (pop.right != null) {
                     //如果某个节点存在右孩子那么结束弹栈，从头开始进入下个循环
-                    stack.push(pop.rightChild);
+                    stack.push(pop.right);
                     break;
                 }
             }
         }
     }
+
     public static void midOrderTravelWithStack2(TreeNode treeNode) {
         if (treeNode == null) {
             return;
@@ -132,18 +133,18 @@ public class TreeTraverse {
         stack.push(treeNode);
         while (!stack.isEmpty()) {
             //新节点开始遍历的时候添加所有的左节孩子入栈
-            TreeNode r = stack.peek().leftChild;
+            TreeNode r = stack.peek().left;
             while (r != null) {
                 stack.push(r);
-                r = r.leftChild;
+                r = r.left;
             }
             //所有左孩子入栈完毕，一直pop
-            while (!stack.isEmpty()){
+            while (!stack.isEmpty()) {
                 TreeNode pop = stack.pop();
-                System.out.println(pop.getData());
-                if (pop.rightChild != null){
+                System.out.println(pop.val);
+                if (pop.right != null) {
                     //如果某个节点存在右孩子那么结束弹栈，从头开始进入下个循环
-                    stack.push(pop.rightChild);
+                    stack.push(pop.right);
                     break;
                 }
             }
@@ -151,8 +152,8 @@ public class TreeTraverse {
     }
 
     /**
-     *         3
-     *    2        8
+     * 3
+     * 2        8
      * 9   10  nil    4
      * 后序遍历(利用栈实现)
      */
@@ -166,18 +167,18 @@ public class TreeTraverse {
         stack.push(root);
         while (!stack.isEmpty()) {
             TreeNode peek = stack.peek();
-            if (peek.leftChild != null){
-                stack.push(peek.leftChild);
-            }else {
-                while (!stack.isEmpty()){
+            if (peek.left != null) {
+                stack.push(peek.left);
+            } else {
+                while (!stack.isEmpty()) {
                     TreeNode pop = stack.peek();
-                    if (!traced.contains(pop) && pop.rightChild != null){
+                    if (!traced.contains(pop) && pop.right != null) {
                         traced.add(pop);
-                        stack.push(pop.rightChild);
+                        stack.push(pop.right);
                         break;
-                    }else {
+                    } else {
                         stack.pop();
-                        System.out.println(pop.getData());
+                        System.out.println(pop.val);
                     }
                 }
             }
@@ -193,55 +194,55 @@ public class TreeTraverse {
         //使用空节点记录是否回溯过
         Stack<TreeNode> stack = new Stack<>();
         stack.push(root);
-        while (!stack.isEmpty()){
+        while (!stack.isEmpty()) {
             TreeNode peek = stack.peek();
-            if (peek == null){
+            if (peek == null) {
                 stack.pop();
                 final TreeNode pop = stack.pop();
-                System.out.println(pop.getData());
+                System.out.println(pop.val);
                 continue;
             }
             stack.push(null);
-            if (peek.rightChild != null){
-                stack.push(peek.rightChild);
+            if (peek.right != null) {
+                stack.push(peek.right);
             }
 
-            if (peek.leftChild != null){
-                stack.push(peek.leftChild);
+            if (peek.left != null) {
+                stack.push(peek.left);
             }
         }
     }
 
 
     /**
-     *         3
-     *    2        8
+     * 3
+     * 2        8
      * 9   10  nil    4
      * 层序遍历(队列实现)
      */
     public List<List<Integer>> levelOrder(TreeNode root) {
         List<List<Integer>> ret = new ArrayList<>();
-        if (Objects.isNull(root)){
+        if (Objects.isNull(root)) {
             return ret;
         }
         TreeNode split = new TreeNode(0);
         Queue<TreeNode> queue = new ArrayDeque<>();
         queue.offer(root);
         queue.offer(split);
-        while (!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             List<Integer> out = new ArrayList<>();
             TreeNode poll = queue.poll();
-            while (poll != null && split != poll){
-                out.add(poll.getData());
-                if (poll.leftChild != null){
-                    queue.offer(poll.leftChild);
+            while (poll != null && split != poll) {
+                out.add(poll.val);
+                if (poll.left != null) {
+                    queue.offer(poll.left);
                 }
-                if (poll.rightChild != null){
-                    queue.offer(poll.rightChild);
+                if (poll.right != null) {
+                    queue.offer(poll.right);
                 }
                 poll = queue.poll();
             }
-            if (!queue.isEmpty()){
+            if (!queue.isEmpty()) {
                 queue.offer(split);
             }
             ret.add(out);
@@ -251,17 +252,17 @@ public class TreeTraverse {
 
 
     /**
-     *         3
-     *    2        8
+     * 3
+     * 2        8
      * 9   10  nil    4
      * 层序遍历(递归实现)
      */
     public List<List<Integer>> levelOrder2(TreeNode root) {
-        if (Objects.isNull(root)){
+        if (Objects.isNull(root)) {
             return null;
         }
         List<List<Integer>> ret = new ArrayList<>();
-        doLevelOrder(root,ret,0);
+        doLevelOrder(root, ret, 0);
         return ret;
     }
 
@@ -272,10 +273,11 @@ public class TreeTraverse {
         if (ret.size() <= level) {
             ret.add(new ArrayList<>());
         }
-        ret.get(level).add(node.getData());
-        doLevelOrder(node.leftChild, ret, level + 1);
-        doLevelOrder(node.rightChild, ret, level + 1);
+        ret.get(level).add(node.val);
+        doLevelOrder(node.left, ret, level + 1);
+        doLevelOrder(node.right, ret, level + 1);
     }
+
     class QueueNode {
         TreeNode node;
         int depth;
@@ -303,28 +305,29 @@ public class TreeTraverse {
             QueueNode nodeDepth = queue.poll();
             TreeNode node = nodeDepth.node;
             int depth = nodeDepth.depth;
-            if (node.leftChild == null && node.rightChild == null) {
+            if (node.left == null && node.right == null) {
                 return depth;
             }
-            if (node.leftChild != null) {
-                queue.offer(new QueueNode(node.leftChild, depth + 1));
+            if (node.left != null) {
+                queue.offer(new QueueNode(node.left, depth + 1));
             }
-            if (node.rightChild != null) {
-                queue.offer(new QueueNode(node.rightChild, depth + 1));
+            if (node.right != null) {
+                queue.offer(new QueueNode(node.right, depth + 1));
             }
         }
 
         return 0;
     }
+
     public int minDepth(TreeNode root) {
         if (root == null) {
             return 0;
         }
-        if (root.leftChild == null && root.rightChild == null) {
+        if (root.left == null && root.right == null) {
             return 1;
         }
-        final int leftLen = minDepth(root.leftChild);
-        final int rightLen = minDepth(root.rightChild);
+        final int leftLen = minDepth(root.left);
+        final int rightLen = minDepth(root.right);
         int len = 1;
         if (leftLen * rightLen > 0) {
             len += Math.min(rightLen, leftLen);
@@ -338,6 +341,7 @@ public class TreeTraverse {
 
     /**
      * 广度遍历到最后才知道那条路最长
+     *
      * @param root root
      * @return int
      */
@@ -348,38 +352,99 @@ public class TreeTraverse {
         Queue<TreeNode> queue = new LinkedList<>();
         queue.offer(root);
         int len = 0;
-        while (!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             int size = queue.size();
-            while (size-- > 0){
+            while (size-- > 0) {
                 final TreeNode poll = queue.poll();
-                if (poll.leftChild!= null){
-                    queue.offer(poll.leftChild);
+                if (poll.left != null) {
+                    queue.offer(poll.left);
                 }
-                if (poll.rightChild != null){
-                    queue.offer(poll.rightChild);
+                if (poll.right != null) {
+                    queue.offer(poll.right);
                 }
             }
             len++;
         }
         return len;
     }
+
     public int maxDepth2(TreeNode root) {
         if (root == null) {
             return 0;
         }
-        if (root.leftChild == null && root.rightChild == null) {
+        if (root.left == null && root.right == null) {
             return 1;
         }
-        return 1 + Math.max(maxDepth(root.leftChild), maxDepth(root.rightChild));
+        return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
     }
+
+
     /**
-     *      3
-     *    2        8
+     * 转为单链表
+     *
+     * @param root root
+     */
+    public void flatten2(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        List<TreeNode> list = new ArrayList<>();
+        doPreOrderTraversal(list, root);
+        for (int i = 0; i < list.size(); i++) {
+            final TreeNode node = list.get(i);
+            node.left = null;
+            node.right = i == list.size() - 1 ? null : list.get(i + 1);
+        }
+    }
+
+    public void flatten(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+
+        TreeNode current = root;
+        while (current != null) {
+            TreeNode left = current.left;
+            if (left != null) {
+                TreeNode pre = left;
+                while (pre.right != null) {
+                    pre = pre.right;
+                }
+                pre.right = current.right;
+                current.left = null;
+                current.right = left;
+            }
+            current = current.right;
+        }
+    }
+
+    private void doPreOrderTraversal(List<TreeNode> list, TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        list.add(root);
+        doPreOrderTraversal(list, root.left);
+        doPreOrderTraversal(list, root.right);
+    }
+
+    public void preorderTraversal(TreeNode root, List<TreeNode> list) {
+        if (root != null) {
+            list.add(root);
+            preorderTraversal(root.left, list);
+            preorderTraversal(root.right, list);
+        }
+    }
+
+    /**
+     * 3
+     * 2        8
      * 9   10  nil    4
+     * [1,2,5,3,4,null,6]
      */
     public static void main(String[] args) {
-        final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(3, 2, 9, null, null, 10, null, null, 8, null, 4)));
-        /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(1, 2)));*/
+        /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(3, 2, 9, null, null, 10, null, null, 8, null, 4)));*/
+        /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(1, 2, 3, null, null, 4, null, null, 5, null, 6)));*/
+        final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(1, 2, 3, 5, null, null, null, 4)));
         /*System.out.println("前序遍历：  ");
         preOrderTravel(binaryTree);
         System.out.println("中序遍历：  ");
@@ -398,6 +463,7 @@ public class TreeTraverse {
         System.out.println("层序遍历递归实现：  " + new TreeTraverse().levelOrder2(binaryTree));*/
 
         final TreeTraverse treeTraverse = new TreeTraverse();
-        System.out.println(treeTraverse.maxDepth(binaryTree));
+        /*System.out.println(treeTraverse.maxDepth(binaryTree));*/
+        treeTraverse.flatten(binaryTree);
     }
 }
