@@ -4,24 +4,30 @@ package tree;
  * @author LuoShangLin
  */
 public class TreeNode {
-    private int data;
-    public TreeNode leftChild;
-    public TreeNode rightChild;
+    public int val;
+    public TreeNode left;
+    public TreeNode right;
 
     public TreeNode(int data) {
-        this.data = data;
+        this.val = data;
     }
 
-    public int getData() {
-        return data;
+    public TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+
+    public int getVal() {
+        return val;
     }
 
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("TreeNode{");
-        sb.append("data=").append(data);
-        sb.append(", leftChild=").append(leftChild);
-        sb.append(", rightChild=").append(rightChild);
+        sb.append("data=").append(val);
+        sb.append(", leftChild=").append(left);
+        sb.append(", rightChild=").append(right);
         sb.append('}');
         return sb.toString();
     }
