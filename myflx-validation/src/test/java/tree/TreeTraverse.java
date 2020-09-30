@@ -2,7 +2,6 @@ package tree;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,6 +58,15 @@ public class TreeTraverse {
         midOrderTravel(treeNode.left);
         System.out.print(treeNode.val);
         midOrderTravel(treeNode.right);
+    }
+
+    public static void midOrderTravel(TreeNode treeNode, List<Integer> list) {
+        if (treeNode == null) {
+            return;
+        }
+        midOrderTravel(treeNode.left, list);
+        list.add(treeNode.val);
+        midOrderTravel(treeNode.right, list);
     }
 
     /**
@@ -530,6 +538,93 @@ public class TreeTraverse {
         return null;
     }
 
+
+    public boolean isValidBST2(TreeNode root) {
+        if (root == null || (root.left == null && root.right == null)) {
+            return true;
+        }
+        if (root.left != null && root.val <= root.left.val) {
+            return false;
+        }
+        if (root.right != null && root.val >= root.right.val) {
+            return false;
+        }
+
+        List<Integer> orderList = new ArrayList<>();
+        midOrderTravel(root, orderList);
+        for (int i = 0; i < orderList.size(); i++) {
+            if (i > 0 && orderList.get(i - 1) >= orderList.get(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isValidBST(TreeNode root) {
+        return helper(root, null, null);
+    }
+
+    public boolean helper(TreeNode root, Integer s, Integer e) {
+        if (root == null) {
+            return true;
+        }
+        if (s != null && root.val <= s) {
+            return false;
+        }
+        if (e != null && root.val >= e) {
+            return false;
+        }
+        if (!helper(root.left, s, root.val)) {
+            return false;
+        }
+        if (!helper(root.right, root.val, e)) {
+            return false;
+        }
+        return true;
+    }
+
+
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        if (preorder == null || inorder == null) {
+            return null;
+        }
+        if (preorder.length != inorder.length) {
+            return null;
+        }
+        if (preorder.length == 1) {
+            return new TreeNode(preorder[0]);
+        }
+        return buildTreeHelper(preorder, inorder, 0, preorder.length);
+    }
+
+    /**
+     * 1-4
+     * 3-4
+     *
+     * @param preorder
+     * @param inorder
+     * @param rootIndex
+     * @param endIndex
+     * @return
+     */
+    private TreeNode buildTreeHelper(int[] preorder, int[] inorder, int rootIndex, int endIndex) {
+        if (rootIndex >= endIndex) {
+            return null;
+        }
+        int rootVal = preorder[rootIndex];
+        final TreeNode root = new TreeNode(rootVal);
+        int leftEndIndex = rootIndex;
+        for (int i = 0; i < endIndex; i++) {
+            if (inorder[i] == rootVal) {
+                leftEndIndex = i;
+                break;
+            }
+        }
+        root.left = buildTreeHelper(preorder, inorder, rootIndex + 1, leftEndIndex);
+        root.right = buildTreeHelper(preorder, inorder, leftEndIndex + 1, endIndex);
+        return root;
+    }
+
     /**
      * 3
      * 2        8
@@ -539,7 +634,7 @@ public class TreeTraverse {
     public static void main(String[] args) {
         /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(3, 2, 9, null, null, 10, null, null, 8, null, 4)));*/
         /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(1, 2, 3, null, null, 4, null, null, 5, null, 6)));*/
-        final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(2, 3, 4, null, null, 5, null, null, 3, 5)));
+        /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(2, 3, 4, null, null, 5, null, null, 3, 5)));*/
         /*System.out.println("前序遍历：  ");
         preOrderTravel(binaryTree);
         System.out.println("中序遍历：  ");
@@ -560,6 +655,7 @@ public class TreeTraverse {
         final TreeTraverse treeTraverse = new TreeTraverse();
         /*System.out.println(treeTraverse.maxDepth(binaryTree));
         treeTraverse.flatten(binaryTree);*/
-        treeTraverse.isSymmetric(binaryTree);
+        /*treeTraverse.isSymmetric(binaryTree);*/
+        final TreeNode node = treeTraverse.buildTree(new int[]{3, 9, 2, 20, 15, 7}, new int[]{2, 9, 3, 1, 20, 7});
     }
 }
