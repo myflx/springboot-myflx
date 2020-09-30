@@ -3,6 +3,7 @@ package tree;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -435,6 +436,100 @@ public class TreeTraverse {
         }
     }
 
+    public boolean isBalanced(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        length(root, root);
+        return root.balanced && root.notBalanceCount == 0;
+    }
+
+    public int length(TreeNode current, TreeNode root) {
+        if (current == null) {
+            return 0;
+        }
+        final int ll = length(current.left, root);
+        final int rl = length(current.right, root);
+        current.balanced = Math.abs(ll - rl) <= 1;
+        root.notBalanceCount += current.balanced ? 0 : 1;
+        return Math.max(ll, rl) + 1;
+    }
+
+
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if (p == null && q == null) {
+            return true;
+        }
+        if (p == null || q == null) {
+            return false;
+        }
+        if (p.val != q.val) {
+            return false;
+        }
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    }
+
+    /**
+     * 3
+     * / \
+     * 9  20
+     * /  \
+     * 15   7
+     *
+     * @param root root
+     * @return list
+     */
+    public List<List<Integer>> levelOrderBottom(TreeNode root) {
+        if (Objects.isNull(root)) {
+            return null;
+        }
+        List<List<Integer>> ret = new ArrayList<>();
+        doLevelOrder(root, ret, 0);
+        Collections.reverse(ret);
+        return ret;
+    }
+
+
+    public boolean isSymmetric(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        if (root.left == null && root.right == null) {
+            return true;
+        }
+        if (root.left == null || root.right == null) {
+            return false;
+        }
+
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root.left);
+        stack.push(root.right);
+        while (!stack.isEmpty()) {
+            final TreeNode rNode = stack.pop();
+            final TreeNode lNode = stack.pop();
+            if (rNode == null && lNode == null) {
+                continue;
+            }
+            if (rNode == null || lNode == null) {
+                return false;
+            }
+
+            if (rNode.val != lNode.val) {
+                return false;
+            }
+            stack.push(lNode.left);
+            stack.push(rNode.right);
+
+            stack.push(rNode.left);
+            stack.push(lNode.right);
+        }
+        return true;
+    }
+
+    public TreeNode sortedArrayToBST(int[] nums) {
+        return null;
+    }
+
     /**
      * 3
      * 2        8
@@ -444,7 +539,7 @@ public class TreeTraverse {
     public static void main(String[] args) {
         /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(3, 2, 9, null, null, 10, null, null, 8, null, 4)));*/
         /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(1, 2, 3, null, null, 4, null, null, 5, null, 6)));*/
-        final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(1, 2, 3, 5, null, null, null, 4)));
+        final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(2, 3, 4, null, null, 5, null, null, 3, 5)));
         /*System.out.println("前序遍历：  ");
         preOrderTravel(binaryTree);
         System.out.println("中序遍历：  ");
@@ -463,7 +558,8 @@ public class TreeTraverse {
         System.out.println("层序遍历递归实现：  " + new TreeTraverse().levelOrder2(binaryTree));*/
 
         final TreeTraverse treeTraverse = new TreeTraverse();
-        /*System.out.println(treeTraverse.maxDepth(binaryTree));*/
-        treeTraverse.flatten(binaryTree);
+        /*System.out.println(treeTraverse.maxDepth(binaryTree));
+        treeTraverse.flatten(binaryTree);*/
+        treeTraverse.isSymmetric(binaryTree);
     }
 }

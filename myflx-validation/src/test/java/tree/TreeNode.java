@@ -8,6 +8,8 @@ public class TreeNode {
     public TreeNode left;
     public TreeNode right;
     public int delta;
+    public boolean balanced;
+    public int notBalanceCount;
 
     public TreeNode(int data) {
         this.val = data;
