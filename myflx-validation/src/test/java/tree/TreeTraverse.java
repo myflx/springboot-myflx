@@ -2,12 +2,16 @@ package tree;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.TreeMap;
 
 /**
  * 对二叉树进行遍历
@@ -584,8 +588,8 @@ public class TreeTraverse {
     }
 
 
-    public TreeNode buildTree(int[] preorder, int[] inorder) {
-        if (preorder == null || inorder == null) {
+    public TreeNode buildTree2(int[] preorder, int[] inorder) {
+        if (preorder == null || inorder == null || preorder.length == 0 || inorder.length == 0) {
             return null;
         }
         if (preorder.length != inorder.length) {
@@ -594,35 +598,101 @@ public class TreeTraverse {
         if (preorder.length == 1) {
             return new TreeNode(preorder[0]);
         }
-        return buildTreeHelper(preorder, inorder, 0, preorder.length);
-    }
-
-    /**
-     * 1-4
-     * 3-4
-     *
-     * @param preorder
-     * @param inorder
-     * @param rootIndex
-     * @param endIndex
-     * @return
-     */
-    private TreeNode buildTreeHelper(int[] preorder, int[] inorder, int rootIndex, int endIndex) {
-        if (rootIndex >= endIndex) {
-            return null;
-        }
-        int rootVal = preorder[rootIndex];
-        final TreeNode root = new TreeNode(rootVal);
-        int leftEndIndex = rootIndex;
-        for (int i = 0; i < endIndex; i++) {
-            if (inorder[i] == rootVal) {
-                leftEndIndex = i;
+        int val = preorder[0];
+        TreeNode root = new TreeNode(val);
+        int s = 0;
+        for (int i = 0; i < inorder.length; i++) {
+            if (val == inorder[i]) {
+                s = i;
                 break;
             }
         }
-        root.left = buildTreeHelper(preorder, inorder, rootIndex + 1, leftEndIndex);
-        root.right = buildTreeHelper(preorder, inorder, leftEndIndex + 1, endIndex);
+        int[] lp = s > 0 ? new int[s] : null;
+        int[] rp = inorder.length - 1 - s > 0 ? new int[inorder.length - 1 - s] : null;
+        int[] li = s > 0 ? new int[s] : null;
+        int[] ri = inorder.length - 1 - s > 0 ? new int[inorder.length - 1 - s] : null;
+
+        if (lp != null) {
+            System.arraycopy(preorder, 1, lp, 0, lp.length);
+        }
+        if (rp != null) {
+            System.arraycopy(preorder, s + 1, rp, 0, rp.length);
+        }
+        if (li != null) {
+            System.arraycopy(inorder, 0, li, 0, li.length);
+        }
+        if (ri != null) {
+            System.arraycopy(inorder, s + 1, ri, 0, ri.length);
+        }
+        root.left = buildTree(lp, li);
+        root.right = buildTree(rp, ri);
         return root;
+    }
+
+
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        if (preorder == null || inorder == null || preorder.length == 0 || inorder.length == 0) {
+            return null;
+        }
+        if (preorder.length != inorder.length) {
+            return null;
+        }
+        if (preorder.length == 1) {
+            return new TreeNode(preorder[0]);
+        }
+        return buildTreeHelper(preorder, 0, preorder.length - 1, inorder, 0, inorder.length - 1);
+    }
+
+    public TreeNode buildTreeHelper(int[] preorder, int ps, int pe, int[] inorder, int is, int ie) {
+        if (ps > pe || is > ie || pe == preorder.length || ie == inorder.length) {
+            return null;
+        }
+        //偏移量
+        int delta = ps - is;
+        int val = preorder[ps];
+        TreeNode treeNode = new TreeNode(val);
+        if (pe == ps) {
+            return treeNode;
+        }
+        int midIndex = 0;
+        for (int i = is; i < inorder.length; i++) {
+            if (val == inorder[i]) {
+                midIndex = i;
+                break;
+            }
+        }
+        treeNode.left = buildTreeHelper(preorder, ps + 1, midIndex + delta, inorder, is, midIndex - 1);
+        treeNode.right = buildTreeHelper(preorder, midIndex + delta + 1, pe, inorder, midIndex + 1, ie);
+        return treeNode;
+    }
+
+
+    public void recoverTree(TreeNode root) {
+        List<TreeNode> orderStructure = new ArrayList<>();
+        TreeMap<Integer, Integer> mapping = new TreeMap<>();
+        midOrderTravel(root, orderStructure, mapping);
+        Iterator<Map.Entry<Integer, Integer>> iterator = mapping.entrySet().iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Integer> next = iterator.next();
+            if (next.getKey() != orderStructure.get(i).val) {
+                int tmp = orderStructure.get(i).val;
+                orderStructure.get(i).val = next.getKey();
+                orderStructure.get(next.getValue()-1).val = tmp;
+                return;
+            }
+            i++;
+        }
+    }
+
+    public static void midOrderTravel(TreeNode treeNode, List<TreeNode> list, TreeMap<Integer, Integer> mapping) {
+        if (treeNode == null) {
+            return;
+        }
+        midOrderTravel(treeNode.left, list, mapping);
+        list.add(treeNode);
+        mapping.put(treeNode.val, mapping.size() + 1);
+        midOrderTravel(treeNode.right, list, mapping);
     }
 
     /**
@@ -634,7 +704,7 @@ public class TreeTraverse {
     public static void main(String[] args) {
         /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(3, 2, 9, null, null, 10, null, null, 8, null, 4)));*/
         /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(1, 2, 3, null, null, 4, null, null, 5, null, 6)));*/
-        /*final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(2, 3, 4, null, null, 5, null, null, 3, 5)));*/
+        final TreeNode binaryTree = TreeTraverse.createBinaryTree(new LinkedList<>(Arrays.asList(3, 1, null, null, 4, 2)));
         /*System.out.println("前序遍历：  ");
         preOrderTravel(binaryTree);
         System.out.println("中序遍历：  ");
@@ -656,6 +726,7 @@ public class TreeTraverse {
         /*System.out.println(treeTraverse.maxDepth(binaryTree));
         treeTraverse.flatten(binaryTree);*/
         /*treeTraverse.isSymmetric(binaryTree);*/
-        final TreeNode node = treeTraverse.buildTree(new int[]{3, 9, 2, 20, 15, 7}, new int[]{2, 9, 3, 1, 20, 7});
+        /*final TreeNode node = treeTraverse.buildTree(new int[]{3, 9, 2, 8, 20, 15, 7}, new int[]{2, 9, 8, 3, 15, 20, 7});*/
+        treeTraverse.recoverTree(binaryTree);
     }
 }
