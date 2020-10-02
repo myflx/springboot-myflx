@@ -785,6 +785,85 @@ public class TreeTraverse {
         }
     }
 
+
+    /**
+     * 锯齿形层次遍历
+     *
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> zigzagLevelOrder2(TreeNode root) {
+        List<List<Integer>> ret = new ArrayList<>();
+        if (root == null) {
+            return ret;
+        }
+        ret.add(new ArrayList<>());
+        ret.get(0).add(root.val);
+        //order大于0代表正序小于0代表反序
+        int order = -1;
+        Queue<Stack<TreeNode>> queue = new ArrayDeque<>();
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        queue.offer(stack);
+        List<Integer> levelList = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            Stack<TreeNode> nextStack = new Stack<>();
+            Stack<TreeNode> poll = queue.poll();
+            while (!poll.isEmpty()) {
+                TreeNode pop = poll.pop();
+                if (order < 0) {
+                    if (pop.right != null) {
+                        nextStack.push(pop.right);
+                        levelList.add(pop.right.val);
+                    }
+                    if (pop.left != null) {
+                        nextStack.push(pop.left);
+                        levelList.add(pop.left.val);
+                    }
+                } else {
+                    if (pop.left != null) {
+                        nextStack.push(pop.left);
+                        levelList.add(pop.left.val);
+                    }
+                    if (pop.right != null) {
+                        levelList.add(pop.right.val);
+                        nextStack.push(pop.right);
+                    }
+                }
+            }
+            if (!levelList.isEmpty()) {
+                ret.add(new ArrayList<>(levelList));
+                levelList.clear();
+            }
+            if (!nextStack.isEmpty()) {
+                queue.offer(nextStack);
+            }
+            order = -order;
+        }
+        return ret;
+    }
+
+    /**
+     * 锯齿形层次遍历
+     * 层次遍历+按条件反转
+     *
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> ret = levelOrder2(root);
+        for (int i = 0; i < ret.size(); i++) {
+            List<Integer> list = ret.get(i);
+            if (i % 2 != 0) {
+                Collections.reverse(list);
+            }
+        }
+        return ret;
+    }
+
     /**
      * 3
      * 2        8
