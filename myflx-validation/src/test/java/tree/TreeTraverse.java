@@ -666,8 +666,39 @@ public class TreeTraverse {
         return treeNode;
     }
 
+    public void recoverTree3(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        TreeNode x = null;
+        TreeNode y = null;
+        TreeNode pred = null;
+        Stack<TreeNode> stack = new Stack<>();
+        while (!stack.isEmpty() || root != null) {
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.pop();
+            if (pred != null && pred.val > root.val) {
+                y = root;
+                if (x == null) {
+                    x = pred;
+                } else {
+                    break;
+                }
+            }
+            pred = root;
+            root = root.right;
+        }
+        if (x != null && y != null) {
+            int tmp = x.val;
+            x.val = y.val;
+            y.val = tmp;
+        }
+    }
 
-    public void recoverTree(TreeNode root) {
+    public void recoverTree2(TreeNode root) {
         List<TreeNode> orderStructure = new ArrayList<>();
         TreeMap<Integer, Integer> mapping = new TreeMap<>();
         midOrderTravel(root, orderStructure, mapping);
@@ -678,7 +709,7 @@ public class TreeTraverse {
             if (next.getKey() != orderStructure.get(i).val) {
                 int tmp = orderStructure.get(i).val;
                 orderStructure.get(i).val = next.getKey();
-                orderStructure.get(next.getValue()-1).val = tmp;
+                orderStructure.get(next.getValue() - 1).val = tmp;
                 return;
             }
             i++;
@@ -693,6 +724,65 @@ public class TreeTraverse {
         list.add(treeNode);
         mapping.put(treeNode.val, mapping.size() + 1);
         midOrderTravel(treeNode.right, list, mapping);
+    }
+
+    public void swap(TreeNode x, TreeNode y) {
+        int tmp = x.val;
+        x.val = y.val;
+        y.val = tmp;
+    }
+
+    public void recoverTree(TreeNode root) {
+        TreeNode x = null;
+        TreeNode y = null;
+        TreeNode pred = null;
+        TreeNode predecessor = null;
+        while (root != null) {
+            if (root.left != null) {
+                //分支①
+                //寻找前驱节点
+                predecessor = root.left;
+                while (predecessor.right != null && predecessor.right != root) {
+                    predecessor = predecessor.right;
+                }
+                if (predecessor.right == null) {
+                    //分支②
+                    //前驱节点关联到当前根节点
+                    predecessor.right = root;
+                    root = root.left;
+                } else {
+                    if (pred != null && root.val < pred.val) {
+                        y = root;
+                        if (x == null) {
+                            x = pred;
+                        }
+                    }
+                    pred = root;
+                    predecessor.right = null;
+                    root = root.right;
+                }
+            } else {
+                //分支③
+                //找到左边的叶子节点（左孩子为空，右孩子关联了父节点）
+                if (pred != null && pred.val > root.val) {
+                    y = root;
+                    if (x == null) {
+                        x = pred;
+                    } else {
+                        //不能break掉，否则存在的循环依赖就没法剔除
+                    }
+                }
+                pred = root;
+                //导致后续循环再次回到父节点的父节点进入分支①④
+                root = root.right;
+
+            }
+        }
+        if (x != null && y != null) {
+            int tmp = x.val;
+            x.val = y.val;
+            y.val = tmp;
+        }
     }
 
     /**
