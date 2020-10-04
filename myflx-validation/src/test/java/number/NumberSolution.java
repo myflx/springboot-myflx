@@ -1,6 +1,7 @@
 package number;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class NumberSolution {
@@ -46,7 +47,7 @@ public class NumberSolution {
         return out;
     }
 
-    public int singleNumber(int[] nums) {
+    public int singleNumber4(int[] nums) {
         if (nums == null) {
             throw new IllegalArgumentException();
         }
@@ -65,6 +66,22 @@ public class NumberSolution {
             return integerIntegerEntry.getKey();
         }
         return 0;
+    }
+
+    public int singleNumber(int[] nums) {
+        if (nums == null) {
+            throw new IllegalArgumentException();
+        }
+        if (nums.length == 0) {
+            return -1;
+        }
+        HashSet<Integer> set = new HashSet<>();
+        for (int num : nums) {
+            if (!set.add(num)) {
+                set.remove(num);
+            }
+        }
+        return set.iterator().next();
     }
 
     public static void main(String[] args) {

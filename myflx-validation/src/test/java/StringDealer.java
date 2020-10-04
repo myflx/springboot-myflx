@@ -2,10 +2,13 @@ public class StringDealer {
 
     public static void main(String[] args) {
         /*System.out.println(new StringDealer().longestCommonSubsequence("pmjghexybyrgzczy"
-                , "hafcdqbgncrcbihkd"));*/
+                , "hafcdqbgncrcbihkd"));
         System.out.println(new StringDealer().convert("LEE", 3).equals("LEE"));
         System.out.println(new StringDealer().convert("LEETCODEISHIRING", 3).equals("LCIRETOESIIGEDHN"));
-        System.out.println(new StringDealer().convert("LEETCODEISHIRING", 4).equals("LDREOEIIECIHNTSG"));
+        System.out.println(new StringDealer().convert("LEETCODEISHIRING", 4).equals("LDREOEIIECIHNTSG"));*/
+
+        String s = new StringDealer().reverseWords("Let's take LeetCode contest");
+        System.out.println("s'teL ekat edoCteeL tsetnoc".equals(s));
     }
 
     public int longestCommonSubsequence(String text1, String text2) {
@@ -63,5 +66,60 @@ public class StringDealer {
             }
         }
         return rev.toString();
+    }
+
+    public String reverseWords2(String s) {
+        String[] s1 = s.split(" ");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < s1.length; i++) {
+            if (i != 0) {
+                stringBuilder.append(" ");
+            }
+            stringBuilder.append(new StringBuilder(s1[i]).reverse());
+        }
+        return stringBuilder.toString();
+    }
+
+    public String reverseWords3(String s) {
+        if (s == null) {
+            return s;
+        }
+        int i = s.indexOf(" ");
+        if (i < 0) {
+            return new StringBuilder(s).reverse().toString();
+        }
+        return new StringBuilder(s.substring(0, i)).reverse().append(" ").append(reverseWords(s.substring(i + 1))).toString();
+    }
+
+    /**
+     * 原地不动的算法，
+     *
+     * @param s s
+     * @return str
+     */
+    public String reverseWords(String s) {
+        if (s == null) {
+            return s;
+        }
+        int preIndex = 0;
+        char[] chars = s.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i] == ' ') {
+                reverse(chars, preIndex, i - 1);
+                preIndex = i + 1;
+            }
+        }
+        reverse(chars, preIndex, s.length() - 1);
+        return new String(chars);
+    }
+
+    private void reverse(char[] chars, int preIndex, int endIndex) {
+        while (preIndex < endIndex) {
+            char tmp = chars[preIndex];
+            chars[preIndex] = chars[endIndex];
+            chars[endIndex] = tmp;
+            preIndex++;
+            endIndex--;
+        }
     }
 }
