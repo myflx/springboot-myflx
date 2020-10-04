@@ -122,4 +122,8 @@ public class StringDealer {
             endIndex--;
         }
     }
+
+    public void reverseString(char[] s) {
+        reverse(s, 0, s.length - 1);
+    }
 }
