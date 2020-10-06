@@ -35,9 +35,114 @@ public class BSTTree {
         return treeNode;
     }
 
+
+    /**
+     * 最近公共祖先
+     * 关键点：搜索树
+     * 一次循环
+     */
+    public TreeNode lowestCommonAncestor3(TreeNode root, TreeNode p, TreeNode q) {
+        if (p.left == q || p.right == q) {
+            return p;
+        }
+        if (q.left == p || q.right == p) {
+            return q;
+        }
+        if (p == root || q == root) {
+            return root;
+        }
+        TreeNode current = root;
+        while (current != null) {
+            if (current.val > p.val && current.val > q.val) {
+                current = current.left;
+                continue;
+            }
+            if (current.val < p.val && current.val < q.val) {
+                current = current.right;
+                continue;
+            }
+            if ((current.val < p.val && current.val > q.val) || (current.val > p.val && current.val < q.val)) {
+                return current;
+            }
+            if (current.val == p.val || current.val == q.val) {
+                return current;
+            }
+        }
+        return current;
+    }
+
+    /**
+     * 最近公共祖先
+     * 关键点：搜索树
+     * 二次循环
+     */
+    public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
+        if (p.left == q || p.right == q) {
+            return p;
+        }
+        if (q.left == p || q.right == p) {
+            return q;
+        }
+        if (p == root || q == root) {
+            return root;
+        }
+        List<TreeNode> path = new ArrayList<>();
+        TreeNode current = root;
+        while (current != null) {
+            path.add(current);
+            if (current.val == p.val) {
+                break;
+            }
+            if (current.val < p.val) {
+                current = current.right;
+            } else {
+                current = current.left;
+            }
+        }
+
+        List<TreeNode> path2 = new ArrayList<>();
+        current = root;
+        while (current != null) {
+            path2.add(current);
+            if (current.val == q.val) {
+                break;
+            }
+            if (current.val < q.val) {
+                current = current.right;
+            } else {
+                current = current.left;
+            }
+        }
+        TreeNode lca = null;
+        for (int i = 0; (i < path.size() && i < path2.size()); i++) {
+            if (path.get(i) == path2.get(i)) {
+                lca = path.get(i);
+            } else {
+                break;
+            }
+        }
+        return lca;
+    }
+
+
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (p.val == root.val) return p;
+        if (q.val == root.val) return q;
+        if (p.val > root.val && q.val > root.val) {
+            return lowestCommonAncestor(root.right, p, q);
+        } else if (p.val < root.val && q.val < root.val) {
+            return lowestCommonAncestor(root.left, p, q);
+        } else {
+            return root;
+        }
+    }
+
     public static void main(String[] args) {
-        TreeNode treeNode = BSTTree.sortedArrayToBST(new Integer[]{-10, -3, 0, 5, 9});
+        /*TreeNode treeNode = BSTTree.sortedArrayToBST(new Integer[]{-10, -3, 0, 5, 9});
         TreeNode treeNode1 = new BSTTree().balanceBST(treeNode);
-        System.out.println(treeNode1);
+        System.out.println(treeNode1);*/
+        TreeNode binaryTree = new TreeNode(6, new TreeNode(2, new TreeNode(0), new TreeNode(4, new TreeNode(3), new TreeNode(5))), new TreeNode(8, new TreeNode(7), new TreeNode(9)));
+        TreeNode treeNode = new BSTTree().lowestCommonAncestor(binaryTree, binaryTree.left.right.left, binaryTree.left.right.right);
+        System.out.println(treeNode.val == 4);
     }
 }
