@@ -153,11 +153,73 @@ public class NumberSolution {
         return null;
     }
 
+
+    /**
+     * 回文字符串-反转一半（完全反转的优化）
+     */
+    public boolean isPalindrome(int x) {
+        if (x <= 0 || (x >= 10 && x % 10 == 0)) {
+            return x == 0;
+        }
+        int rev = 0;
+        while (rev < x) {
+            rev = rev * 10 + x % 10;
+            x /= 10;
+        }
+        return x == rev || x == rev / 10;
+    }
+
+    public boolean isPalindrome4(int x) {
+        if (x <= 0) {
+            return x == 0;
+        }
+        if (x >= 10 && x % 10 == 0) {
+            return false;
+        }
+        String xStr = String.valueOf(x);
+        return xStr.equals(new StringBuffer(xStr).reverse().toString());
+    }
+
+    public boolean isPalindrome3(int x) {
+        int n = x;
+        if (x <= 0) {
+            return x == 0;
+        }
+        if (x >= 10 && x % 10 == 0) {
+            return false;
+        }
+        long m = 0;
+        while (n / 10 != 0) {
+            m = m * 10 + n % 10;
+            n /= 10;
+        }
+        m = m * 10 + n % 10;
+        return m - x == 0;
+    }
+
+    public boolean isPalindrome2(int x) {
+        int n = x;
+        if (x <= 0) {
+            return x == 0;
+        }
+        if (x >= 10 && x % 10 == 0) {
+            return false;
+        }
+        long m = 0;
+        while (n / 10 != 0) {
+            m = (m + n % 10) * 10;
+            n /= 10;
+        }
+        m += n;
+        return m - x == 0;
+    }
+
     public static void main(String[] args) {
         /*System.out.println(1 ^ 2);
         int i = new NumberSolution().singleNumber(new int[]{1, 4, 2, 2, 1});
-        System.out.println(i == 4);*/
+        System.out.println(i == 4);
         int i = new NumberSolution().majorityElement(new int[]{1, 4, 2, 2, 1, 1});
-        System.out.println(i == 1);
+        System.out.println(i == 1);*/
+        System.out.println(new NumberSolution().isPalindrome(19091));
     }
 }

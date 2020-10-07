@@ -1,5 +1,7 @@
 package linkedlist;
 
+import java.util.HashSet;
+
 public class Solution {
     private final ListNode l1 = buildLinkedList(new int[]{1, 2, 4, 5, 7, 8});
     private final ListNode l2 = buildLinkedList(new int[]{1, 3, 4, 6, 9, 12});
@@ -13,6 +15,46 @@ public class Solution {
 
         ListNode listNode = solution.mergeTwoLists(solution.l1, solution.l2);
         System.out.println(listNode);
+    }
+
+    /**
+     * 寻找相交节点
+     */
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == headB) {
+            return headA;
+        }
+        if (headA == null || headB == null) {
+            return null;
+        }
+        ListNode a = headA;
+        ListNode b = headB;
+        while (a != b) {
+            a = a == null ? headA : a.next;
+            b = b == null ? headB : b.next;
+        }
+        return a;
+    }
+
+    /**
+     * 寻找相交节点
+     */
+    public ListNode getIntersectionNode2(ListNode headA, ListNode headB) {
+        if (headA == headB) {
+            return headA;
+        }
+        HashSet<ListNode> set = new HashSet<>();
+        while (headA != null) {
+            set.add(headA);
+            headA = headA.next;
+        }
+        while (headB != null) {
+            if (set.contains(headB)) {
+                return headB;
+            }
+            headB = headB.next;
+        }
+        return null;
     }
 
     /**
