@@ -12,10 +12,15 @@ import java.util.TreeSet;
 public class NumberSolution {
 
     /**
+     * 凡是int都要注意边界问题
      * https://leetcode-cn.com/problems/contains-duplicate-iii/
      */
     public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        //TODO 考虑是否有好的方式解决边界值的溢出
+        //只能通过一个不可变的数据存储变量
         final boolean[] ma = {false};
+
+        //维护一个长度为k的BST,维护过程中树内值若满足t则返回true。
         final TreeSet<Integer> set = new TreeSet<>((o1, o2) -> {
             if (Math.abs((long) o1 - (long) o2) <= t) {
                 ma[0] = true;
@@ -44,6 +49,7 @@ public class NumberSolution {
                 if (!set.add(nums[j++])) {
                     return true;
                 }
+                //当添加第一个元素的时候个元素时候自身同自身做比较
                 if (set.size() == 1) {
                     ma[0] = false;
                 }
@@ -401,7 +407,7 @@ public class NumberSolution {
         System.out.println(7 & (4 - 1));
         System.out.println(7 & 1);
         System.out.println(~7);*/
-        System.out.println(new NumberSolution().containsNearbyAlmostDuplicate(new int[]{1, 2, 2, 3, 4, 5}, 3, 0));
+        System.out.println(new NumberSolution().containsNearbyAlmostDuplicate(new int[]{1, 2, 2, 3, 4, 5}, 1, 0));
     }
 
     public static void swap(int a, int b) {
