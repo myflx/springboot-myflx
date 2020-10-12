@@ -4,63 +4,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 不使用额外空间
+ * 不使用额外空间(实际使用相同列表也是占用了额外空间)
  */
-public class MinStack {
-    long min;
-    List<Long> list = new ArrayList<>();
+public class MinStack3 {
+    int min;
+    List<Integer> list = new ArrayList<>();
 
-    public MinStack() {
+    public MinStack3() {
 
     }
 
     public void push(int x) {
         if (list.size() == 0) {
             min = x;
-        }
-        list.add((long) x - min);
-        if (x < min) {
+        } else if (x <= min) {
+            list.add(min);
             min = x;
         }
+        list.add(x);
+
     }
 
     public void pop() {
         if (list.size() == 0) {
             return;
         }
-        Long pop = list.remove(list.size() - 1);
-        if (pop < 0) {
-            min -= pop;
+        Integer remove = list.remove(list.size() - 1);
+        if (remove == min && list.size() > 0) {
+            min = list.remove(list.size() - 1);
         }
-
     }
 
     public Integer top() {
-        if (list.size() == 0) {
-            return null;
-        }
-        Long pop = list.get(list.size() - 1);
-        if (pop < 0) {
-            //负值说明此位置存入的值是当前位置最后下一个负值之前的最小值
-            return Math.toIntExact(min);
-        }
-        return Math.toIntExact(pop + min);
+        return list.size() == 0 ? null : list.get(list.size() - 1);
     }
 
     public int getMin() {
-        return (int) min;
+        return min;
     }
 
     public static void main(String[] args) {
-        MinStack minStack = new MinStack();
+        MinStack3 minStack = new MinStack3();
         minStack.push(395);
         minStack.push(276);
-        minStack.top();
         minStack.push(29);
         minStack.push(-482);
-        minStack.top();
         minStack.pop();
-        minStack.top();
 
         minStack.push(-108);
         minStack.push(-251);

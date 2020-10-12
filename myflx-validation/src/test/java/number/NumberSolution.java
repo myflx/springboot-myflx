@@ -7,8 +7,164 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class NumberSolution {
+
+    /**
+     * https://leetcode-cn.com/problems/contains-duplicate-iii/
+     */
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        final boolean[] ma = {false};
+        final TreeSet<Integer> set = new TreeSet<>((o1, o2) -> {
+            if (Math.abs((long) o1 - (long) o2) <= t) {
+                ma[0] = true;
+            }
+            return o1 - o2;
+        });
+        int i = 0;
+        while (i < nums.length) {
+            if (!set.isEmpty()) {
+                if (ma[0]) {
+                    return true;
+                }
+                set.add(nums[i]);
+                if (ma[0]) {
+                    return true;
+                }
+                set.clear();
+            }
+            int next = i + k;
+            int j = i + 1;
+            while (j <= next && j < nums.length) {
+                if (Math.abs((long) nums[i] - (long) nums[j]) <= t) {
+                    return true;
+                }
+                //避免中间的数据被淹没了增加变量增加中间比较结果
+                if (!set.add(nums[j++])) {
+                    return true;
+                }
+                if (set.size() == 1) {
+                    ma[0] = false;
+                }
+                if (ma[0]) {
+                    return true;
+                }
+            }
+            i = j;
+        }
+        return false;
+    }
+
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < nums.length; ++i) {
+            if (set.contains(nums[i])) return true;
+            set.add(nums[i]);
+            if (set.size() > k) {
+                set.remove(nums[i - k]);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 错误数字
+     * <a href='https://leetcode-cn.com/problems/set-mismatch/'/>
+     */
+    public int[] findErrorNums(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return new int[0];
+        }
+        int[] ret = new int[2];
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int num : nums) {
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+        for (int i = 1; i <= nums.length; i++) {
+            if (map.containsKey(i)) {
+                if (map.get(i) == 2) {
+                    ret[0] = i;
+                }
+            } else {
+                ret[1] = i;
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 错误数字
+     * <a href='https://leetcode-cn.com/problems/set-mismatch/'/>
+     */
+    public int[] findErrorNums2(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return new int[0];
+        }
+        int[] ret = new int[2];
+        Arrays.sort(nums);
+        int firstMissPosition = 0;
+        for (int i = 0; i < nums.length; i++) {
+            //错误数
+            if (nums[i] != i + 1) {
+                ret[1] = i + 1;
+                if (firstMissPosition == 0) {
+                    firstMissPosition = i + 1;
+                }
+            }
+            if (i == nums.length - 1) {
+                continue;
+            }
+            //出现重复数
+            if (nums[i] == nums[i + 1]) {
+                ret[0] = nums[i];
+                //重复前出现错位数则为第一个错误数
+                if (ret[1] > 0) {
+                    ret[1] = firstMissPosition;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 有2个数字只出现一次，其他数字出现2次
+     */
+    public int[] singleNumberIII(int[] nums) {
+        int xor = 0;
+        for (int num : nums) {
+            //①目标数x^y的或运算。xy不相等xor位中肯定有某一位为1假设为第n位
+            //②因为是xor运算所以在第n位上xy的码必然不相同
+            xor ^= num;
+        }
+        //③找到最后一个1
+        int[] single = new int[2];
+        int diff = xor & (-xor);
+        //④将数组元素同diff与运算是否为0将数组一分为二同时x,y必然在不同数组中（理解①②）
+        //⑤两组数各自异或运算只剩下目标x/y
+        for (int num : nums) {
+            if ((diff & num) == 0) {
+                single[0] ^= num;
+            } else {
+                single[1] ^= num;
+            }
+        }
+        return single;
+    }
+
+    /**
+     * 其他数字出现3次
+     */
+    public int singleNumberII(int[] nums) {
+        int Y = 0, X = 0;
+        for (int num : nums) {
+            Y = ~X & (Y ^ num);
+            X = ~Y & (X ^ num);
+        }
+        return Y;
+    }
+
     public int singleNumber3(int[] nums) {
         int single = 0;
         for (int num : nums) {
@@ -219,7 +375,41 @@ public class NumberSolution {
         int i = new NumberSolution().singleNumber(new int[]{1, 4, 2, 2, 1});
         System.out.println(i == 4);
         int i = new NumberSolution().majorityElement(new int[]{1, 4, 2, 2, 1, 1});
-        System.out.println(i == 1);*/
+        System.out.println(i == 1);
         System.out.println(new NumberSolution().isPalindrome(19091));
+        System.out.println(new NumberSolution().singleNumberII(new int[]{2, 2, 2, 1}));
+
+        //10101110
+        String x = "10101110";
+        int integer = Integer.valueOf(x, 2);
+        int i = 0;
+        while (integer != 0) {
+            System.out.println((integer));
+            i++;
+            integer = integer & (integer - 1);
+        }
+        System.out.println("==============================>" + i);
+        System.out.println("==============================>" + integer);
+        System.out.println(3 & (-3));
+        System.out.println(Integer.toBinaryString(3));
+        System.out.println(Integer.toBinaryString(-3));
+        NumberSolution.swap(2, 3);
+        System.out.println(Integer.toBinaryString(-26));
+        System.out.println(Integer.toBinaryString(-26 >> 1));
+        System.out.println(-~6);
+        System.out.println(~-6);
+        System.out.println(7 & (4 - 1));
+        System.out.println(7 & 1);
+        System.out.println(~7);*/
+        System.out.println(new NumberSolution().containsNearbyAlmostDuplicate(new int[]{1, 2, 2, 3, 4, 5}, 3, 0));
+    }
+
+    public static void swap(int a, int b) {
+        System.out.println("交换前：a=" + a + ",b=" + b);
+        a = a ^ b;
+        b = a ^ b;
+        a = a ^ b;
+        System.out.println("交换后：a=" + a + ",b=" + b);
     }
 }
+

@@ -5,7 +5,33 @@ public class StockProblem {
         System.out.println(new StockProblem().maxProfit(new int[]{5, 4, 3, 2, 1}) == 0);
     }
 
+    /**
+     * 只交易一次
+     */
     public int maxProfit(int[] prices) {
+        if (prices == null || prices.length == 0) {
+            return 0;
+        }
+        int x = 0;
+        x = ~x;
+        int minPrice = prices[0];
+        int maxProfit = 0;
+        for (int i = 1; i < prices.length; i++) {
+            int profit = prices[i] - minPrice;
+            if (profit < 0) {
+                minPrice = prices[i];
+            } else if (profit > maxProfit) {
+                maxProfit = profit;
+            }
+        }
+        return maxProfit;
+    }
+
+
+    /**
+     * 允许多次交易
+     */
+    public int maxProfit2(int[] prices) {
         int maxprofit = 0;
         for (int i = 1; i < prices.length; i++) {
             if (prices[i] > prices[i - 1])
@@ -15,7 +41,7 @@ public class StockProblem {
     }
 
     /**
-     * [7,1,5,3,6,4]
+     * 允许多次交易
      */
     public int maxProfit1(int[] prices) {
         if (prices == null || prices.length == 0) {
