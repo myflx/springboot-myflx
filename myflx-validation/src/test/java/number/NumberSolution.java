@@ -1,5 +1,6 @@
 package number;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class NumberSolution {
+
 
     /**
      * 凡是int都要注意边界问题
@@ -170,6 +172,53 @@ public class NumberSolution {
         }
         return Y;
     }
+
+
+
+
+    /**
+     * 给定一个整数数组和一个整数 k，判断数组中是否存在两个不同的索引 i 和 j，使得 nums [i] = nums [j]，并且 i 和 j 的差的 绝对值 至多为 k。
+     * <p>
+     * 来源：力扣（LeetCode）
+     * 链接：https://leetcode-cn.com/problems/contains-duplicate-ii
+     * 著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。
+     */
+    public boolean containsNearbyDuplicate2(int[] nums, int k) {
+        if (nums == null || nums.length < 2) {
+            return false;
+        }
+        boolean rep = false;
+        final HashMap<Integer, List<Integer>> map = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            final List<Integer> integers = map.getOrDefault(nums[i], new ArrayList<>());
+            if (integers.size() > 0) {
+                rep = true;
+                for (Integer idx : integers) {
+                    if (i - idx <= k) {
+                        return true;
+                    }
+                }
+            }
+            integers.add(i);
+            map.put(nums[i], integers);
+        }
+        return rep;
+    }
+
+    public boolean containsDuplicate(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            return false;
+        }
+        final HashSet<Integer> hashSet = new HashSet<>();
+        for (int num : nums) {
+            if (!hashSet.add(num)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 
     public int singleNumber3(int[] nums) {
         int single = 0;

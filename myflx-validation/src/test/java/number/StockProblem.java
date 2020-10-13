@@ -2,7 +2,39 @@ package number;
 
 public class StockProblem {
     public static void main(String[] args) {
-        System.out.println(new StockProblem().maxProfit(new int[]{5, 4, 3, 2, 1}) == 0);
+        /*System.out.println(new StockProblem().maxProfit(new int[]{5, 4, 3, 2, 1}) == 0);*/
+        System.out.println(new StockProblem().maxSubArray(new int[]{1}));
+    }
+
+
+    /**
+     * <p>
+     * <p>
+     * 输入: [-2,1,-3,4,-1,2,1,-5,4]
+     * 输出: 6
+     * 解释: 连续子数组 [4,-1,2,1] 的和最大，为 6。
+     */
+    public int maxSubArray(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return Integer.MIN_VALUE;
+        }
+        if (nums.length == 1) {
+            return nums[0];
+        }
+        //确认要使用几个变量存值
+        //确认数据废弃条件
+        int max = nums[0];
+        int preMax = max;
+        for (int i = 1; i < nums.length; i++) {
+            max += nums[i];
+            if (max < nums[i]) {
+                max = nums[i];
+            }
+            if (max > preMax) {
+                preMax = max;
+            }
+        }
+        return preMax;
     }
 
     /**
