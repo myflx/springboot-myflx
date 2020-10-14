@@ -12,6 +12,29 @@ import java.util.TreeSet;
 
 public class NumberSolution {
 
+    /**
+     * 斐波那契数列n超过45就溢出了
+     * 假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+     *
+     * 每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+     *
+     * 注意：给定 n 是一个正整数。
+     *
+     * https://leetcode-cn.com/problems/climbing-stairs/
+     */
+    public int climbStairs(int n) {
+        if (n <= 0) {
+            return 0;
+        }
+        int[] methods = new int[2];
+        methods[0] = 2;
+        methods[1] = 1;
+        for (int i = 3; i <= n; i++) {
+            methods[i & 1] = methods[(i - 1) & 1] + methods[(i - 2) & 1];
+        }
+        return methods[n & 1];
+    }
+
 
     /**
      * 凡是int都要注意边界问题
@@ -455,8 +478,10 @@ public class NumberSolution {
         System.out.println(~-6);
         System.out.println(7 & (4 - 1));
         System.out.println(7 & 1);
-        System.out.println(~7);*/
-        System.out.println(new NumberSolution().containsNearbyAlmostDuplicate(new int[]{1, 2, 2, 3, 4, 5}, 1, 0));
+        System.out.println(~7);
+        System.out.println(new NumberSolution().containsNearbyAlmostDuplicate(new int[]{1, 2, 2, 3, 4, 5}, 1, 0));*/
+        System.out.println(new NumberSolution().climbStairs(4));
+
     }
 
     public static void swap(int a, int b) {

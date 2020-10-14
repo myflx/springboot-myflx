@@ -1,5 +1,6 @@
 package linkedlist;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Solution {
@@ -15,6 +16,39 @@ public class Solution {
 
         ListNode listNode = solution.mergeTwoLists(solution.l1, solution.l2);
         System.out.println(listNode);
+    }
+
+    public boolean hasCycle(ListNode head) {
+        if (head == null || head.next == null) {
+            return false;
+        }
+        ListNode fNode = head.next;
+        ListNode sNode = head;
+        while (fNode != sNode) {
+            if (fNode == null || fNode.next == null) {
+                return false;
+            }
+            sNode = sNode.next;
+            fNode = fNode.next.next;
+        }
+        return true;
+    }
+
+    /**
+     * 思路不要固化
+     * 不一定发现起点才证明有环，环上的任何一个节点都重复都能证明
+     */
+    public boolean hasCycle2(ListNode head) {
+        HashMap<ListNode,Integer> map = new HashMap<>();
+        int index = 0;
+        while (head != null) {
+            if (map.containsKey(head)){
+                return true;
+            }
+            map.put(head,index++);
+            head = head.next;
+        }
+        return false;
     }
 
     /**

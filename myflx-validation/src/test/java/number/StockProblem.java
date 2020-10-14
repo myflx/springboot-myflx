@@ -10,17 +10,17 @@ public class StockProblem {
         return getStatus(nums, 0, nums.length - 1).mSum;
     }
 
-    private Status getStatus(int[] nums, int l, int r) {
-        if (l == r && r < nums.length - 1) {
-            return new Status(nums[l], nums[l], nums[l], nums[l]);
+    private Status getStatus(int[] nums, int lIndex, int rIndex) {
+        if (lIndex == rIndex && rIndex < nums.length - 1) {
+            return new Status(nums[lIndex], nums[lIndex], nums[lIndex], nums[lIndex]);
         }
-        final Status lStatus = getStatus(nums, l, (l + r) / 2);
-        final Status rStatus = getStatus(nums, 1 + (l + r) / 2, r);
+        final Status l = getStatus(nums, lIndex, (lIndex + rIndex) / 2);
+        final Status r = getStatus(nums, 1 + (lIndex + rIndex) / 2, rIndex);
         return new Status(
-                lStatus.mSum,
-                rStatus.mSum,
-                Math.max(lStatus.mSum, rStatus.mSum),
-                lStatus.iSum + rStatus.iSum
+                Math.max(l.lSum, l.iSum + r.lSum),
+                Math.max(r.rSum, r.iSum + l.rSum),
+                Math.max(Math.max(l.mSum, r.mSum), l.rSum + r.lSum),
+                l.iSum + r.iSum
         );
     }
 
