@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.Stack;
+
 public class StringDealer {
 
     public static void main(String[] args) {
@@ -7,8 +10,132 @@ public class StringDealer {
         System.out.println(new StringDealer().convert("LEETCODEISHIRING", 3).equals("LCIRETOESIIGEDHN"));
         System.out.println(new StringDealer().convert("LEETCODEISHIRING", 4).equals("LDREOEIIECIHNTSG"));*/
 
-        String s = new StringDealer().reverseWords("Let's take LeetCode contest");
-        System.out.println("s'teL ekat edoCteeL tsetnoc".equals(s));
+        /*String s = new StringDealer().reverseWords("Let's take LeetCode contest");
+        System.out.println("s'teL ekat edoCteeL tsetnoc".equals(s));*/
+
+        /*//1-空串
+        System.out.println(new StringDealer().isValid(""));
+
+        //2-奇数长度
+        System.out.println(new StringDealer().isValid("{}]"));
+
+        //3中心对称
+        System.out.println(new StringDealer().isValid("([{}])"));
+
+        //4大包小
+        System.out.println(new StringDealer().isValid("([]{}())"));
+
+        //5多个同级
+        System.out.println(new StringDealer().isValid("()[]{}()"));
+
+        //6括号交叉
+        System.out.println(new StringDealer().isValid("([)]{}()"));*/
+
+        System.out.println(new StringDealer().longestCommonPrefix(new String[]{"dog", "racecar", "car"}));
+    }
+
+
+    public String longestCommonPrefix(String[] strs) {
+        //处理边界
+        if (strs == null || strs.length == 0) {
+            return "";
+        }
+        if (strs.length == 1) {
+            return strs[0];
+        }
+        String str = strs[0];
+        int count = str.length();
+        for (int i = 0; i < count; i++) {
+            char c = str.charAt(i);
+            for (int j = 1; j < strs.length; j++) {
+                if (i == strs[j].length() || c != strs[j].charAt(i)) {
+                    return str.substring(0, i);
+                }
+            }
+        }
+        return "";
+    }
+
+    /**
+     * 最长公共前缀
+     */
+    public String longestCommonPrefix2(String[] strs) {
+        //处理边界
+        if (strs == null || strs.length == 0) {
+            return "";
+        }
+        if (strs.length == 1) {
+            return strs[0];
+        }
+        StringBuilder ret = new StringBuilder();
+        //确定最小长度为循环边界
+        int len = Integer.MAX_VALUE;
+        for (String str : strs) {
+            if (str == null || str.length() == 0) {
+                return "";
+            }
+            len = Math.min(len, str.length());
+        }
+
+        //遍历，比较
+        l:
+        for (int i = 0; i < len; i++) {
+            Character character = null;
+            for (String str : strs) {
+                char c = str.charAt(i);
+                if (character == null) {
+                    character = c;
+                } else if (c != character) {
+                    break l;
+                }
+            }
+            ret.append(character);
+        }
+        return ret.toString();
+    }
+
+    /**
+     * ()[]{}
+     * ()[{}]
+     * [(){}]
+     * [{()}]
+     * 有效的括号
+     * https://leetcode-cn.com/problems/valid-parentheses/
+     */
+    static HashMap<Character, Character> MAP = new HashMap<>();
+
+    static {
+        MAP.put('{', '}');
+        MAP.put('(', ')');
+        MAP.put('[', ']');
+    }
+
+    public boolean isValid(String s) {
+        if (s == null || s.length() < 2) {
+            return false;
+        }
+        if ((s.length() & 1) == 1) {
+            return false;
+        }
+        char[] chars = s.toCharArray();
+        Stack<Character> stack = new Stack<>();
+        for (char c : chars) {
+            Character character = MAP.get(c);
+            if (character != null) {
+                stack.push(character);
+            } else {
+                if (!stack.isEmpty()) {
+                    if (stack.peek() == c) {
+                        stack.pop();
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+        return stack.isEmpty();
     }
 
     public int longestCommonSubsequence(String text1, String text2) {

@@ -1,15 +1,144 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
+import java.util.List;
 import java.util.PriorityQueue;
-import java.util.TreeSet;
 
 public class ArraySolution {
     public static void main(String[] args) {
         /*new ArraySolution().removeDuplicates(new int[]{1, 2, 2});*/
+/*
         new ArraySolution().merge(new int[]{1, 2, 2, 2, 3, 5, 6, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, 8,
                 new int[]{0, 4, 4, 4, 5, 8, 8, 9}, 8);
+*/
+        /*new ArraySolution().subsets(new int[]{1, 2, 3, 4, 5});*/
+        System.out.println(Arrays.toString(new ArraySolution().generateMatrix(2)));
     }
+
+
+    public int[][] generateMatrix(int n) {
+        int[][] ret = new int[n][n];
+        //信息表:0-第一维索引 1-第二维索引 2-索引位的值 3-上中心拐點（1-是，其他否） 4-中心扩展长度
+        int[] inf = new int[]{0, n - 1, n, 1, n - 1};
+        while (inf[4] >= 0) {
+            int l = 1;
+            int preVal = inf[2] - 1;
+            int postVal = inf[2] + 1;
+            int firstIndex = inf[0];
+            int secondIndex = inf[1];
+            ret[inf[0]][inf[1]] = inf[2];
+            //交換
+            inf[0] = inf[0] ^ inf[1];
+            inf[1] = inf[0] ^ inf[1];
+            inf[0] = inf[0] ^ inf[1];
+            //中心点前后赋值
+            if (inf[3] == 1) {
+                while (l++ <= inf[4]) {
+                    ret[inf[1]][--secondIndex] = preVal--;
+                    ret[++firstIndex][inf[0]] = postVal++;
+                }
+            } else {
+                while (l++ <= inf[4]) {
+                    ret[inf[1]][++secondIndex] = preVal--;
+                    ret[--firstIndex][inf[0]] = postVal++;
+                }
+                //进位
+                inf[0] ++;
+                inf[1] = n - 1 - inf[0];
+            }
+            //设置下个中心位
+            inf[2] = inf[2] + inf[4] * 2;
+            inf[3] = inf[3] == 1 ? 0 : 1;
+            inf[4]--;
+        }
+        return ret;
+    }
+
+    /**
+     * 给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+     * https://leetcode-cn.com/problems/subsets/
+     */
+    public List<List<Integer>> subsets(int[] nums) {
+        List<List<Integer>> ret = new ArrayList<>();
+        //无元素
+        ret.add(new ArrayList<>());
+        //单个元素
+        int nextStartIndex = 1;
+        List<List<Integer>> preIndex = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            ret.add(Collections.singletonList(nums[i]));
+            preIndex.add(Collections.singletonList(i));
+        }
+        //开始组合
+        int i = 2;
+        int len = nums.length;
+        while (i++ <= len && !preIndex.isEmpty()) {
+            List<List<Integer>> currentIndex = new ArrayList<>();
+            for (List<Integer> indexs : preIndex) {
+                //获取索引列表中的最后一个索引值
+                int nextIndex = indexs.get(indexs.size() - 1) + 1;
+                while (nextIndex < len) {
+                    //维护当前的索引值列表
+                    List<Integer> nextIndexList = new ArrayList<>(indexs);
+                    nextIndexList.add(nextIndex);
+                    currentIndex.add(nextIndexList);
+                    //维护输出列表
+                    List<Integer> numberList = new ArrayList<>();
+                    for (Integer integer : nextIndexList) {
+                        numberList.add(nums[integer]);
+                    }
+                    ret.add(numberList);
+                    nextIndex++;
+                }
+            }
+            preIndex = currentIndex;
+        }
+        return ret;
+    }
+
+    /**
+     * 给定一组不含重复元素的整数数组 nums，返回该数组所有可能的子集（幂集）。
+     * https://leetcode-cn.com/problems/subsets/
+     */
+    public List<List<Integer>> subsets2(int[] nums) {
+        List<List<Integer>> ret = new ArrayList<>();
+        //无元素
+        ret.add(new ArrayList<>());
+        //单个元素
+        int nextStartIndex = 1;
+        List<List<Integer>> preIndex = new ArrayList<>();
+        for (int i = 0; i < nums.length; i++) {
+            ret.add(Collections.singletonList(nums[i]));
+            preIndex.add(Collections.singletonList(i));
+        }
+        //开始组合
+        int i = 2;
+        int len = nums.length;
+        while (i++ <= len && !preIndex.isEmpty()) {
+            List<List<Integer>> currentIndex = new ArrayList<>();
+            for (List<Integer> indexs : preIndex) {
+                //获取索引列表中的最后一个索引值
+                int nextIndex = indexs.get(indexs.size() - 1) + 1;
+                while (nextIndex < len) {
+                    //维护当前的索引值列表
+                    List<Integer> nextIndexList = new ArrayList<>(indexs);
+                    nextIndexList.add(nextIndex);
+                    currentIndex.add(nextIndexList);
+                    //维护输出列表
+                    List<Integer> numberList = new ArrayList<>();
+                    for (Integer integer : nextIndexList) {
+                        numberList.add(nums[integer]);
+                    }
+                    ret.add(numberList);
+                    nextIndex++;
+                }
+            }
+            preIndex = currentIndex;
+        }
+        return ret;
+    }
+
 
     /**
      * 官方题解：O(m+n)原地不动其实是我第一种思路的逆向，相差的不远!!!!，确实秒！！！
@@ -33,6 +162,7 @@ public class ArraySolution {
             nums1[index--] = nums2[n];
         }
     }
+
     /**
      * 该解法借助外部数据结构
      * 个人问题:
@@ -53,7 +183,7 @@ public class ArraySolution {
             queue.add(nums2[j]);
         }
         int i = 0;
-        while (!queue.isEmpty()){
+        while (!queue.isEmpty()) {
             nums1[i++] = queue.poll();
         }
     }
@@ -98,11 +228,11 @@ public class ArraySolution {
      * 0, 0, 0, 1, 1, 1, 2
      * ↑        ↑
      * 0, 1, 0, 1, 1, 1, 2
-     *    ↑     ↑
+     * ↑     ↑
      * 0, 1, 2, 1, 1, 1, 2
-     *       ↑           ↑
-     *
-     *
+     * ↑           ↑
+     * <p>
+     * <p>
      * 0, 1, 1, 1, 2
      * ↑  ↑
      */
