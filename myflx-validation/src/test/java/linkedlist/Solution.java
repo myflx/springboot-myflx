@@ -59,6 +59,17 @@ public class Solution {
         return false;
     }
 
+
+    public ListNode detectCycle(ListNode head) {
+        HashSet<ListNode> set = new HashSet<>();
+        while (head != null){
+            if (!set.add(head)){
+                return head;
+            }
+            head = head.next;
+        }
+        return null;
+    }
     /**
      * 寻找相交节点
      */
