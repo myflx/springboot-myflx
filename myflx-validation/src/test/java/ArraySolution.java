@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.stream.Collectors;
 
 public class ArraySolution {
     public static void main(String[] args) {
@@ -13,7 +14,12 @@ public class ArraySolution {
                 new int[]{0, 4, 4, 4, 5, 8, 8, 9}, 8);
 */
         /*new ArraySolution().subsets(new int[]{1, 2, 3, 4, 5});*/
-        System.out.println(Arrays.toString(new ArraySolution().generateMatrix(2)));
+        /*System.out.println(Arrays.toString(new ArraySolution().generateMatrix(2)));*/
+
+        /*System.out.println(new ArraySolution().permute(new int[]{1, 2, 3, 4, 5}));*/
+        /*System.out.println(Arrays.toString(new ArraySolution().productExceptSelf(new int[]{1, 2, 3, 4, 5})));*/
+
+        System.out.println(new ArraySolution().findKthLargest(new int[]{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4));
     }
 
 
@@ -44,7 +50,7 @@ public class ArraySolution {
                     ret[--firstIndex][inf[0]] = postVal++;
                 }
                 //进位
-                inf[0] ++;
+                inf[0]++;
                 inf[1] = n - 1 - inf[0];
             }
             //设置下个中心位
@@ -250,5 +256,175 @@ public class ArraySolution {
             }
         }
         return i + 1;
+    }
+
+
+    /**
+     * 输入: [1,2,3]
+     * 输出:
+     * [
+     * [1,2,3],
+     * [1,3,2],
+     * [2,1,3],
+     * [2,3,1],
+     * [3,1,2],
+     * [3,2,1]
+     * ]
+     * <p>
+     * 给定一个 没有重复 数字的序列，返回其所有可能的全排列。
+     * https://leetcode-cn.com/problems/permutations/
+     */
+    public List<List<Integer>> permute(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return new ArrayList<>();
+        }
+        final List<List<Integer>> lists = permuteHelp(Arrays.stream(nums).boxed().collect(Collectors.toList()));
+        return lists;
+    }
+
+    public List<List<Integer>> permuteHelp(List<Integer> list) {
+        List<List<Integer>> ret = new ArrayList<>();
+        if (list == null || list.isEmpty()) {
+            return ret;
+        }
+        if (list.size() == 1) {
+            ret.add(list);
+        } else if (list.size() == 2) {
+            ret.add(list);
+            final List<Integer> integers = new ArrayList<>(list);
+            Collections.reverse(integers);
+            ret.add(integers);
+        } else {
+            for (int i = 0; i < list.size(); i++) {
+                final List<Integer> collect = new ArrayList<>(list);
+                final Integer remove = collect.remove(i);
+                final List<List<Integer>> lists = permuteHelp(collect);
+                for (List<Integer> integerList : lists) {
+                    List<Integer> item = new ArrayList<>();
+                    item.add(remove);
+                    item.addAll(integerList);
+                    ret.add(item);
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 除自身积
+     * 动态规划-左右积数组
+     * https://leetcode-cn.com/problems/product-of-array-except-self/
+     */
+    public int[] productExceptSelf(int[] nums) {
+        int length = nums.length;
+        int[] answer = new int[length];
+
+        // answer[i] 表示索引 i 左侧所有元素的乘积
+        // 因为索引为 '0' 的元素左侧没有元素， 所以 answer[0] = 1
+        answer[0] = 1;
+        for (int i = 1; i < length; i++) {
+            answer[i] = nums[i - 1] * answer[i - 1];
+        }
+
+        // R 为右侧所有元素的乘积
+        // 刚开始右边没有元素，所以 R = 1
+        int R = 1;
+        for (int i = length - 1; i >= 0; i--) {
+            // 对于索引 i，左边的乘积为 answer[i]，右边的乘积为 R
+            answer[i] = answer[i] * R;
+            // R 需要包含右边所有的乘积，所以计算下一个结果时需要将当前值乘到 R 上
+            R *= nums[i];
+        }
+        return answer;
+    }
+
+    /**
+     * 除自身积
+     * 二分法
+     * https://leetcode-cn.com/problems/product-of-array-except-self/
+     */
+    public int[] productExceptSelf2(int[] nums) {
+        int[] ret = new int[nums.length];
+        productExceptSelfHelp(nums, 0, nums.length - 1, ret);
+        return ret;
+    }
+
+    public void productExceptSelfHelp(int[] nums, int s, int e, int[] ret) {
+        //二分乘积数组
+        int[] products = new int[2];
+        Arrays.fill(products, 1);
+        //中间靠左的索引
+        int mid = (s + e) / 2;
+        for (int i = s; i <= e; i++) {
+            if (i <= mid) {
+                products[0] *= nums[i];
+            } else {
+                products[1] *= nums[i];
+            }
+        }
+        if (mid - s == 1) {
+            //两个元素交换相乘入组
+            ret[mid] = nums[s];
+            ret[s] = nums[mid];
+        } else if (mid - s == 0) {
+            //单元素直接取积
+            ret[s] = 1;
+        } else if (mid - s > 1) {
+            productExceptSelfHelp(nums, s, mid, ret);
+        }
+
+        if (e - mid - 1 == 1) {
+            //两个元素交换相乘入组
+            ret[mid + 1] = nums[e];
+            ret[e] = nums[mid + 1];
+        } else if (e - mid - 1 == 0) {
+            //单元素置为1
+            ret[e] = 1;
+        } else if (e - mid - 1 > 1) {
+            productExceptSelfHelp(nums, mid + 1, e, ret);
+        }
+
+        //处理完毕填充乘积
+        for (int i = s; i <= e; i++) {
+            if (i <= mid) {
+                ret[i] *= products[1];
+            } else {
+                ret[i] *= products[0];
+            }
+        }
+    }
+
+
+    /**
+     * 数组中的top kth
+     * https://leetcode-cn.com/problems/kth-largest-element-in-an-array/
+     */
+    public int findKthLargest(int[] nums, int k) {
+        if (nums == null || nums.length == 0 || k > nums.length) {
+            return -1;
+        }
+        if (nums.length == 1 && k == 1) {
+            return nums[0];
+        }
+        Arrays.sort(nums);
+        return nums[nums.length - k];
+    }
+
+    public int findKthLargest2(int[] nums, int k) {
+        if (nums == null || nums.length == 0 || k > nums.length) {
+            return -1;
+        }
+        if (nums.length == 1 && k == 1) {
+            return nums[0];
+        }
+        //优先队列长度为k
+        final PriorityQueue<Integer> queue = new PriorityQueue<>(k, Comparator.comparingInt(o -> o));
+        for (int num : nums) {
+            queue.offer(num);
+            if (queue.size() > k) {
+                queue.poll();
+            }
+        }
+        return queue.isEmpty() ? -1 : queue.poll();
     }
 }

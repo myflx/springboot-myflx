@@ -2,6 +2,7 @@ package tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class BSTTree {
     public TreeNode balanceBST(TreeNode root) {
@@ -135,6 +136,37 @@ public class BSTTree {
         } else {
             return root;
         }
+    }
+
+
+    /**
+     * 230. 二叉搜索树中第K小的元素
+     * https://leetcode-cn.com/problems/kth-smallest-element-in-a-bst/
+     */
+    public int kthSmallest(TreeNode root, int k) {
+        int val = root.val;
+        //中序遍历
+        final Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            final TreeNode peek = stack.peek();
+            if (peek.left != null) {
+                stack.push(peek.left);
+            } else {
+                while (!stack.isEmpty()) {
+                    TreeNode pop = stack.pop();
+                    val = pop.val;
+                    if (--k == 0) {
+                        return val;
+                    }
+                    if (pop.right != null) {
+                        stack.push(pop.right);
+                        break;
+                    }
+                }
+            }
+        }
+        return val;
     }
 
     public static void main(String[] args) {

@@ -1,21 +1,29 @@
 package linkedlist;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class Solution {
     private final ListNode l1 = buildLinkedList(new int[]{1, 2, 4, 5, 7, 8});
     private final ListNode l2 = buildLinkedList(new int[]{1, 3, 4, 6, 9, 12});
+    private final ListNode l3 = buildLinkedList(new int[]{1, 2, 3, 4});
+    private final ListNode l4 = buildLinkedList(new int[]{2, 1, 3, 7, 4});
 
     public static void main(String[] args) {
+        System.out.println(10000 ^ 100001);
         Solution solution = new Solution();
         /*solution.deleteNode(solution.baseNode.next.next);
         System.out.println(solution.baseNode);
         ListNode listNode = solution.reverseList(solution.baseNode);
         System.out.println(listNode);*/
 
-        ListNode listNode = solution.mergeTwoLists(solution.l1, solution.l2);
-        System.out.println(listNode);
+        /*ListNode listNode = solution.mergeTwoLists(solution.l1, solution.l2);
+        System.out.println(listNode);*/
+
+        System.out.println(solution.sortList(solution.l4));
     }
 
     public boolean hasCycle(ListNode head) {
@@ -39,13 +47,13 @@ public class Solution {
      * 不一定发现起点才证明有环，环上的任何一个节点都重复都能证明
      */
     public boolean hasCycle2(ListNode head) {
-        HashMap<ListNode,Integer> map = new HashMap<>();
+        HashMap<ListNode, Integer> map = new HashMap<>();
         int index = 0;
         while (head != null) {
-            if (map.containsKey(head)){
+            if (map.containsKey(head)) {
                 return true;
             }
-            map.put(head,index++);
+            map.put(head, index++);
             head = head.next;
         }
         return false;
@@ -272,6 +280,142 @@ public class Solution {
             }
         }
         return root;
+    }
+
+
+    /**
+     * 在 O(n log n) 时间复杂度和常数级空间复杂度下，对链表进行排序。
+     * https://leetcode-cn.com/problems/sort-list/
+     */
+    public ListNode sortList2(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode current = new ListNode(head.val);
+        ListNode last = current;
+        ListNode tmp = head.next;
+        while (tmp != null) {
+            if (tmp.val >= last.val) {
+                last.next = new ListNode(tmp.val);
+                last = last.next;
+            } else if (tmp.val < current.val) {
+                ListNode listNode = new ListNode(tmp.val);
+                listNode.next = current;
+                current = listNode;
+            } else {
+                ListNode listNode = current;
+                while (listNode.next.val < tmp.val) {
+                    listNode = listNode.next;
+                }
+                //listNode.next.val >= tmp
+                ListNode next = listNode.next;
+                listNode.next = new ListNode(tmp.val);
+                listNode.next.next = next;
+
+            }
+            tmp = tmp.next;
+        }
+        return current;
+    }
+
+
+    public static ListNode sortList3(ListNode head) {//2-1-3-7-4
+        ListNode dummyHead = new ListNode(Integer.MIN_VALUE);//d-2-1-3-7-4
+        dummyHead.next = head;//
+        // 先统计长度
+        int len = 0;
+        ListNode p = head;
+        while (p != null) {
+            len++;
+            p = p.next;
+        }
+        // 循环开始切割和合并
+        for (int i = 1; i < len; i <<= 1) {
+            ListNode cur = dummyHead.next;
+            ListNode tail = dummyHead;
+            while (cur != null) {
+                ListNode left = cur;
+                ListNode right = cut(left, i);
+                cur = cut(right, i);
+                tail.next = merge(left, right);
+                while (tail.next != null) {
+                    tail = tail.next;
+                }
+            }
+        }
+        return dummyHead.next;
+    }
+
+
+    public ListNode sortList(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode fast = head;
+        ListNode slow = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        //因为快节点比慢节点快一倍所以此时循环结束慢为链表的中间位置
+        ListNode right = slow.next;
+        slow.next = null;
+        return merge(sortList(head), sortList(right));
+    }
+
+    /**
+     * 借助数据排序最快
+     */
+    public static ListNode sortList4(ListNode head) {
+        List<Integer> list = new ArrayList<>();
+        ListNode p = head, q = head;
+        while (p != null) {
+            list.add(p.val);
+            p = p.next;
+        }
+        Collections.sort(list);
+        int i = 0;
+        while (q != null) {
+            q.val = list.get(i++);
+            q = q.next;
+        }
+        return head;
+    }
+
+
+    /**
+     * --n获取前一个
+     * n--获取后一个
+     * 切割前n个元素，返回后半部分
+     */
+    public static ListNode cut(ListNode head, int n) {
+        if (n <= 0) return head;
+        ListNode p = head;
+        while (--n > 0 && p != null) {
+            p = p.next;
+        }
+        if (p == null) return null;
+        ListNode next = p.next;
+        p.next = null;
+        return next;
+    }
+
+
+    public static ListNode merge(ListNode listNode1, ListNode listNode2) {
+        ListNode dummyHead = new ListNode(Integer.MIN_VALUE);
+        ListNode p = dummyHead;
+        while (listNode1 != null && listNode2 != null) {
+            if (listNode1.val < listNode2.val) {
+                p.next = listNode1;
+                listNode1 = listNode1.next;
+            } else {
+                p.next = listNode2;
+                listNode2 = listNode2.next;
+            }
+            p = p.next;
+        }
+        p.next = listNode1 == null ? listNode2 : listNode1;
+        return dummyHead.next;
     }
 }
 
