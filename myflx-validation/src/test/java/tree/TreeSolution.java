@@ -2,8 +2,15 @@ package tree;
 
 import java.util.HashSet;
 import java.util.Stack;
+import java.util.TreeSet;
 
 public class TreeSolution {
+    public static void main(String[] args) {
+        TreeNode treeNode = new TreeNode(2, new TreeNode(-1), null);
+        int i = new TreeSolution().maxPathSum(treeNode);
+        System.out.println(i);
+    }
+
 
     /**
      * 124. 二叉树中的最大路径和
@@ -14,25 +21,49 @@ public class TreeSolution {
      * https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/
      */
     public int maxPathSum(TreeNode root) {
-        if (root.left == null && root.right == null) {
-            return root.val;
+        TreeSet<Integer> reachableTree = new TreeSet<>();
+        TreeSet<Integer> unReachableTree = new TreeSet<>();
+        maxPathSumHelp(root, reachableTree, unReachableTree);
+        if (unReachableTree.isEmpty()) {
+            return reachableTree.last();
+        } else {
+            return Math.max(reachableTree.last(), unReachableTree.last());
         }
-        int preMax = root.val;
-        int max = preMax;
-        if (root.left != null) {
-            TreeNode left = root.left;
-            root.left = null;
-            int leftMax = maxPathSum(left);
-            int maxN = Math.max(leftMax, max);
-            int m = Math.max(maxN, leftMax + max);
+    }
 
+    public void maxPathSumHelp(TreeNode root, TreeSet<Integer> reachableTree, TreeSet<Integer> unReachableTree) {
+        if (root.left == null && root.right == null) {
+            reachableTree.add(root.val);
+            return;
         }
+        TreeSet<Integer> reachableTreeL = new TreeSet<>();
+        if (root.left != null) {
+            maxPathSumHelp(root.left, reachableTreeL, unReachableTree);
+        }
+        TreeSet<Integer> reachableTreeR = new TreeSet<>();
         if (root.right != null) {
-            TreeNode right = root.right;
-            root.right = null;
-            int rightMax = maxPathSum(right);
+            maxPathSumHelp(root.right, reachableTreeR, unReachableTree);
         }
-        return 1;
+        if (reachableTreeL.isEmpty() && !reachableTreeR.isEmpty()) {
+            unReachableTree.add(reachableTreeR.last());
+            reachableTree.add(reachableTreeR.last() + root.val);
+        } else if (!reachableTreeL.isEmpty() && reachableTreeR.isEmpty()) {
+            unReachableTree.add(reachableTreeL.last());
+            reachableTree.add(reachableTreeL.last() + root.val);
+        } else {
+            unReachableTree.add(reachableTreeL.last());
+            unReachableTree.add(reachableTreeR.last());
+            unReachableTree.add(reachableTreeL.last() + reachableTreeR.last() + root.val);
+            reachableTree.add(reachableTreeL.last() + root.val);
+            reachableTree.add(reachableTreeR.last() + root.val);
+        }
+        reachableTree.add(root.val);
+        while (unReachableTree.size() > 1) {
+            unReachableTree.pollFirst();
+        }
+        while (reachableTree.size() > 1) {
+            reachableTree.pollFirst();
+        }
     }
 
     /**
