@@ -1,5 +1,8 @@
 package power;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Solution {
     public boolean isPowerOfTwo2(int n) {
         if (n <= 0) {
@@ -58,17 +61,21 @@ public class Solution {
     }
 
     /**
-     * 获取任意一个整数的第一个不小于n 2的幂
-     * 最近2的幂
+     * 格雷编码
+     * https://leetcode-cn.com/problems/gray-code/
      */
-    public static int latestPowerOfTwo(int n) {
-        int m = n - 1;
-        m |= m >>> 1;
-        m |= m >>> 2;
-        m |= m >>> 4;
-        m |= m >>> 8;
-        m |= m >>> 16;
-        return m < 0 ? 1 : m + 1;
+    public List<Integer> grayCode(int n) {
+        List<Integer> list = new ArrayList<>();
+        if (n == 0) {
+            list.add(0);
+            return list;
+        }
+        final List<Integer> integers = grayCode(n - 1);
+        list.addAll(integers);
+        for (int i = 0; i < integers.size(); i++) {
+            list.add(integers.get(integers.size() - 1 - i) + (1 << (n - 1)));
+        }
+        return list;
     }
 
 
@@ -83,9 +90,10 @@ public class Solution {
         System.out.println(174 & 173);
         System.out.println(new Solution().hammingWeight(174));
         System.out.println(Integer.toBinaryString(Integer.MIN_VALUE));
-        System.out.println(Integer.toBinaryString(Integer.MAX_VALUE));*/
-//        10000000000000000000000000000000
-
-        System.out.println(Integer.toBinaryString(Solution.latestPowerOfTwo(Integer.MIN_VALUE/2 +1)));
+        System.out.println(Integer.toBinaryString(Integer.MAX_VALUE));
+        int max = 1 << 2;
+        System.out.println(Integer.MAX_VALUE);*/
+        final List<Integer> integers = new Solution().grayCode(4);
+        System.out.println(integers);
     }
 }
