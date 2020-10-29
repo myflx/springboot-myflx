@@ -2,13 +2,16 @@ package number;
 
 
 public class BigNumberSolution {
-    private static final char ZERO = '0';
+    private static final String ZERO = "0";
 
     /**
      * @param num1 "1232154651"
      * @param num2 "97579854"
      */
     public String multiply(String num1, String num2) {
+        if (ZERO.equals(num1) || ZERO.equals(num2)) {
+            return num2;
+        }
         StringBuilder max;
         StringBuilder min;
         if (num1.length() < num2.length()) {
@@ -58,16 +61,23 @@ public class BigNumberSolution {
                     j--;
                     k--;
                 }
+                while (pre > 0 && j >= 0) {
+                    String number = String.valueOf(Integer.parseInt(preNumber.substring(j, j + 1)) + pre);
+                    preNumber.setCharAt(j, number.charAt(number.length() - 1));
+                    pre = number.length() > 1 ? Integer.parseInt(number.substring(0, 1)) : 0;
+                    j--;
+                }
                 if (pre > 0) {
                     preNumber.insert(0, pre);
                 }
+
             }
         }
         return String.valueOf(preNumber);
     }
 
     public static void main(String[] args) {
-        String multiply = new BigNumberSolution().multiply("1232154651", "97579854");
+        String multiply = new BigNumberSolution().multiply("721", "140");
         System.out.println(multiply);
     }
 }
