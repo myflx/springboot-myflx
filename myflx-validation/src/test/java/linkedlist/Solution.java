@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class Solution {
-    private final ListNode l1 = buildLinkedList(new int[]{1, 2, 4, 5, 7, 8});
+    private final ListNode l1 = buildLinkedList(new int[]{1, 2, 3});
     private final ListNode l2 = buildLinkedList(new int[]{1, 3, 4, 6, 9, 12});
     private final ListNode l3 = buildLinkedList(new int[]{1, 2, 3, 4});
     private final ListNode l4 = buildLinkedList(new int[]{2, 1, 3, 7, 4});
@@ -23,7 +23,30 @@ public class Solution {
         /*ListNode listNode = solution.mergeTwoLists(solution.l1, solution.l2);
         System.out.println(listNode);*/
 
-        System.out.println(solution.sortList(solution.l4));
+        /*System.out.println(solution.sortList(solution.l4));*/
+        System.out.println(solution.rotateRight(solution.l1, 2000000000));
+    }
+
+
+    public ListNode rotateRight(ListNode head, int k) {
+        if (k == 0 || head == null || head.next == null) {
+            return head;
+        }
+        int len = 1;
+        ListNode p = head;
+        while (p.next != null) {
+            p = p.next;
+            len++;
+        }
+        p.next = head;
+        //计算迭代长度
+        len = (k / len + 1) * len - k;
+        while (len-- > 0) {
+            p = p.next;
+        }
+        ListNode q = p.next;
+        p.next = null;
+        return q;
     }
 
     public boolean hasCycle(ListNode head) {
@@ -62,14 +85,15 @@ public class Solution {
 
     public ListNode detectCycle(ListNode head) {
         HashSet<ListNode> set = new HashSet<>();
-        while (head != null){
-            if (!set.add(head)){
+        while (head != null) {
+            if (!set.add(head)) {
                 return head;
             }
             head = head.next;
         }
         return null;
     }
+
     /**
      * 寻找相交节点
      */

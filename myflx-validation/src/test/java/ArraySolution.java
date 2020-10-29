@@ -22,6 +22,23 @@ public class ArraySolution {
         System.out.println(new ArraySolution().findKthLargest(new int[]{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4));
     }
 
+    /**
+     * 螺旋数组
+     */
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> ret = new ArrayList<>();
+        if (matrix.length == 0 || matrix[0].length == 0) {
+            return ret;
+        }
+        int m = matrix[0].length;
+        int n = matrix.length;
+        int[] info = new int[]{0, m - 1, m - 1, n - 1, 1};
+        while (info[2] == 0 || info[3] == 0) {
+
+        }
+        return ret;
+    }
+
 
     public int[][] generateMatrix(int n) {
         int[][] ret = new int[n][n];
