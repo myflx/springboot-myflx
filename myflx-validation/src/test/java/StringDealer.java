@@ -31,9 +31,18 @@ public class StringDealer {
         //6括号交叉
         System.out.println(new StringDealer().isValid("([)]{}()"));*/
 
-        System.out.println(new StringDealer().longestCommonPrefix(new String[]{"dog", "racecar", "car"}));
+        /*System.out.println(new StringDealer().longestCommonPrefix(new String[]{"dog", "racecar", "car"}));*/
+        System.out.println((int) ' ');
+
+        System.out.println(new StringDealer().myAtoi(""));
+
     }
 
+
+    public int myAtoi(String s) {
+        StringBuilder builder = new StringBuilder(s);
+        return 0;
+    }
 
     public String longestCommonPrefix(String[] strs) {
         //处理边界
