@@ -20,7 +20,8 @@ public class ArraySolution {
         /*System.out.println(Arrays.toString(new ArraySolution().productExceptSelf(new int[]{1, 2, 3, 4, 5})));*/
 
         /*System.out.println(new ArraySolution().findKthLargest(new int[]{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4));*/
-        System.out.println(new ArraySolution().spiralOrder(new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}));
+        /*System.out.println(new ArraySolution().spiralOrder(new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}));*/
+        System.out.println(new ArraySolution().maxArea(new int[]{1, 8, 6, 20, 5, 4, 20, 3, 7}));
     }
 
     /**
@@ -466,5 +467,30 @@ public class ArraySolution {
             }
         }
         return queue.isEmpty() ? -1 : queue.poll();
+    }
+
+
+    public int maxArea(int[] height) {
+        if (height == null || height.length < 2) {
+            return 0;
+        }
+        int S = 0;
+        int i = 0, j = height.length - 1;
+        while (i < j) {
+            S = Math.max(S(height, i, j), S);
+            if (height[i] <= height[j]) {
+                i++;
+            } else if (height[i] > height[j]) {
+                j--;
+            }
+        }
+        return S;
+    }
+
+    /**
+     * 获取两挡板之间最大乘水量
+     */
+    public int S(int[] height, int i, int j) {
+        return (j - i) * Math.min(height[i], height[j]);
     }
 }
