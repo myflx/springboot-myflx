@@ -19,7 +19,8 @@ public class ArraySolution {
         /*System.out.println(new ArraySolution().permute(new int[]{1, 2, 3, 4, 5}));*/
         /*System.out.println(Arrays.toString(new ArraySolution().productExceptSelf(new int[]{1, 2, 3, 4, 5})));*/
 
-        System.out.println(new ArraySolution().findKthLargest(new int[]{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4));
+        /*System.out.println(new ArraySolution().findKthLargest(new int[]{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4));*/
+        System.out.println(new ArraySolution().spiralOrder(new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}));
     }
 
     /**
@@ -30,11 +31,33 @@ public class ArraySolution {
         if (matrix.length == 0 || matrix[0].length == 0) {
             return ret;
         }
-        int m = matrix[0].length;
-        int n = matrix.length;
-        int[] info = new int[]{0, m - 1, m - 1, n - 1, 1};
-        while (info[2] == 0 || info[3] == 0) {
+        int m = matrix.length;//第一维索引
+        int n = matrix[0].length;//第二维索引
+        //信息表:0-第一维索引 1-第二维索引 2-上拐點（1-是 -1否） 3-第一维度长度 4-第二维度长度
+        int[] info = new int[]{0, n - 1, 1, m, n};
+        while (info[3] > 1 || info[4] > 1) {
+            int revert = info[2];
+            int i = info[0];
+            int j = info[1];
+            if (revert > 0) {
+                int k = info[1] - info[4] + 1;
+                while (k < info[1]) ret.add(matrix[i][k++]);
+                ret.add(matrix[i][k]);
+                k = info[1] - info[3] + 1;
+                while (k < info[3]) ret.add(matrix[k++][j]);
+            } else {
+                int k = info[4] + info[1] - 1;
+                while (k > 0) ret.add(matrix[i][k--]);
+                ret.add(matrix[i][k]);
+                k = info[0] - info[3] + 1;
+                while (k > 0) ret.add(matrix[k--][j]);
+            }
 
+            info[0] = revert > 0 ? (info[3] - 1 + info[0]) : (info[0] - info[3] + 1);
+            info[1] = revert > 0 ? (info[1] + 1 - info[4]) : (info[4] - 1 + info[1]);
+            info[2] *= -1;
+            info[3] -= 1;
+            info[4] -= 1;
         }
         return ret;
     }
