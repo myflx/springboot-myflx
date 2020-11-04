@@ -452,5 +452,47 @@ public class Solution {
         p.next = listNode1 == null ? listNode2 : listNode1;
         return dummyHead.next;
     }
+
+    public ListNode mergeKLists2(ListNode[] lists) {
+        ListNode ans = null;
+        for (int i = 0; i < lists.length; ++i) {
+            ans = mergeTwoLists(ans, lists[i]);
+        }
+        return ans;
+    }
+
+    public ListNode mergeTwoLists22(ListNode l1, ListNode l2) {
+        //哑结点
+        ListNode ns = new ListNode(-1);
+        ListNode nsl = ns;//始终指向最后一个节点
+        while (l1 != null && l2 != null) {
+            if (l1.val > l2.val) {
+                nsl.next = l2;
+                l2 = l2.next;
+            } else {
+                nsl.next = l1;
+                l1 = l1.next;
+            }
+            nsl = nsl.next;
+        }
+        //统一处理迭代中非空逻辑排除出来的节点
+        nsl.next = l1 == null ? l2 : l1;
+        return ns.next;
+    }
+
+
+    public ListNode mergeKLists(ListNode[] lists) {
+        return mergeKListsHelp(lists, 0, lists.length - 1);
+    }
+
+    public ListNode mergeKListsHelp(ListNode[] lists, int s, int e) {
+        if (s == e) {
+            return lists[s];
+        }
+        if (s > e) {
+            return null;
+        }
+        return mergeTwoLists(mergeKListsHelp(lists, s, (s + e) / 2), mergeKListsHelp(lists, (s + e) / 2 + 1, e));
+    }
 }
 
