@@ -1,5 +1,8 @@
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 public class StringDealer {
 
@@ -31,7 +34,10 @@ public class StringDealer {
         //6括号交叉
         System.out.println(new StringDealer().isValid("([)]{}()"));*/
 
-        System.out.println(new StringDealer().longestCommonPrefix(new String[]{"dog", "racecar", "car"}));
+        /*System.out.println(new StringDealer().longestCommonPrefix(new String[]{"dog", "racecar", "car"}));*/
+
+        System.out.println(new StringDealer().myAtoi("+-12"));
+
     }
 
 
@@ -252,5 +258,66 @@ public class StringDealer {
 
     public void reverseString(char[] s) {
         reverse(s, 0, s.length - 1);
+    }
+
+
+    final Pattern compile2 = Pattern.compile("^[\\+\\-]?\\d+");
+    final Pattern compile = Pattern.compile("^[0-9]*$");
+
+
+    final List<Character> characters = Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+
+    /**
+     * ascii to integer
+     */
+    public int myAtoi(String s) {
+        if (s == null || s.length() == 0) {
+            return 0;
+        }
+        final StringBuilder builder = new StringBuilder(s.trim());
+        if (builder.length() == 0) {
+            return 0;
+        }
+        boolean prefix = false;
+        int i = 0;
+        final char charAt = builder.charAt(i);
+        if (charAt == '-') {
+            prefix = true;
+            builder.deleteCharAt(i);
+        } else if (charAt == '+') {
+            builder.deleteCharAt(i);
+        } else if (!isNumber(charAt)) {
+            return 0;
+        }
+        while (i < builder.length()) {
+            final char c = builder.charAt(i);
+            if (!isNumber(c)) {
+                break;
+            }
+            i++;
+        }
+        if (i < builder.length()) {
+            builder.delete(i, builder.length());
+        }
+        if (builder.length() == 0) {
+            return 0;
+        }
+        if (prefix) {
+            builder.insert(0, '-');
+        }
+        try {
+            return Integer.valueOf(builder.toString());
+        } catch (NumberFormatException e) {
+            return prefix ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        }
+    }
+
+    public boolean isNumber(char c) {
+        try {
+            Integer.valueOf(Character.toString(c));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -493,4 +493,41 @@ public class ArraySolution {
     public int S(int[] height, int i, int j) {
         return (j - i) * Math.min(height[i], height[j]);
     }
+
+
+    /**
+     * 最近三数只和
+     */
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int n = nums.length;
+        int best = 10000;
+        for (int i = 0; i < nums.length; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+            int j = i + 1, k = n - 1;
+            while (j < k) {
+                int sum = nums[i] + nums[j] + nums[k];
+                if (sum == target) {
+                    return target;
+                }
+                if (Math.abs(sum - target) < Math.abs(target - best)) {
+                    best = sum;
+                }
+                if (sum > target) {
+                    k--;
+                    while (k > j && nums[k] == nums[k + 1]) {
+                        k--;
+                    }
+                } else {
+                    j++;
+                    while (k > j && nums[j] == nums[j - 1]) {
+                        j++;
+                    }
+                }
+            }
+        }
+        return best;
+    }
 }
