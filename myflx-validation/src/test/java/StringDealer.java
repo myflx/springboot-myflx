@@ -38,6 +38,11 @@ public class StringDealer {
 
         System.out.println(new StringDealer().myAtoi("+-12"));
 
+        /*System.out.println(new StringDealer().longestCommonPrefix(new String[]{"dog", "racecar", "car"}));*/
+        System.out.println((int) ' ');
+
+        System.out.println(new StringDealer().myAtoi(""));
+
     }
 
 

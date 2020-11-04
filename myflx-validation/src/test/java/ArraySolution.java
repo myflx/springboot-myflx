@@ -21,10 +21,19 @@ public class ArraySolution {
 
         /*System.out.println(new ArraySolution().findKthLargest(new int[]{3, 2, 3, 1, 2, 4, 5, 5, 6}, 4));*/
         /*System.out.println(new ArraySolution().spiralOrder(new int[][]{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}));*/
-        System.out.println(new ArraySolution().maxArea(new int[]{1, 8, 6, 20, 5, 4, 20, 3, 7}));
+        /*System.out.println(new ArraySolution().maxArea(new int[]{1, 8, 6, 20, 5, 4, 20, 3, 7}));*/
+        /*System.out.println(new ArraySolution().search(new int[]{14, 15, 16, 17, 0, 1, 2}, 0));*/
+        System.out.println(new ArraySolution().findMedianSortedArrays(new int[]{1, 3}, new int[]{2}));
     }
 
     /**
+     * {1, 2, 3},
+     * {4, 5, 6},
+     * {7, 8, 9}
+     * <p>
+     * {{1,2,3,4},{5,6,7,8},{9,10,11,12}}
+     * <p>
+     * /**
      * 螺旋数组
      */
     public List<Integer> spiralOrder(int[][] matrix) {
@@ -32,33 +41,36 @@ public class ArraySolution {
         if (matrix.length == 0 || matrix[0].length == 0) {
             return ret;
         }
-        int m = matrix.length;//第一维索引
-        int n = matrix[0].length;//第二维索引
-        //信息表:0-第一维索引 1-第二维索引 2-上拐點（1-是 -1否） 3-第一维度长度 4-第二维度长度
-        int[] info = new int[]{0, n - 1, 1, m, n};
-        while (info[3] > 1 || info[4] > 1) {
-            int revert = info[2];
-            int i = info[0];
-            int j = info[1];
-            if (revert > 0) {
-                int k = info[1] - info[4] + 1;
-                while (k < info[1]) ret.add(matrix[i][k++]);
-                ret.add(matrix[i][k]);
-                k = info[1] - info[3] + 1;
-                while (k < info[3]) ret.add(matrix[k++][j]);
-            } else {
-                int k = info[4] + info[1] - 1;
-                while (k > 0) ret.add(matrix[i][k--]);
-                ret.add(matrix[i][k]);
-                k = info[0] - info[3] + 1;
-                while (k > 0) ret.add(matrix[k--][j]);
-            }
+        int m = matrix.length;//行
+        int n = matrix[0].length;//列
+        // 1维  2维  1维长度 2维长度 上拐点
+        int[] info = new int[]{0, n - 1, m, n, 1};
+//        int[] info = new int[]{m - 1, 0, m - 1, n - 1, -1};
 
-            info[0] = revert > 0 ? (info[3] - 1 + info[0]) : (info[0] - info[3] + 1);
-            info[1] = revert > 0 ? (info[1] + 1 - info[4]) : (info[4] - 1 + info[1]);
-            info[2] *= -1;
+        while ((info[2] >= 1 || info[3] >= 1)) {
+            if (info[4] > 0) {
+                int k = info[1] - info[3] + 1;
+                while (k <= info[1]) ret.add(matrix[info[0]][k++]);
+                k = info[0] + 1;
+                while (k <= info[2] + info[0] - 1) ret.add(matrix[k++][info[1]]);
+            } else {
+                int k = info[3] + info[1] - 1;
+                while (k >= info[1]) ret.add(matrix[info[0]][k--]);
+
+                k = info[0] - 1;
+                while (k >= info[0] - info[2] + 1) ret.add(matrix[k--][info[1]]);
+            }
+            //计算下个拐点
+            //=======================================小变大:大变小==================
+            info[0] = info[4] > 0 ? info[2] + info[0] - 1 : info[0] - info[2] + 1;
+            //=======================================大变小:小变大==================
+            info[1] = info[4] > 0 ? info[1] - info[3] + 1 : info[1] + info[3] - 1;
+            info[2] -= 1;
             info[3] -= 1;
-            info[4] -= 1;
+            info[4] *= -1;
+            if (info[2] == 0 || info[3] == 0) {
+                break;
+            }
         }
         return ret;
     }
@@ -494,7 +506,47 @@ public class ArraySolution {
         return (j - i) * Math.min(height[i], height[j]);
     }
 
+    public int search(int[] nums, int target) {
+        if (nums == null || nums.length < 1) {
+            return -1;
+        }
+        int i = 0;
+        int j = nums.length - 1;
+        while (i <= j && nums[i] <= target) {
+            if (nums[i] == target) {
+                return i;
+            }
+            if (i < j && nums[i] > nums[i + 1]) {
+                break;
+            }
+            i++;
+        }
+        if (i == 0) {
+            i = j;
+            while (i > 0 && nums[i] >= target) {
+                if (nums[i] == target) {
+                    return i;
+                }
+                if (nums[i] < nums[i - 1]) {
+                    break;
+                }
+                i--;
+            }
+        }
+        return -1;
+    }
 
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int[] arr = new int[nums1.length + nums2.length];
+        System.arraycopy(nums1, 0, arr, 0, nums1.length);
+        System.arraycopy(nums2, 0, arr, nums1.length, nums2.length);
+        Arrays.sort(arr);
+        if (arr.length % 2 == 1) {
+            return arr[arr.length / 2];
+        } else {
+            return (double) (arr[arr.length / 2] + arr[(arr.length - 1) / 2]) / 2;
+        }
+    }
     /**
      * 最近三数只和
      */
