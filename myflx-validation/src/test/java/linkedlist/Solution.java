@@ -494,5 +494,32 @@ public class Solution {
         }
         return mergeTwoLists(mergeKListsHelp(lists, s, (s + e) / 2), mergeKListsHelp(lists, (s + e) / 2 + 1, e));
     }
+
+    /**
+     * 返回倒数第k个节点
+     */
+    public int kthToLast(ListNode head, int k) {
+        int count = 1;
+        ListNode c = head;
+        while (c.next != null) {
+            c = c.next;
+            count++;
+        }
+        c.next = head;
+        count = count + 1 - k;
+        while (count-- > 0) {
+            c = c.next;
+        }
+        return c.val;
+    }
+
+    public int kthToLast100(ListNode head, int k) {
+        List<ListNode> list = new ArrayList<>();
+        while (head != null) {
+            list.add(head);
+            head = head.next;
+        }
+        return list.get(list.size() - k).val;
+    }
 }
 
