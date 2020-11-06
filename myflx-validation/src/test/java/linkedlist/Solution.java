@@ -1,32 +1,150 @@
 package linkedlist;
 
+import com.google.common.collect.Lists;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 public class Solution {
+    private final ListNode baseNode = buildLinkedList(new int[]{1, 0, 1});
     private final ListNode l1 = buildLinkedList(new int[]{1, 2, 3});
     private final ListNode l2 = buildLinkedList(new int[]{1, 3, 4, 6, 9, 12});
     private final ListNode l3 = buildLinkedList(new int[]{1, 2, 3, 4});
     private final ListNode l4 = buildLinkedList(new int[]{2, 1, 3, 7, 4});
+
 
     public static void main(String[] args) {
         System.out.println(10000 ^ 100001);
         Solution solution = new Solution();
         /*solution.deleteNode(solution.baseNode.next.next);
         System.out.println(solution.baseNode);*/
-        ListNode listNode = solution.reverseList99(solution.baseNode);
+        int listNode = solution.getDecimalValue(solution.baseNode);
         System.out.println(listNode);
 
         /*ListNode listNode = solution.mergeTwoLists(solution.l1, solution.l2);
         System.out.println(listNode);*/
 
         /*System.out.println(solution.sortList(solution.l4));*/
-        System.out.println(solution.rotateRight(solution.l1, 2000000000));
+        /*System.out.println(solution.rotateRight(solution.l1, 2000000000));*/
     }
 
+    public int[] reversePrint(ListNode head) {
+        if (head == null) return null;
+        int count = 10000;
+        int[] list = new int[10000];
+        while (head != null) {
+            count--;
+            list[count] = head.val;
+            head = head.next;
+        }
+
+        return list;
+    }
+
+    public int getDecimalValue(ListNode head) {
+        if (head == null) return 0;
+        int ret = 0;
+        while (head != null) {
+            ret = (ret << 1) + head.val;
+            head = head.next;
+        }
+        return ret;
+    }
+
+    public int getDecimalValue2(ListNode head) {
+        if (head == null) return 0;
+        StringBuilder sb = new StringBuilder();
+        while (head != null) {
+            sb.append(head.val);
+            head = head.next;
+        }
+        return Integer.parseInt(sb.toString(), 2);
+    }
+
+
+    public ListNode getKthFromEnd(ListNode head, int k) {
+        if (head == null) return null;
+        ListNode h = head;
+        int count = 0;
+        while (head != null) {
+            head = head.next;
+            count++;
+        }
+        count = count - k;
+        while (count-- > 0) {
+            h = h.next;
+        }
+        return h;
+    }
+
+    /**
+     * 返回中间节点
+     */
+    public ListNode middleNode(ListNode head) {
+        if (head == null || head.next == null) return null;
+        List<ListNode> list = new ArrayList<>();
+        while (head != null) {
+            list.add(head);
+            head = head.next;
+        }
+        return list.get(list.size() / 2);
+    }
+
+    public ListNode removeDuplicateNodes(ListNode head) {
+        if (head == null) return null;
+        HashSet<Integer> set = new HashSet<>();
+        set.add(head.val);
+        ListNode dummy = new ListNode(-1, head);
+        ListNode pre = head;
+        ListNode h = head.next;
+        while (h != null) {
+            if (!set.add(h.val)) {
+                h = h.next;
+                continue;
+            }
+            pre.next = h;
+            pre = pre.next;
+            h = h.next;
+        }
+        pre.next = null;
+        return dummy.next;
+    }
+
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null) return null;
+        ListNode dummy = new ListNode(-1, head);
+        ListNode pre = head;
+        ListNode h = head.next;
+        while (h != null) {
+            if (h.val != pre.val) {
+                pre.next = h;
+                pre = pre.next;
+            }
+            h = h.next;
+        }
+        pre.next = null;
+        return dummy.next;
+    }
+
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode dummy = new ListNode(-1);
+        ListNode pre = dummy;
+        ListNode h = head;
+        while (h != null) {
+            ListNode next = h.next;
+            h.next = null;
+            if (h.val != val) {
+                pre.next = h;
+                pre = pre.next;
+            }
+            h = next;
+        }
+        return dummy.next;
+    }
 
     public ListNode reverseList99(ListNode head) {
         if (head == null) return null;
@@ -317,8 +435,6 @@ public class Solution {
         }
         return node;
     }
-
-    private final ListNode baseNode = buildLinkedList(new int[]{4, 5, 1, 9});
 
     public void deleteNode(ListNode node) {
         if (node == null) {
