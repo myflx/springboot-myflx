@@ -16,9 +16,9 @@ public class Solution {
         System.out.println(10000 ^ 100001);
         Solution solution = new Solution();
         /*solution.deleteNode(solution.baseNode.next.next);
-        System.out.println(solution.baseNode);
-        ListNode listNode = solution.reverseList(solution.baseNode);
-        System.out.println(listNode);*/
+        System.out.println(solution.baseNode);*/
+        ListNode listNode = solution.reverseList99(solution.baseNode);
+        System.out.println(listNode);
 
         /*ListNode listNode = solution.mergeTwoLists(solution.l1, solution.l2);
         System.out.println(listNode);*/
@@ -27,6 +27,34 @@ public class Solution {
         System.out.println(solution.rotateRight(solution.l1, 2000000000));
     }
 
+
+    public ListNode reverseList99(ListNode head) {
+        if (head == null) return null;
+        ListNode ret = null;
+        while (head != null) {
+            ListNode next = head.next;
+            head.next = ret;
+            ret = head;
+            head = next;
+        }
+        return ret;
+    }
+
+
+    public ListNode deleteNode(ListNode head, int val) {
+        if (head == null) return null;
+        if (head.val == val) return head.next;
+        ListNode pre = head;
+        ListNode n = head;
+        while (n != null && n.val != val) {
+            pre = n;
+            n = n.next;
+        }
+        if (n != null) {
+            pre.next = n.next;
+        }
+        return head;
+    }
 
     public ListNode rotateRight(ListNode head, int k) {
         if (k == 0 || head == null || head.next == null) {
