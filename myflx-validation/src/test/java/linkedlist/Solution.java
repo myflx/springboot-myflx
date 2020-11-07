@@ -1,7 +1,5 @@
 package linkedlist;
 
-import com.google.common.collect.Lists;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,8 +20,8 @@ public class Solution {
         Solution solution = new Solution();
         /*solution.deleteNode(solution.baseNode.next.next);
         System.out.println(solution.baseNode);*/
-        int listNode = solution.getDecimalValue(solution.baseNode);
-        System.out.println(listNode);
+        final int[] ints = solution.reversePrint(solution.l1);
+        System.out.println(Arrays.toString(ints));
 
         /*ListNode listNode = solution.mergeTwoLists(solution.l1, solution.l2);
         System.out.println(listNode);*/
@@ -32,17 +30,19 @@ public class Solution {
         /*System.out.println(solution.rotateRight(solution.l1, 2000000000));*/
     }
 
+
+    int[] list = new int[10000];
     public int[] reversePrint(ListNode head) {
         if (head == null) return null;
-        int count = 10000;
-        int[] list = new int[10000];
+        int count = 0;
         while (head != null) {
-            count--;
-            list[count] = head.val;
+            count++;
+            list[list.length - count] = head.val;
             head = head.next;
         }
-
-        return list;
+        int[] ret = new int[count];
+        System.arraycopy(list, 10000 - count, ret, 0, ret.length);
+        return ret;
     }
 
     public int getDecimalValue(ListNode head) {
@@ -130,7 +130,7 @@ public class Solution {
         return dummy.next;
     }
 
-    public ListNode removeElements(ListNode head, int val) {
+    public ListNode removeElements2(ListNode head, int val) {
         ListNode dummy = new ListNode(-1);
         ListNode pre = dummy;
         ListNode h = head;
@@ -172,6 +172,22 @@ public class Solution {
             pre.next = n.next;
         }
         return head;
+    }
+
+    public ListNode removeElements(ListNode head, int val) {
+        if (head == null) return null;
+        ListNode dummyNode = new ListNode(-1);
+        ListNode pre = dummyNode;
+        while (head != null) {
+            ListNode next = head.next;
+            head.next = null;
+            if (head.val != val) {
+                pre.next = head;
+                pre = pre.next;
+            }
+            head = next;
+        }
+        return dummyNode.next;
     }
 
     public ListNode rotateRight(ListNode head, int k) {
