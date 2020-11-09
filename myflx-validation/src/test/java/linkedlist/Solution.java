@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Solution {
     private final ListNode baseNode = buildLinkedList(new int[]{1, 0, 1});
-    private final ListNode l1 = buildLinkedList(new int[]{1, 2, 3, 3, 4, 4, 4});
+    private final ListNode l1 = buildLinkedList(new int[]{1, 2, 3, 4, 5, 6, 7, 8});
     private final ListNode l2 = buildLinkedList(new int[]{1, 3, 4, 6, 9, 12});
     private final ListNode l3 = buildLinkedList(new int[]{1, 2, 3, 4});
     private final ListNode l4 = buildLinkedList(new int[]{2, 1, 3, 7, 4});
@@ -21,7 +21,7 @@ public class Solution {
         Solution solution = new Solution();
         /*solution.deleteNode(solution.baseNode.next.next);
         System.out.println(solution.baseNode);*/
-        System.out.println(solution.deleteDuplicates2(solution.l1));
+        System.out.println(solution.reverseKGroup(solution.l1, 3));
 
         /*ListNode listNode = solution.mergeTwoLists(solution.l1, solution.l2);
         System.out.println(listNode);*/
@@ -30,6 +30,40 @@ public class Solution {
         /*System.out.println(solution.rotateRight(solution.l1, 2000000000));*/
     }
 
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode dummy = new ListNode(-1);
+        ListNode l = dummy;
+
+        int count = 0;
+        ListNode current = null;
+        ListNode cl = null;
+        ListNode h = head;
+        while (h != null) {
+            ListNode next = h.next;
+            h.next = current;
+            current = h;
+            if (cl == null) {
+                cl = h;
+            }
+            if (++count == k) {
+                l.next = current;
+                l = cl;
+                current = null;
+                cl = null;
+                count = 0;
+            }
+            h = next;
+        }
+        ListNode current1 = null;
+        while (current != null) {
+            ListNode next = current.next;
+            current.next = current1;
+            current1 = current;
+            current = next;
+        }
+        l.next = current1;
+        return dummy.next;
+    }
 
     public ListNode deleteDuplicates2(ListNode head) {
         if (head == null || head.next == null) return head;
