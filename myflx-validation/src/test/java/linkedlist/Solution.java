@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Solution {
     private final ListNode baseNode = buildLinkedList(new int[]{1, 0, 1});
-    private final ListNode l1 = buildLinkedList(new int[]{1, 2, 3, 4, 5, 6, 7, 8});
+    private final ListNode l1 = buildLinkedList(new int[]{1, 2, 3, 4, 5});
     private final ListNode l2 = buildLinkedList(new int[]{1, 3, 4, 6, 9, 12});
     private final ListNode l3 = buildLinkedList(new int[]{1, 2, 3, 4});
     private final ListNode l4 = buildLinkedList(new int[]{2, 1, 3, 7, 4});
@@ -21,13 +21,71 @@ public class Solution {
         Solution solution = new Solution();
         /*solution.deleteNode(solution.baseNode.next.next);
         System.out.println(solution.baseNode);*/
-        System.out.println(solution.reverseKGroup(solution.l1, 3));
+        System.out.println(solution.reverseBetween(solution.l1, 1, 5));
 
         /*ListNode listNode = solution.mergeTwoLists(solution.l1, solution.l2);
         System.out.println(listNode);*/
 
         /*System.out.println(solution.sortList(solution.l4));*/
         /*System.out.println(solution.rotateRight(solution.l1, 2000000000));*/
+    }
+
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        int diff = n - m + 1;
+        ListNode dummy = new ListNode(-1, head);
+        ListNode h = dummy;
+        while (h != null && m-- > 1) {
+            h = h.next;
+        }
+        ListNode hl = h;
+        h = h.next;
+        ListNode pre = null;
+        ListNode preLast = null;
+        while (h != null && diff-- > 0) {
+            ListNode next = h.next;
+            h.next = null;
+            if (pre == null) {
+                pre = h;
+                preLast = h;
+            } else {
+                h.next = pre;
+                pre = h;
+            }
+            h = next;
+        }
+        if (hl != null) {
+            hl.next = pre;
+        }
+        if (preLast != null) {
+            preLast.next = h;
+        }
+        return dummy.next;
+    }
+
+    public ListNode partition(ListNode head, int x) {
+        ListNode dummy = new ListNode(-1);
+        ListNode dummyLast = dummy;
+        ListNode right = null;
+        ListNode rightLast = null;
+        while (head != null) {
+            ListNode next = head.next;
+            head.next = null;
+            if (head.val < x) {
+                dummyLast.next = head;
+                dummyLast = dummyLast.next;
+            } else {
+                if (rightLast != null) {
+                    rightLast.next = head;
+                    rightLast = rightLast.next;
+                } else {
+                    right = head;
+                    rightLast = head;
+                }
+            }
+            head = next;
+        }
+        dummyLast.next = right;
+        return dummy.next;
     }
 
     public ListNode reverseKGroup(ListNode head, int k) {
@@ -128,34 +186,6 @@ public class Solution {
         }
         pre.next = h.next;
         return dummy.next;
-    }
-
-    public ListNode partition(ListNode head, int x) {
-        ListNode l = null;
-        ListNode lf = null;
-        ListNode rp = null;
-        ListNode h = head;
-        while (h != null) {
-            ListNode next = h.next;
-            h.next = null;
-            if (h.val < x) {
-                if (l == null) {
-                    l = h;
-                    lf = h;
-                } else {
-                    lf.next = h;
-                    lf = lf.next;
-                }
-            } else {
-                h.next = rp;
-                rp = h;
-            }
-            h = next;
-        }
-        if (lf != null) {
-            lf.next = rp;
-        }
-        return l == null ? rp : l;
     }
 
     public boolean isPalindrome(ListNode head) {
