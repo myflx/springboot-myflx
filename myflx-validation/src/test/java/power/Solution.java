@@ -93,7 +93,20 @@ public class Solution {
         System.out.println(Integer.toBinaryString(Integer.MAX_VALUE));
         int max = 1 << 2;
         System.out.println(Integer.MAX_VALUE);*/
-        final List<Integer> integers = new Solution().grayCode(4);
-        System.out.println(integers);
+        /*final List<Integer> integers = new Solution().grayCode(4);
+        System.out.println(integers);*/
+
+        System.out.println(COUNT_BITS);
+        System.out.println(RUNNING);
+        System.out.println(SHUTDOWN);
+        System.out.println(STOP);
+        System.out.println(TIDYING);
+        System.out.println(TERMINATED);
     }
+    private static final int COUNT_BITS = Integer.SIZE - 3;
+    private static final int RUNNING    = -1 << COUNT_BITS;
+    private static final int SHUTDOWN   =  0 << COUNT_BITS;
+    private static final int STOP       =  1 << COUNT_BITS;
+    private static final int TIDYING    =  2 << COUNT_BITS;
+    private static final int TERMINATED =  3 << COUNT_BITS;
 }

@@ -9,16 +9,28 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Solution {
     private final ListNode baseNode = buildLinkedList(new int[]{1, 0, 1});
-    private final ListNode l1 = buildLinkedList(new int[]{-10, -3, 0, 5, 9});
-    private final ListNode l2 = buildLinkedList(new int[]{1, 3, 4, 6, 9, 12});
+    private final ListNode l1 = buildLinkedList(new int[]{2, 4, 3});
+    private final ListNode l2 = buildLinkedList(new int[]{5, 6, 4});
     private final ListNode l3 = buildLinkedList(new int[]{1, 2, 3, 4});
     private final ListNode l4 = buildLinkedList(new int[]{2, 1, 3, 7, 4});
 
 
     public static void main(String[] args) {
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            executor.execute(() -> {
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    //do nothing
+                }
+            });
+        }
         System.out.println(10000 ^ 100001);
         Solution solution = new Solution();
         /*solution.deleteNode(solution.baseNode.next.next);
@@ -30,8 +42,165 @@ public class Solution {
 
         /*System.out.println(solution.sortList(solution.l4));*/
         /*System.out.println(solution.rotateRight(solution.l1, 2000000000));*/
-        final TreeNode node = solution.sortedListToBST(solution.l1);
-        System.out.println(node);
+        System.out.println(solution.addTwoNumbers(solution.l1, solution.l2));
+    }
+
+    public ListNode detectCycle666(ListNode head) {
+        if (head == null) return null;
+        ListNode f = head, s = head;
+        while (f.next != null && f.next.next != null) {
+            s = s.next;
+            f = f.next.next;
+            if (s == f) {
+                break;
+            }
+        }
+        if (f.next == null || f.next.next == null) {
+            return null;
+        }
+        f = head;
+        while (s != f) {
+            s = s.next;
+            f = f.next;
+        }
+        return s;
+    }
+
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummy = new ListNode(-1);
+        ListNode dummyL = dummy;
+        int preNum = 0;
+        while (l1 != null || l2 != null) {
+            int sum = preNum;
+            if (l1 != null) {
+                sum += l1.val;
+                l1 = l1.next;
+            }
+            if (l2 != null) {
+                sum += l2.val;
+                l2 = l2.next;
+            }
+            dummyL.next = new ListNode(sum % 10);
+            dummyL = dummyL.next;
+            preNum = sum / 10;
+        }
+        if (preNum > 0) {
+            dummyL.next = new ListNode(preNum);
+        }
+        return dummy.next;
+    }
+
+    public ListNode oddEvenList(ListNode head) {
+        ListNode ldummy = new ListNode(-1);
+        ListNode llast = ldummy;
+        ListNode rdummy = new ListNode(-1);
+        ListNode rlast = rdummy;
+        int count = 1;
+        while (head != null) {
+            ListNode next = head.next;
+            head.next = null;
+            if ((count++ & 1) == 1) {
+                llast.next = head;
+                llast = head;
+            } else {
+                rlast.next = head;
+                rlast = head;
+            }
+            head = next;
+        }
+        llast.next = rdummy.next;
+        return ldummy.next;
+    }
+
+    public ListNode insertionSortList(ListNode head) {
+        ListNode pn = new ListNode(-1);
+        ListNode h = head;
+        while (h != null) {
+            ListNode next = h.next;
+            h.next = null;
+            //插入head中进行排序
+            ListNode p = pn.next;
+            ListNode pre = pn;
+            while (p != null) {
+                if (h.val > p.val) {
+                    ListNode preN = pre.next;
+                    pre.next = h;
+                    h.next = preN;
+                    break;
+                }
+                pre = p;
+                p = p.next;
+            }
+            if (p == null) {
+                pre.next = h;
+            }
+
+            h = next;
+        }
+        ListNode pre = null;
+        h = pn.next;
+        while (h != null) {
+            ListNode next = h.next;
+            h.next = pre;
+            pre = h;
+            h = next;
+        }
+        return pre;
+    }
+
+    public void reorderList(ListNode head) {
+        if (head == null) return;
+        ListNode s = head;
+        ListNode f = head;
+        //找到中心点并断开连接
+        while (f.next != null && f.next.next != null) {
+            s = s.next;
+            f = f.next.next;
+        }
+        //翻转
+        ListNode foot = null;
+        ListNode right = s.next;
+        s.next = null;
+        while (right != null) {
+            ListNode next = right.next;
+            right.next = foot;
+            foot = right;
+            right = next;
+        }
+        //合并
+        ListNode last = new ListNode(-1);
+        while (head != null && foot != null) {
+            ListNode lnext = head.next;
+            ListNode rnext = foot.next;
+            //关联
+            head.next = foot;
+            foot.next = null;
+            last.next = head;
+            //next
+            last = foot;
+            head = lnext;
+            foot = rnext;
+        }
+        last.next = head;
+    }
+
+    public void reorderList2(ListNode head) {
+        Deque<ListNode> stack = new ArrayDeque<>();
+        ListNode h = head;
+        while (h != null) {
+            ListNode next = h.next;
+            h.next = null;
+            stack.offer(h);
+            h = next;
+        }
+
+        ListNode lastNode = new ListNode(-1);
+        while (stack.size() > 0) {
+            ListNode listNode = stack.pollFirst();
+            listNode.next = stack.pollLast();
+            lastNode.next = listNode;
+            lastNode = lastNode.next.next;
+        }
     }
 
     /**
