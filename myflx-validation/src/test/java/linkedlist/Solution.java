@@ -9,6 +9,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,16 +22,6 @@ public class Solution {
 
 
     public static void main(String[] args) {
-        ExecutorService executor = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            executor.execute(() -> {
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    //do nothing
-                }
-            });
-        }
         System.out.println(10000 ^ 100001);
         Solution solution = new Solution();
         /*solution.deleteNode(solution.baseNode.next.next);
@@ -42,7 +33,7 @@ public class Solution {
 
         /*System.out.println(solution.sortList(solution.l4));*/
         /*System.out.println(solution.rotateRight(solution.l1, 2000000000));*/
-        System.out.println(solution.addTwoNumbers(solution.l1, solution.l2));
+        System.out.println(solution.addTwoNumbersPlus(solution.l1, solution.l2));
     }
 
     public ListNode detectCycle666(ListNode head) {
@@ -64,6 +55,38 @@ public class Solution {
             f = f.next;
         }
         return s;
+    }
+
+    public ListNode addTwoNumbersPlus(ListNode l1, ListNode l2) {
+        Stack<ListNode> stack1 = new Stack<>();
+        Stack<ListNode> stack2 = new Stack<>();
+        while (l1 != null || l2 != null) {
+            if (l1 != null) {
+                stack1.push(l1);
+                l1 = l1.next;
+            }
+            if (l2 != null) {
+                stack2.push(l2);
+                l2 = l2.next;
+            }
+        }
+        ListNode pre = null;
+        int preNumber = 0;
+        while (stack1.size() > 0 || stack2.size() > 0) {
+            int sum = preNumber;
+            if (stack1.size() > 0) {
+                sum += stack1.pop().val;
+            }
+            if (stack2.size() > 0) {
+                sum += stack2.pop().val;
+            }
+            preNumber = sum / 10;
+            pre = new ListNode(sum % 10, pre);
+        }
+        if (preNumber > 0) {
+            pre = new ListNode(preNumber, pre);
+        }
+        return pre;
     }
 
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
