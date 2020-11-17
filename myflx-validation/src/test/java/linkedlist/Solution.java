@@ -4,18 +4,17 @@ import tree.TreeNode;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Solution {
     private final ListNode baseNode = buildLinkedList(new int[]{1, 0, 1});
-    private final ListNode l1 = buildLinkedList(new int[]{2, 4, 3});
+    private final ListNode l1 = buildLinkedList(new int[]{1, 2, 3, 4});
     private final ListNode l2 = buildLinkedList(new int[]{5, 6, 4});
     private final ListNode l3 = buildLinkedList(new int[]{1, 2, 3, 4});
     private final ListNode l4 = buildLinkedList(new int[]{2, 1, 3, 7, 4});
@@ -33,7 +32,7 @@ public class Solution {
 
         /*System.out.println(solution.sortList(solution.l4));*/
         /*System.out.println(solution.rotateRight(solution.l1, 2000000000));*/
-        System.out.println(solution.addTwoNumbersPlus(solution.l1, solution.l2));
+        System.out.println(Arrays.toString(solution.splitListToParts(solution.l1, 2)));
     }
 
     public ListNode detectCycle666(ListNode head) {
@@ -1122,6 +1121,41 @@ public class Solution {
             head = head.next;
         }
         return list.get(list.size() - k).val;
+    }
+
+    public ListNode[] splitListToParts(ListNode root, int k) {
+        ListNode[] ret = new ListNode[k];
+        if (k <= 0) return ret;
+        int count = 0;
+        ListNode h = root;
+        while (h != null) {
+            count++;
+            h = h.next;
+        }
+        int len = count / k;
+        int left = count % k;
+        //执行分隔
+        h = root;
+        int i = 0;
+        while (i < k) {
+            int currentLen = (left--) > 0 ? len + 1 : len;
+            if (currentLen == 0 || h == null) {
+                ret[i++] = null;
+                continue;
+            }
+            ListNode pre = new ListNode(-1, h);
+            ListNode p = h;
+            while (currentLen > 0 && p != null) {
+                currentLen--;
+                pre = p;
+                p = p.next;
+            }
+            ListNode next = pre.next;
+            pre.next = null;
+            ret[i++] = h;
+            h = next;
+        }
+        return ret;
     }
 }
 
