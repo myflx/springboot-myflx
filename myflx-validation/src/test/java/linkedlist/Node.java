@@ -2,6 +2,7 @@ package linkedlist;
 
 public class Node {
     int val;
+    Node pre;
     Node next;
     Node random;
 
