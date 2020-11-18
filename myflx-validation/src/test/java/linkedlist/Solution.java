@@ -4,33 +4,23 @@ import tree.TreeNode;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Stack;
 
 public class Solution {
     private final ListNode baseNode = buildLinkedList(new int[]{1, 0, 1});
-    private final ListNode l1 = buildLinkedList(new int[]{2, 4, 3});
+    private final ListNode l1 = buildLinkedList(new int[]{1, 2, 3, 4});
     private final ListNode l2 = buildLinkedList(new int[]{5, 6, 4});
     private final ListNode l3 = buildLinkedList(new int[]{1, 2, 3, 4});
     private final ListNode l4 = buildLinkedList(new int[]{2, 1, 3, 7, 4});
 
 
     public static void main(String[] args) {
-        ExecutorService executor = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            executor.execute(() -> {
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    //do nothing
-                }
-            });
-        }
         System.out.println(10000 ^ 100001);
         Solution solution = new Solution();
         /*solution.deleteNode(solution.baseNode.next.next);
@@ -42,7 +32,7 @@ public class Solution {
 
         /*System.out.println(solution.sortList(solution.l4));*/
         /*System.out.println(solution.rotateRight(solution.l1, 2000000000));*/
-        System.out.println(solution.addTwoNumbers(solution.l1, solution.l2));
+        System.out.println(Arrays.toString(solution.splitListToParts(solution.l1, 2)));
     }
 
     public ListNode detectCycle666(ListNode head) {
@@ -64,6 +54,38 @@ public class Solution {
             f = f.next;
         }
         return s;
+    }
+
+    public ListNode addTwoNumbersPlus(ListNode l1, ListNode l2) {
+        Stack<ListNode> stack1 = new Stack<>();
+        Stack<ListNode> stack2 = new Stack<>();
+        while (l1 != null || l2 != null) {
+            if (l1 != null) {
+                stack1.push(l1);
+                l1 = l1.next;
+            }
+            if (l2 != null) {
+                stack2.push(l2);
+                l2 = l2.next;
+            }
+        }
+        ListNode pre = null;
+        int preNumber = 0;
+        while (stack1.size() > 0 || stack2.size() > 0) {
+            int sum = preNumber;
+            if (stack1.size() > 0) {
+                sum += stack1.pop().val;
+            }
+            if (stack2.size() > 0) {
+                sum += stack2.pop().val;
+            }
+            preNumber = sum / 10;
+            pre = new ListNode(sum % 10, pre);
+        }
+        if (preNumber > 0) {
+            pre = new ListNode(preNumber, pre);
+        }
+        return pre;
     }
 
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
@@ -1099,6 +1121,41 @@ public class Solution {
             head = head.next;
         }
         return list.get(list.size() - k).val;
+    }
+
+    public ListNode[] splitListToParts(ListNode root, int k) {
+        ListNode[] ret = new ListNode[k];
+        if (k <= 0) return ret;
+        int count = 0;
+        ListNode h = root;
+        while (h != null) {
+            count++;
+            h = h.next;
+        }
+        int len = count / k;
+        int left = count % k;
+        //执行分隔
+        h = root;
+        int i = 0;
+        while (i < k) {
+            int currentLen = (left--) > 0 ? len + 1 : len;
+            if (currentLen == 0 || h == null) {
+                ret[i++] = null;
+                continue;
+            }
+            ListNode pre = new ListNode(-1, h);
+            ListNode p = h;
+            while (currentLen > 0 && p != null) {
+                currentLen--;
+                pre = p;
+                p = p.next;
+            }
+            ListNode next = pre.next;
+            pre.next = null;
+            ret[i++] = h;
+            h = next;
+        }
+        return ret;
     }
 }
 
