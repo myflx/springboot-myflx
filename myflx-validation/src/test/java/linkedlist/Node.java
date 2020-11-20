@@ -4,6 +4,7 @@ public class Node {
     int val;
     Node pre;
     Node next;
+    Node child;
     Node random;
 
     public Node(int val) {

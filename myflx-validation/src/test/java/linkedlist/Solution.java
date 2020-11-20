@@ -35,6 +35,35 @@ public class Solution {
         System.out.println(Arrays.toString(solution.splitListToParts(solution.l1, 2)));
     }
 
+    public Node flatten(Node head) {
+        flattenRtTail(head);
+        return head;
+    }
+
+    public Node flattenRtTail(Node head) {
+        Node current = head;
+        Node pre = head;
+        while (current != null) {
+            Node next = current.next;
+            Node child = current.child;
+            current.child = null;
+            if (child != null) {
+                final Node flatten = flattenRtTail(child);
+                current.next = child;
+                child.pre = current;
+                if (next != null) {
+                    final Node nextFlatten = flatten(next);
+                    flatten.next = nextFlatten;
+                    nextFlatten.pre = flatten;
+                }
+            }
+            pre = current;
+            current = current.next;
+        }
+        return pre;
+    }
+
+
     public ListNode detectCycle666(ListNode head) {
         if (head == null) return null;
         ListNode f = head, s = head;
