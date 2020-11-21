@@ -24,8 +24,20 @@ spring:
 eureka:
   instance:
     hostname: localhost
+    preferIpAddress: true
   client:
     registerWithEureka: false
     fetchRegistry: false
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    healthcheck:
+      enabled: true
+management:
+  server:
+    port: 8080
+  endpoint:
+    info:
+      enabled: false
+
+#  endpoints:
+#    enabled-by-default: false

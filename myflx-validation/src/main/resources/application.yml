@@ -23,9 +23,9 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+    instance-id: http://localhost:8761
   client:
-    enabled: false #关闭服务注册
+    enabled: true #关闭服务注册
     registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/

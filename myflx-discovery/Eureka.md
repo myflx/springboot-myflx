@@ -28,9 +28,13 @@ springboot 提供服务发现组件：Eureka,Consul,Zookeeper
 >
 > spring cloud 中的eureka 配置对象主要为：``EurekaInstanceConfigBean``   ``EurekaClientConfigBean``
 
-##### 如何注册服务？
+##### 如何注册/发现服务？
 
-##### 如何发现服务？
+​		eureka server端既是服务端也是客户端，所以会和多有的客户端具有相同功能，eureka client会在启动后开启定时线程轮询分别用来获取注册信息，检测服务端心跳，更新服务缓存信息。服务端除了具备客户端的功能外。同时会开启定时器剔除无效注册，同时开启定时线程为注册的服务续期，同时会更新对等服务端集群的信息。
+
+##### 官方参考
+
+​	[文档地址](https://cloud.spring.io/spring-cloud-netflix/reference/html/)
 
 #### Eureka用户认证
 
@@ -76,13 +80,62 @@ eureka:
 
 通过配置：``eureka.client.healthcheck.enable.true`` 将auctor的端点 /health 传递到服务端。要是实现更细粒度的检查可以实现接口``com.netflix.appinfo.HealthCheckHandler``
 
+#### Eureka 配置
+
+[链接](https://cloud.spring.io/spring-cloud-netflix/reference/html/appendix.html)
+
 #### Eureka 源码分析
 
-##### eureka client 服务启动
+##### eureka client 
 
-主要关注 ``@EnableEurekaClient`` 如何装配及其自动的对象。
+###### 配置装配
 
-##### eureka client 服务注册流程
+主要关注 ``@EnableEurekaClient`` 如何装配及其自动的对象。高版本中只需要添加依赖而不需要注解启动，通过配置控制是否启动client启动。
+
+服务发现自动装配对象
+
+```java
+@Configuration
+@EnableConfigurationProperties
+@ConditionalOnClass(EurekaClientConfig.class)
+@Import(DiscoveryClientOptionalArgsConfiguration.class)
+@ConditionalOnBean(EurekaDiscoveryClientConfiguration.Marker.class)
+@ConditionalOnProperty(value = "eureka.client.enabled", matchIfMissing = true)
+@ConditionalOnDiscoveryEnabled
+@AutoConfigureBefore({ NoopDiscoveryClientAutoConfiguration.class,
+		CommonsClientAutoConfiguration.class, ServiceRegistryAutoConfiguration.class })
+@AutoConfigureAfter(name = {
+		"org.springframework.cloud.autoconfigure.RefreshAutoConfiguration",
+		"org.springframework.cloud.netflix.eureka.EurekaDiscoveryClientConfiguration",
+		"org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration" })
+public class EurekaClientAutoConfiguration {
+    ....
+}
+```
+
+核心自动装配对象： ``CloudEurekaClient``
+
+自动装配的对象：
+
+``EurekaClientConfig``:持有配置参数。
+
+``MutableDiscoveryClientOptionalArgs``，``RestTemplateDiscoveryClientOptionalArgs``:均继承抽象对象
+
+``AbstractDiscoveryClientOptionalArgs``。``MutableDiscoveryClientOptionalArgs`` 持有集合对象：
+
+``Collection<ClientFilter>``
+
+服务发现配置对象：
+
+``EurekaDiscoveryClientConfiguration``
+
+健康检查配置对象：
+
+``EurekaHealthCheckHandlerConfiguration``
+
+
+
+###### 服务注册流程
 
 ​	为了了解服务注册的功能实现在不存在eureka server 的情况下客户端启动类只注解 ``@EnableEurekaClient`` 然后启动服务时，会出现报错信息，从报错信息入手和注解启动入口进行源码分析。
 
@@ -124,7 +177,7 @@ com.sun.jersey.api.client.ClientHandlerException: java.net.ConnectException: Con
 
 ``DiscoveryClient``对象（spring cloud实现类``CloudEurekaClient``）：
 
-​	持有Eureka事件监听器列表：``EurekaEventListener``，
+​	持有Eureka事件监听器列表：``EurekaEventListener``，当状态变更的时候会发布``StatusChangeEvent``事件，缓存刷新之后会发布 ``CacheRefreshedEvent``事件(会发送应用级别事件``HeartbeatEvent``)。并触发监听器的对事件的监听。
 
 ​	持有健康检查处理器回调:``Provider<HealthCheckCallback>``，
 
@@ -147,3 +200,227 @@ com.sun.jersey.api.client.ClientHandlerException: java.net.ConnectException: Con
 - 启用 ``InstanceInfoReplicator`` 复制对象的定时线程来刷新实例信息，同时判断如果是脏信息就重新注册并清楚脏信息标记。然后设置下次备份任务（默认延迟40s）
 
 ``DiscoveryManager`` 单例对象持有服务发现对象和EurekaClientConfig配置对象。
+
+
+
+###### 健康检查
+
+配置对象 ``EurekaHealthCheckHandlerConfiguration`` 
+
+启动参数(默认false)：
+
+```yaml
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+```
+
+健康检查处理对象：``HealthCheckHandler``(``EurekaHealthCheckHandler``)
+
+可以自行实现接口``HealthCheckHandler``实现健康检查。
+
+###### 多AZ
+
+[链接](https://cloud.spring.io/spring-cloud-netflix/reference/html/#zones)
+
+同一个region下配置多AZ ，服务请求的时候偏向同AZ可以按照如下配置
+
+```
+eureka.instance.metadataMap.zone = zone1
+eureka.client.preferSameZoneEureka = true
+```
+
+###### AZ负载均衡 
+
+[链接](https://cloud.spring.io/spring-cloud-netflix/reference/html/#using-eureka-with-spring-cloud-loadbalancer)
+
+`ZonePreferenceServiceInstanceListSupplier`
+
+##### eureka server
+
+###### EurekaServerAutoConfiguration
+
+​		需要在依赖`spring-cloud-starter-netflix-eureka-server` 的基础上在启动配置上增加注解  
+
+``@EnableEurekaServer``，系统才启动eureka server 的功能。否则系统会只能作为 eureka client。
+
+server启动注解的增加会生效 自动配置的对象 ``EurekaServerAutoConfiguration`` 装配
+
+```java
+@Configuration
+@Import(EurekaServerInitializerConfiguration.class)
+@ConditionalOnBean(EurekaServerMarkerConfiguration.Marker.class)
+@EnableConfigurationProperties({ EurekaDashboardProperties.class,
+		InstanceRegistryProperties.class })
+@PropertySource("classpath:/eureka/server.properties")
+public class EurekaServerAutoConfiguration extends WebMvcConfigurerAdapter {
+		.....
+}
+```
+
+``EurekaServerInitializerConfiguration`` 继承了``ServletContextAware`` 对象，获取 `ServletContext` 将Eureka 上下文作为属性关联到``ServletContext``中。
+
+```java
+@Override
+public void start() {
+    new Thread(() -> {
+        try {
+            //初始化上下文
+            eurekaServerBootstrap.contextInitialized(
+                EurekaServerInitializerConfiguration.this.servletContext);
+            log.info("Started Eureka Server");
+			//发布获取eureka配置事件
+            publish(new EurekaRegistryAvailableEvent(getEurekaServerConfig()));
+            EurekaServerInitializerConfiguration.this.running = true;
+            //发布获取eureka 服务端启动完毕事件
+            publish(new EurekaServerStartedEvent(getEurekaServerConfig()));
+        }
+        catch (Exception ex) {
+            // Help!
+            log.error("Could not initialize Eureka servlet context", ex);
+        }
+    }).start();
+}
+
+public void contextInitialized(ServletContext context) {
+    try {
+        initEurekaEnvironment();
+        initEurekaServerContext();
+
+        context.setAttribute(EurekaServerContext.class.getName(), this.serverContext);
+    }
+    catch (Throwable e) {
+        log.error("Cannot bootstrap eureka server :", e);
+        throw new RuntimeException("Cannot bootstrap eureka server :", e);
+    }
+}
+```
+
+###### EurekaController
+
+配置启动时会装配控制器：``EurekaController``用于支持eureka dashboard 。
+
+``EurekaServerAutoConfiguration.RefreshablePeerEurekaNodes`` 作为eureka 高可用节点，会在
+
+``com.netflix.eureka.DefaultEurekaServerContext#initialize`` 中启动线程执行任务
+
+```java
+PeerEurekaNodes.this.updatePeerEurekaNodes(PeerEurekaNodes.this.resolvePeerUrls());
+```
+
+自动配置对象``EurekaServerAutoConfiguration``会自动装配上下文
+
+(持有节点``RefreshablePeerEurekaNodes``)
+
+```java
+@Bean
+public EurekaServerContext eurekaServerContext(ServerCodecs serverCodecs,
+			PeerAwareInstanceRegistry registry, PeerEurekaNodes peerEurekaNodes) {
+		return new DefaultEurekaServerContext(this.eurekaServerConfig, serverCodecs,
+				registry, peerEurekaNodes, this.applicationInfoManager);
+}
+```
+
+###### eureka 实例事件发布
+
+Eureka实例生命周期伴随着事件的发布，主要是通过实例注册对象``InstanceRegistry``  发布事件。
+
+``EurekaInstanceCanceledEvent``,``EurekaInstanceRegisteredEvent``,
+
+``EurekaInstanceRenewedEvent``,``EurekaRegistryAvailableEvent``,
+
+``EurekaServerStartedEvent``
+
+
+
+
+
+###### 对等节点更新线程
+
+上下文会在@PostConstruct中启动线程来获取对等节点的信息。
+
+```java
+@PostConstruct
+public void initialize() {
+    logger.info("Initializing ...");
+    this.peerEurekaNodes.start();
+    try {
+        this.registry.init(this.peerEurekaNodes);
+    } catch (Exception var2) {
+        throw new RuntimeException(var2);
+    }
+    logger.info("Initialized");
+}
+```
+
+对等节点线程会默认10mins 执行一次，在线程中对等eureka server 端信息会被包装成对等节点对象``PeerEurekaNode`` 、信息存在：``com.netflix.eureka.cluster.PeerEurekaNodes#peerEurekaNodes``
+
+
+
+当配置发生变化时会发布事件 ``EnvironmentChangeEvent``  也会触发对等节点的更新。
+
+同时启动线程更新对等eureka node.
+
+
+
+###### RenewalThreshold 线程
+
+15min执行一次
+
+```java
+private void scheduleRenewalThresholdUpdateTask() {
+    this.timer.schedule(new TimerTask() {
+        public void run() {
+            PeerAwareInstanceRegistryImpl.this.updateRenewalThreshold();
+        }
+    }, (long)this.serverConfig.getRenewalThresholdUpdateIntervalMs(), (long)this.serverConfig.getRenewalThresholdUpdateIntervalMs());
+}
+```
+
+
+
+###### 无效注册服务剔除Timer
+
+1min执行一次
+
+```java
+com.netflix.eureka.registry.AbstractInstanceRegistry.EvictionTas
+```
+
+###### eureka server 上下文
+
+​	``EurekaServerContext``  实现类：``DefaultEurekaServerContext``
+
+###### 实例注册对象
+
+``PeerAwareInstanceRegistry`` 实现类:``InstanceRegistry`` 
+
+
+
+###### 节点集群
+
+``PeerEurekaNodes``
+
+
+
+###### eureka server 上下文
+
+``EurekaServerContext``  实现类 ``DefaultEurekaServerContext``
+
+启动集群节点同步节点：this.peerEurekaNodes.start();
+
+###### eureka server 启动入口
+
+``EurekaServerBootstrap``：初始化eureka 环境，初始化eureka上下文，注册MBean。
+
+
+
+###### eureka 使用 archaius 配置库
+
+
+
+###### eureka server securing
+
+[link](https://cloud.spring.io/spring-cloud-netflix/reference/html/#securing-the-eureka-server)
+

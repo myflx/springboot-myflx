@@ -16,6 +16,8 @@ server:
 
   #data-redis
 spring:
+  cache:
+    type: caffeine #cache指定缓存类型
   redis:
     database: 15
     password:
@@ -28,3 +30,7 @@ spring:
         max-idle: 8
         max-wait: -1
         min-idle: 1
+management:
+  health:
+    redis:
+      enabled: true
