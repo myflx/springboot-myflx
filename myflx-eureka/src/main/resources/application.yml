@@ -1,0 +1,43 @@
+server:
+  port: 8761
+  tomcat:
+    basedir: .
+    accesslog:
+      buffered: false
+      directory: logs
+      enabled: true
+      file-date-format: .yyyy-MM-dd
+      pattern: "%{yyyy-MM-dd HH:mm:ss.SSS}t %h %A %l %user \"%r\" %s %b %D"
+      prefix: access
+      rename-on-rotate: false
+      request-attributes-enabled: true
+      rotate: true
+      suffix: .log
+
+spring:
+  jackson:
+    time-zone: GMT+8
+  profiles:
+    active: default
+  application:
+    name: myflx-eureka
+eureka:
+  instance:
+    hostname: localhost
+    preferIpAddress: true
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    healthcheck:
+      enabled: true
+management:
+  server:
+    port: 8080
+  endpoint:
+    info:
+      enabled: false
+
+#  endpoints:
+#    enabled-by-default: false

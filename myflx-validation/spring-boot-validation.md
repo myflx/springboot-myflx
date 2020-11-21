@@ -38,7 +38,7 @@ public class ValidationAutoConfiguration {
 
 ![1566828471237](uml/1566828471237.png)
 
-### apache common bean validator
+### apache com.myflx.common bean validator
 
 	> 提供了大量校验器可供项目，可参考使用，避免重复造轮子。
 
