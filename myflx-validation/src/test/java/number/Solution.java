@@ -22,7 +22,7 @@ public class Solution {
         System.out.println(Integer.toBinaryString(63 & 100));
         System.out.println(Integer.toBinaryString(127 & 100));*/
 
-        System.out.println(new Solution().intToRoman(1994));
+        System.out.println(new Solution().romanToInt("MCMXCIV"));
     }
 
 
@@ -44,6 +44,48 @@ public class Solution {
             current -= values[boundIndex];
         }
         return ret.toString();
+    }
+
+    /**
+     * 有待优化
+     */
+    public int romanToInt(String s) {
+        int sum = 0, pre = 0;
+        for (int i = 0; i < s.length(); i++) {
+            int num = getValue(s.charAt(i));
+            if (i == 0) {
+                sum = num;
+                pre = num;
+                continue;
+            }
+            sum += num;
+            if (num > pre) {
+                sum -= pre * 2;
+            }
+            pre = num;
+        }
+        return sum;
+    }
+
+    private int getValue(char ch) {
+        switch (ch) {
+            case 'I':
+                return 1;
+            case 'V':
+                return 5;
+            case 'X':
+                return 10;
+            case 'L':
+                return 50;
+            case 'C':
+                return 100;
+            case 'D':
+                return 500;
+            case 'M':
+                return 1000;
+            default:
+                return 0;
+        }
     }
 
     public List<List<Integer>> threeSum(int[] nums) {
