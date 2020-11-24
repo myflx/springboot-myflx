@@ -22,7 +22,50 @@ public class Solution {
         System.out.println(Integer.toBinaryString(63 & 100));
         System.out.println(Integer.toBinaryString(127 & 100));*/
 
-        System.out.println(new Solution().romanToInt("MCMXCIV"));
+        System.out.println(new Solution().letterCombinations("222"));
+    }
+
+    String[] abcs = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+
+    public List<String> letterCombinations(String digits) {
+        if (digits == null || digits.length() == 0) {
+            return new ArrayList<>();
+        }
+        List<String> ret = new ArrayList<>();
+        if (digits.length() == 1) {
+            int i = Integer.valueOf(digits.substring(0, 1));
+            if (i < 2 || i > 9) {
+                return new ArrayList<>();
+            }
+            final char[] ac = abcs[i].toCharArray();
+            for (char c1 : ac) {
+                ret.add(new String(new char[]{c1}));
+            }
+        } else if (digits.length() == 2) {
+            int i = Integer.valueOf(digits.substring(0, 1));
+            int j = Integer.valueOf(digits.substring(1, 2));
+            if (i < 2 || i > 9 || j < 2 || j > 9) {
+                return new ArrayList<>();
+            }
+            final char[] ac = abcs[i].toCharArray();
+            final char[] bc = abcs[j].toCharArray();
+            for (char c : ac) {
+                for (char c1 : bc) {
+                    ret.add(new String(new char[]{c, c1}));
+                }
+            }
+        } else {
+            int len = digits.length();
+            final List<String> leftList = letterCombinations(digits.substring(0, len / 2));
+            final List<String> rightList = letterCombinations(digits.substring(len / 2, len));
+            for (String s : leftList) {
+                for (String s1 : rightList) {
+                    ret.add(s + s1);
+                }
+            }
+        }
+        return ret;
     }
 
 

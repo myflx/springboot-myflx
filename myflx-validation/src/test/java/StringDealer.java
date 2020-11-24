@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,13 @@ public class StringDealer {
 
     }
 
+    /**
+     * https://leetcode-cn.com/problems/generate-parentheses/
+     */
+    public List<String> generateParenthesis(int n) {
+        List<String> ret = new ArrayList<>();
+        return ret;
+    }
 
     public String longestCommonPrefix(String[] strs) {
         //处理边界
