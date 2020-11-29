@@ -1,12 +1,10 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 public class StringDealer {
@@ -43,87 +41,81 @@ public class StringDealer {
 
         System.out.println(new StringDealer().myAtoi("+-12"));
 
-        /*System.out.println(new StringDealer().longestCommonPrefix(new String[]{"dog", "racecar", "car"}));*/
+        /*System.out.println(new StringDealer().longestCommonPrefix(new String[]{"dog", "racecar", "car"}));
 
         System.out.println(new StringDealer().myAtoi(""));
-        System.out.println(new StringDealer().generateParenthesis(4));
+        System.out.println(new StringDealer().generateParenthesis(4));*/
+        System.out.println(new StringDealer().strStr("mississippi", "issip"));
     }
 
 
-    static Map<Integer, List<String>> CACHE = new HashMap<>();
-    private char L = '(';
-    private char R = ')';
-
-    static {
-        CACHE.put(1, Collections.singletonList("()"));
-        CACHE.put(2, Arrays.asList("(())", "()()"));
-        CACHE.put(3, Arrays.asList("((()))", "(()())", "(())()", "()(())", "()()()"));
+    public int strStr(String haystack, String needle) {
+        if (needle == null || needle.equals("")) {
+            return 0;
+        }
+        if (haystack == null || "".equals(haystack) || haystack.length() < needle.length()) {
+            return -1;
+        }
+        if (haystack.length() == needle.length()) {
+            return haystack.equals(needle) ? 0 : -1;
+        }
+        char[] source = haystack.toCharArray();
+        char[] target = needle.toCharArray();
+        int first = -1, j = 0;
+        for (int i = 0; j < target.length && i < source.length; i++) {
+            if (source[i] == target[j]) {
+                j++;
+                first = first >= 0 ? first : i;
+            } else {
+                j = 0;
+                if (first >= 0) {
+                    i = first;
+                }
+                first = -1;
+            }
+        }
+        return j == target.length ? first : -1;
     }
 
     /**
      * https://leetcode-cn.com/problems/generate-parentheses/
      */
     public List<String> generateParenthesis(int n) {
-        final List<String> list = CACHE.get(n);
-        if (list != null) {
-            return list;
-        }
-        List<String> ret = new ArrayList<>();
-        final List<String> preList = generateParenthesis(n - 1);
-        int len = 2 * (n - 1);
-        int nextLen = 3 * n;
-        char[] container = new char[nextLen];
-        for (int k = 0; k < preList.size(); k++) {
-            String s = preList.get(k);
-            fillArray(s, container, len);
-            if (k == 0) {
-                container[0] = L;
-                container[s.length()] = R;
-                ret.add(new String(container).replaceAll("\u0000", ""));
-                container[0] = '\u0000';
-                container[s.length()] = '\u0000';
-                continue;
-            }
-            for (int i = 0; i < nextLen / 2; i++) {
-                if (container[i] != '\u0000') {
-                    continue;
-                }
-                if (i != 0 && container[i - 1] == '\u0000') {
-                    break;
-                }
-                container[i] = L;
-                int j = i + 1;
-                while (j < container.length) {
-                    if (container[j] != '\u0000') {
-                        j++;
-                        continue;
-                    }
-                    if (container[j - 1] == '\u0000') {
-                        break;
-                    }
-                    container[j] = R;
-                    ret.add(new String(container).replaceAll("\u0000", ""));
-                    container[j++] = '\u0000';
-                }
-                container[i] = '\u0000';
-            }
-        }
-        CACHE.put(n, ret);
-        return ret;
+        Set<String> ret = new HashSet<>();
+        char[] base = getStartCharArray(n);
+        ret.add(new String(base));
+        generateParenthesisHelp(base, n, ret);
+        return new ArrayList<>(ret);
     }
 
-    private void fillArray(String s, char[] container, int len) {
-        Arrays.fill(container, '\u0000');
-        final char[] chars = s.toCharArray();
-        int i = 1, j = 0;
-        while (j < len - 1) {
-            container[i++] = chars[j];
-            if (chars[j] != chars[j + 1] && chars[j] == R) {
-                i++;
-            }
-            j++;
+    private void generateParenthesisHelp(char[] base, int n, Set<String> ret) {
+        if (n == 1) {
+            return;
         }
-        container[i] = chars[j];
+        char[] temp = Arrays.copyOf(base, base.length);
+        int index = 2 * n - 1;
+        for (int j = n; j < index; j++) {
+            char c1 = temp[j - 1];
+            char c2 = temp[j];
+            if (c1 == c2) {
+                break;
+            }
+            temp[j] = c1;
+            temp[j - 1] = c2;
+            if (!ret.add(new String(temp))) {
+                break;
+            }
+            generateParenthesisHelp(temp, n - 1, ret);
+        }
+    }
+
+    public char[] getStartCharArray(int n) {
+        int len = 2 * n;
+        char[] chars = new char[len];
+        for (int j = 0; j < len; j++) {
+            chars[j] = j < n ? '(' : ')';
+        }
+        return chars;
     }
 
     public String longestCommonPrefix(String[] strs) {
