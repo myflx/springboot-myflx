@@ -63,7 +63,7 @@ public class StringDealer {
         Map<String, Integer> used = new HashMap<>();//记录字符使用次数
         for (int i = 0; i < wordLen; i++) {//按照跨度中的单个长度跳跃覆盖所有字符
             for (int j = i; j <= s.length() - window; j += wordLen) {//按跨度跳跃
-                if (!used.isEmpty()){
+                if (!used.isEmpty()) {
                     used.clear();
                 }
                 int startIndex = j + wordLen;//定位到当前第一个跨度索引
