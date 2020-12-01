@@ -46,10 +46,49 @@ public class StringDealer {
 
         System.out.println(new StringDealer().myAtoi(""));
         System.out.println(new StringDealer().generateParenthesis(4));
-        System.out.println(new StringDealer().strStr("mississippi", "issip"));*/
+        System.out.println(new StringDealer().strStr("mississippi", "issip"));
         System.out.println(new StringDealer().findSubstring("barfoothefoobarman",
-                new String[]{"foo", "bar"}));
+                new String[]{"foo", "bar"}));*/
+
+        System.out.println(new StringDealer().countAndSay(8));
     }
+
+    static HashMap<Integer, String> map = new HashMap<>();
+
+    static {
+        map.put(1, "1");
+        map.put(2, "11");
+        map.put(3, "21");
+        map.put(4, "1211");
+        map.put(5, "111221");
+    }
+
+    public String countAndSay(int n) {
+        String s = map.get(n);
+        if (s == null) {
+            String preStr = countAndSay(n - 1);
+            //对字符进行描述
+            map.put(n, s = say(preStr));
+        }
+        return s;
+    }
+
+    private String say(String preStr) {
+        StringBuilder builder = new StringBuilder();
+        char[] chars = preStr.toCharArray();
+        int count = 1;
+        for (int i = 1; i < chars.length; i++) {
+            if (chars[i] != chars[i - 1]) {
+                builder.append(count).append(chars[i - 1]);
+                count = 1;
+                continue;
+            }
+            count++;
+        }
+        builder.append(count).append(chars[chars.length - 1]);
+        return builder.toString();
+    }
+
 
     public List<Integer> findSubstring(String s, String[] words) {
         List<Integer> res = new ArrayList<>();
