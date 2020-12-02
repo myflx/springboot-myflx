@@ -48,9 +48,55 @@ public class StringDealer {
         System.out.println(new StringDealer().generateParenthesis(4));
         System.out.println(new StringDealer().strStr("mississippi", "issip"));
         System.out.println(new StringDealer().findSubstring("barfoothefoobarman",
-                new String[]{"foo", "bar"}));*/
+                new String[]{"foo", "bar"}));
+        System.out.println(new StringDealer().countAndSay(8));*/
+        System.out.println(new StringDealer().lengthOfLastWord("hello "));
+    }
 
-        System.out.println(new StringDealer().countAndSay(8));
+    public int lengthOfLastWord(String s) {
+        if (s == null) {
+            return 0;
+        }
+        int len = 0;
+        final char[] chars = s.toCharArray();
+        int index = chars.length;
+        while (--index >= 0) {
+            if (chars[index] == ' ') {
+                if (len == 0) {
+                    continue;
+                }
+                break;
+            }
+            len++;
+        }
+        return len;
+    }
+
+    public List<List<String>> groupAnagrams(String[] strs) {
+        List<List<String>> ret = new ArrayList<>();
+        if (strs == null) {
+            return ret;
+        }
+        Map<String, List<String>> map = new HashMap<>();
+        for (String str : strs) {
+            String common = strTransfer(str);
+            final List<String> orDefault = map.getOrDefault(common, new ArrayList<>());
+            orDefault.add(str);
+            map.put(common, orDefault);
+        }
+        for (Map.Entry<String, List<String>> stringListEntry : map.entrySet()) {
+            ret.add(stringListEntry.getValue());
+        }
+        return ret;
+    }
+
+    /**
+     * 异位字母转换
+     */
+    private String strTransfer(String str) {
+        final char[] chars = str.toCharArray();
+        Arrays.sort(chars);
+        return new String(chars);
     }
 
     static HashMap<Integer, String> map = new HashMap<>();
