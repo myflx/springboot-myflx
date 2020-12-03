@@ -50,7 +50,117 @@ public class StringDealer {
         System.out.println(new StringDealer().findSubstring("barfoothefoobarman",
                 new String[]{"foo", "bar"}));
         System.out.println(new StringDealer().countAndSay(8));*/
-        System.out.println(new StringDealer().lengthOfLastWord("hello "));
+        List<String> success = Arrays.asList(" ", "0", " 0.1 ", ".1", "2e10", " -90e3   ", " 6e-1", "53.5e93", "-.1", "1.", " 005047e+6", "46.e3", ".2e81");
+        for (String s : success) {
+            if (!new StringDealer().isNumber(s)) {
+                System.out.println(s);
+            }
+        }
+        System.out.println("===========================================");
+        List<String> fail = Arrays.asList(" .", ". ", "abc", "1 a", " 1e", "e3", " 99e2.5 ", " --6 ", "95a54e53", "-+3", ".", "+e", "+3. e04116", ". 1", ".e1", "4e+", " -.");
+        for (String s : fail) {
+            if (new StringDealer().isNumber(s)) {
+                System.out.println(s);
+            }
+        }
+    }
+
+    /**
+     * true ：
+     * false：".", "+e" ,"+3. e04116"
+     * 数字
+     * 指数
+     * 正负号
+     * 小数点
+     * <a href='https://leetcode-cn.com/problems/valid-number/'/>
+     */
+    public boolean isNumber(String s) {
+        if (s == null || s.length() == 0) {
+            return false;
+        }
+        final char[] chars = s.toCharArray();
+        int start = 0, endIndex = chars.length;
+        while (start < chars.length && (int) chars[start] == 32) {
+            start++;
+        }
+        if (start == chars.length) {
+            return false;
+        }
+        while (--endIndex >= 0) {
+            if ((int) chars[endIndex] != 32) {
+                break;
+            }
+        }
+
+        boolean hasE = false;
+        boolean hasPoint = false;
+        boolean end = false;
+        for (int i = start; i <= endIndex; i++) {
+            if (end) {
+                return false;
+            }
+            if (i == start) {
+                if (isNumberChar(chars[i]) || isPrefixChar(chars[i])) {
+                    continue;
+                }
+                if ((int) chars[i] == 46 && endIndex - start != 0) {
+                    hasPoint = true;
+                    continue;
+                }
+                //首位但不可打头
+                return false;
+            }
+            if (isNumberChar(chars[i])) {
+                continue;
+            }
+            if (!hasPoint && !hasE) {
+                if ((int) chars[i] == 46 && (isNumberChar(chars[i - 1]) || isPrefixChar(chars[i - 1]))) {
+                    if (i == endIndex && isPrefixChar(chars[i - 1])) {
+                        return false;
+                    }
+                    hasPoint = true;
+                    continue;
+                }
+            }
+            if (!hasE) {
+                if ((int) chars[i] == 101 && (isNumberChar(chars[i - 1]) || (int) chars[i - 1] == 46)) {
+                    if (i == endIndex) {
+                        return false;
+                    }
+                    hasE = true;
+                    if ((int) chars[i - 1] == 46) {
+                        if ((i - 2) < 0) {
+                            return false;
+                        }
+                        if (!isNumberChar(chars[i - 2])) {
+                            return false;
+                        }
+                    }
+                    continue;
+                }
+            }
+            if ((int) chars[i] == 32) {
+                end = true;
+                continue;
+            }
+            if (hasE && isPrefixChar(chars[i]) && (int) chars[i - 1] == 101) {
+                //当前是负号前面是E
+                if (i == endIndex) {
+                    return false;
+                }
+                continue;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isNumberChar(char c) {
+        return (int) c >= 48 && (int) c <= 57;
+    }
+
+    public boolean isPrefixChar(char c) {
+        return (int) c == 43 || (int) c == 45;
     }
 
     public int lengthOfLastWord(String s) {
