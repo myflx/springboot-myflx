@@ -6,7 +6,7 @@
 
 ### spring-aop的驱动
 
-​		spring基于xml编程的时候，xml中aop schema会在spring-aop模块META-INF/spring.handers中找到对应的AopNameHandler会为对应的标签注册对应的beandefinition的解析的类。Parser将xml中的bean定义解析出来，然后将定义注册到上下文。
+​		spring基于xml编程的时候，xml中aop schema会在spring-aop模块META-INF/spring.handers中找到对应的AopNameHandler会为对应的标签注册对应的beandefinition的解析的类。Parser将xml中的bean定义解析出来，然后将定义注册到上下文BeanFactory中。
 
 ​		spring注解编程模型中比较出名的Enable模式。Enable模式中spring-aop功能的启动依赖于注解 `EnableAspectJAutoProxy`  这个注解来源spring-context，3.0版本才有。
 
