@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class StringDealer {
@@ -63,6 +64,76 @@ public class StringDealer {
                 System.out.println(s);
             }
         }
+    }
+
+
+    public int minDistance(String word1, String word2) {
+        //定位到最佳操作点
+        //按照字符索引
+        Map<Character, List<Integer>> map = new HashMap<>();
+        Map<Character, List<Integer>> map1 = new HashMap<>();
+        final char[] chars = word2.toCharArray();
+        final char[] chars1 = word1.toCharArray();
+        int i = 0, j = 0;
+        while (i < chars.length || j < chars1.length) {
+            if (i < chars.length) {
+                final List<Integer> orDefault = map.getOrDefault(chars[i], new ArrayList<>());
+                orDefault.add(i);
+                map.put(chars[i], orDefault);
+                i++;
+            }
+            if (j < chars1.length) {
+                final List<Integer> orDefault = map1.getOrDefault(chars1[j], new ArrayList<>());
+                orDefault.add(j);
+                map1.put(chars1[j], orDefault);
+                j++;
+            }
+        }
+
+        //找到切入点的最大匹配数量和切入点的索引
+        int maxCount = 0;
+        int maxCountIndex = 0;
+        int maxCountIndex2 = 0;
+        for (int k = 0; k < chars1.length; k++) {
+            char current = chars1[k];
+            if (!map.containsKey(current)) {
+                continue;
+            }
+            final List<Integer> indexList = map.get(current);
+
+            for (Integer index : indexList) {
+                Map<Character, List<Integer>> used = new HashMap<>();
+                int count = 1;
+                int m = index + 1;
+                while (m < chars.length) {
+                    if (!used.isEmpty()) {
+                        used.clear();
+                    }
+                    char next = chars[m++];
+                    if (!map1.containsKey(next)) {
+                        continue;
+                    }
+                    final List<Integer> usedOrDefault = used.getOrDefault(next, new ArrayList<>());
+                    final List<Integer> integers = map1.get(next);
+                    for (Integer integer : integers) {
+                        if (usedOrDefault.contains(integer) || integer < index) {
+                            continue;
+                        }
+                        usedOrDefault.add(integer);
+                        used.put(next, usedOrDefault);
+                        count++;
+                    }
+                }
+                if (count >= maxCount) {
+                    maxCount = count;
+                    maxCountIndex = k;
+                }
+            }
+        }
+        Math.max(chars1.length - maxCountIndex, maxCountIndex2);
+
+
+        return 0;
     }
 
     /**

@@ -1,6 +1,7 @@
 package power;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Solution {
@@ -78,6 +79,28 @@ public class Solution {
         return list;
     }
 
+    /**
+     * https://leetcode-cn.com/problems/add-binary/
+     * 二进制求和
+     */
+    public String addBinary(String a, String b) {
+        char[] arr = new char[Math.max(a.length(), b.length())];
+        Arrays.fill(arr, '0');
+        int i = a.length() - 1, j = b.length() - 1, k = arr.length - 1;
+        int over = 0;
+        while (i >= 0 || j >= 0) {
+            int sum = over;
+            if (i >= 0) {
+                sum += Integer.valueOf(Character.toString(a.charAt(i--)));
+            }
+            if (j >= 0) {
+                sum += Integer.valueOf(Character.toString(b.charAt(j--)));
+            }
+            arr[k--] = (sum & 1) == 0 ? '0' : '1';
+            over = sum < 2 ? 0 : 1;
+        }
+        return over > 0 ? "1" + new String(arr) : new String(arr);
+    }
 
     public static void main(String[] args) {
         /*BigDecimal bigDecimal = BigDecimal.valueOf(2);
