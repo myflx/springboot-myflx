@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class StringDealer {
@@ -50,7 +49,7 @@ public class StringDealer {
         System.out.println(new StringDealer().strStr("mississippi", "issip"));
         System.out.println(new StringDealer().findSubstring("barfoothefoobarman",
                 new String[]{"foo", "bar"}));
-        System.out.println(new StringDealer().countAndSay(8));*/
+        System.out.println(new StringDealer().countAndSay(8));
         List<String> success = Arrays.asList(" ", "0", " 0.1 ", ".1", "2e10", " -90e3   ", " 6e-1", "53.5e93", "-.1", "1.", " 005047e+6", "46.e3", ".2e81");
         for (String s : success) {
             if (!new StringDealer().isNumber(s)) {
@@ -63,77 +62,42 @@ public class StringDealer {
             if (new StringDealer().isNumber(s)) {
                 System.out.println(s);
             }
-        }
+        }*/
+        System.out.println(new StringDealer().minDistance("intention", "execution"));
     }
 
 
     public int minDistance(String word1, String word2) {
-        //定位到最佳操作点
-        //按照字符索引
-        Map<Character, List<Integer>> map = new HashMap<>();
-        Map<Character, List<Integer>> map1 = new HashMap<>();
-        final char[] chars = word2.toCharArray();
-        final char[] chars1 = word1.toCharArray();
-        int i = 0, j = 0;
-        while (i < chars.length || j < chars1.length) {
-            if (i < chars.length) {
-                final List<Integer> orDefault = map.getOrDefault(chars[i], new ArrayList<>());
-                orDefault.add(i);
-                map.put(chars[i], orDefault);
-                i++;
-            }
-            if (j < chars1.length) {
-                final List<Integer> orDefault = map1.getOrDefault(chars1[j], new ArrayList<>());
-                orDefault.add(j);
-                map1.put(chars1[j], orDefault);
-                j++;
+        if (word1.length() == 0) {
+            return word2.length();
+        }
+        if (word2.length() == 0) {
+            return word1.length();
+        }
+        //动态规划
+        int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+        //基础数据填充
+        for (int i = 0; i < dp.length; i++) {
+            int[] arr = dp[i];
+            for (int j = 0; j < arr.length; j++) {
+                if (i == 0) {
+                    dp[i][j] = j;
+                    continue;
+                }
+                if (j == 0) {
+                    dp[i][j] = i;
+                    continue;
+                }
+                int down = dp[i][j - 1] + 1;
+                int left = dp[i - 1][j] + 1;
+                int left_down = dp[i - 1][j - 1];
+                if (word1.charAt(i - 1) != word2.charAt(j - 1)) {
+                    left_down += 1;
+                }
+                dp[i][j] = Math.min(left, Math.min(down, left_down));
             }
         }
-
-        //找到切入点的最大匹配数量和切入点的索引
-        int maxCount = 0;
-        int maxCountIndex = 0;
-        int maxCountIndex2 = 0;
-        for (int k = 0; k < chars1.length; k++) {
-            char current = chars1[k];
-            if (!map.containsKey(current)) {
-                continue;
-            }
-            final List<Integer> indexList = map.get(current);
-
-            for (Integer index : indexList) {
-                Map<Character, List<Integer>> used = new HashMap<>();
-                int count = 1;
-                int m = index + 1;
-                while (m < chars.length) {
-                    if (!used.isEmpty()) {
-                        used.clear();
-                    }
-                    char next = chars[m++];
-                    if (!map1.containsKey(next)) {
-                        continue;
-                    }
-                    final List<Integer> usedOrDefault = used.getOrDefault(next, new ArrayList<>());
-                    final List<Integer> integers = map1.get(next);
-                    for (Integer integer : integers) {
-                        if (usedOrDefault.contains(integer) || integer < index) {
-                            continue;
-                        }
-                        usedOrDefault.add(integer);
-                        used.put(next, usedOrDefault);
-                        count++;
-                    }
-                }
-                if (count >= maxCount) {
-                    maxCount = count;
-                    maxCountIndex = k;
-                }
-            }
-        }
-        Math.max(chars1.length - maxCountIndex, maxCountIndex2);
-
-
-        return 0;
+        return dp[word1.length()][word2.length()];
     }
 
     /**
