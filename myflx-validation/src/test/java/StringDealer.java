@@ -63,7 +63,240 @@ public class StringDealer {
                 System.out.println(s);
             }
         }*/
-        System.out.println(new StringDealer().minDistance("intention", "execution"));
+        System.out.println(new StringDealer().isScramble("great", "rgeat"));
+    }
+
+    /**
+     * 判断s1是否是s2的扰乱字符串
+     *
+     * @param s1 s1
+     * @param s2 s2
+     * @return Boolean
+     */
+    public boolean isScramble(String s1, String s2) {
+        char[] chars1 = s1.toCharArray();
+        char[] chars2 = s2.toCharArray();
+        int m = chars1.length;
+        int n = chars2.length;
+        if (m != n) {
+            return false;
+        }
+        boolean[][][] dp = new boolean[n][n][n + 1];
+        //动态规划解题
+        for (int len = 1; len <= n; len++) {
+            for (int i = 0; i <= n - len; i++) {
+                for (int j = 0; j <= n - len; j++) {
+                    if (len == 1){
+                        dp[i][j][1] = chars1[i] == chars2[j];
+                        continue;
+                    }
+                    for (int k = 1; k <= len - 1; k++) {
+                        if (dp[i][j][k] && dp[i + k][j + k][len - k]) {
+                            dp[i][j][len] = true;
+                            break;
+                        }
+                        if (dp[i][j + len - k][k] && dp[i + k][j][len - k]) {
+                            dp[i][j][len] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return dp[0][0][n];
+    }
+
+
+    public boolean isScramble2(String s1, String s2) {
+        HashMap<String, Integer> memoization = new HashMap<>();
+        return isScrambleRecursion(s1, s2, memoization);
+    }
+
+    public boolean isScrambleRecursion(String s1, String s2, HashMap<String, Integer> memoization) {
+        //判断之前是否已经有了结果
+        int ret = memoization.getOrDefault(s1 + "#" + s2, -1);
+        if (ret == 1) {
+            return true;
+        } else if (ret == 0) {
+            return false;
+        }
+        if (s1.length() != s2.length()) {
+            memoization.put(s1 + "#" + s2, 0);
+            return false;
+        }
+        if (s1.equals(s2)) {
+            memoization.put(s1 + "#" + s2, 1);
+            return true;
+        }
+
+        int[] letters = new int[26];
+        for (int i = 0; i < s1.length(); i++) {
+            letters[s1.charAt(i) - 'a']++;
+            letters[s2.charAt(i) - 'a']--;
+        }
+        for (int i = 0; i < 26; i++)
+            if (letters[i] != 0) {
+                memoization.put(s1 + "#" + s2, 0);
+                return false;
+            }
+
+        for (int i = 1; i < s1.length(); i++) {
+            if (isScramble(s1.substring(0, i), s2.substring(0, i)) && isScramble(s1.substring(i), s2.substring(i))) {
+                memoization.put(s1 + "#" + s2, 1);
+                return true;
+            }
+            if (isScramble(s1.substring(0, i), s2.substring(s2.length() - i))
+                    && isScramble(s1.substring(i), s2.substring(0, s2.length() - i))) {
+                memoization.put(s1 + "#" + s2, 1);
+                return true;
+            }
+        }
+        memoization.put(s1 + "#" + s2, 0);
+        return false;
+    }
+
+
+    public static String minWindow(String s, String t) {
+        if (s == null || s.length() == 0 || t == null || t.length() == 0 || s.length() < t.length()) {
+            return "";
+        }
+        //当前滑动窗口
+        int[] window = new int[128];
+        //当前实现的目标
+        int[] target = new int[128];
+        int count = 0;
+        //目标的前后索引
+        int sIndex = 0, eIndex = -1;
+        //窗口的前后索引
+        int left = 0, right = 0;
+        int minLength = s.length() + 1;
+        //初始化目标
+        for (char c : t.toCharArray()) {
+            target[c]++;
+        }
+        while (right < s.length()) {
+            char ch = s.charAt(right);
+            window[ch]++;
+            if (target[ch] > 0 && target[ch] >= window[ch]) {
+                count++;
+            }
+            //满足了所有的子序列
+            while (count == t.length()) {
+                ch = s.charAt(left);
+                if (target[ch] > 0 && target[ch] >= window[ch]) {
+                    count--;
+                }
+                if (minLength > right - left + 1) {
+                    sIndex = left;
+                    eIndex = right;
+                    minLength = right - left + 1;
+                }
+                window[ch]--;
+                left++;
+            }
+            right++;
+        }
+        return s.substring(sIndex, eIndex + 1);
+    }
+
+
+    public static String minWindow2(String s, String t) {
+        if (s == null || s == "" || t == null || t == "" || s.length() < t.length()) {
+            return "";
+        }
+        //用来统计t中每个字符出现次数
+        int[] needs = new int[128];
+        //用来统计滑动窗口中每个字符出现次数
+        int[] window = new int[128];
+
+        for (int i = 0; i < t.length(); i++) {
+            needs[t.charAt(i)]++;
+        }
+
+        int left = 0;
+        int right = 0;
+
+        String res = "";
+
+        //目前有多少个字符
+        int count = 0;
+
+        //用来记录最短需要多少个字符。
+        int minLength = s.length() + 1;
+
+        while (right < s.length()) {
+            char ch = s.charAt(right);
+            window[ch]++;
+            if (needs[ch] > 0 && needs[ch] >= window[ch]) {
+                count++;
+            }
+
+            //移动到不满足条件为止
+            while (count == t.length()) {
+                ch = s.charAt(left);
+                if (needs[ch] > 0 && needs[ch] >= window[ch]) {
+                    count--;
+                }
+                if (right - left + 1 < minLength) {
+                    minLength = right - left + 1;
+                    res = s.substring(left, right + 1);
+
+                }
+                window[ch]--;
+                left++;
+
+            }
+            right++;
+
+        }
+        return res;
+    }
+
+
+    public String minWindow1(String s, String t) {
+        if (s == null || s.length() == 0 || t == null || t.length() == 0 || s.length() < t.length()) {
+            return "";
+        }
+        //计数池
+        Map<Character, Integer> countMap = new HashMap<>();
+        final char[] chars = t.toCharArray();
+        for (char c : chars) {
+            countMap.put(c, countMap.getOrDefault(c, 0) + 1);
+        }
+        int len = s.length() + 1;
+        int left = 0, right = 0;
+        int sIndex = 0, eIndex = -1;
+        while (right < s.length()) {
+            if (countMap.containsKey(s.charAt(right))) {
+                countMap.put(s.charAt(right), countMap.getOrDefault(s.charAt(right), 0) - 1);
+            }
+            if (isCoverAll(countMap)) {
+                //左窗边右移直到覆盖最小边界
+                while (!countMap.containsKey(s.charAt(left)) || countMap.get(s.charAt(left)) < 0) {
+                    if (countMap.containsKey(s.charAt(left))) {
+                        countMap.put(s.charAt(left), countMap.get(s.charAt(left)) + 1);
+                    }
+                    left++;
+                }
+                if (len > right - left + 1) {
+                    sIndex = left;
+                    eIndex = right;
+                    len = right - left + 1;
+                }
+            }
+            right++;
+        }
+        return s.substring(sIndex, eIndex + 1);
+    }
+
+
+    private boolean isCoverAll(Map<Character, Integer> countMap) {
+        for (Map.Entry<Character, Integer> entry : countMap.entrySet()) {
+            if (entry.getValue() > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
 
