@@ -63,7 +63,35 @@ public class StringDealer {
                 System.out.println(s);
             }
         }*/
-        System.out.println(new StringDealer().isScramble("great", "rgeat"));
+        System.out.println(new StringDealer().numDecodings("01"));
+        System.out.println(Integer.parseInt("01"));
+    }
+
+    public int numDecodings(String s) {
+        if (s == null || s.length() == 0 || (s.charAt(0) == '0')) {
+            return 0;
+        }
+        char[] chars = s.toCharArray();
+        char[] temp = new char[2];
+        int[] dp = new int[chars.length + 1];
+        dp[0] = 1;
+        dp[1] = 1;
+        char pre = chars[0];
+        for (int i = 1; i < chars.length; i++) {
+            temp[0] = pre;
+            temp[1] = chars[i];
+            int number = Integer.parseInt(new String(temp));
+            if (chars[i] == '0') {
+                if (number < 1 || number > 26) {
+                    break;
+                }
+                dp[i + 1] = dp[i - 1];
+            } else {
+                dp[i + 1] = (pre == '0') ? dp[i] : ((number >= 1 && number <= 26) ? dp[i] + dp[i - 1] : dp[i]);
+            }
+            pre = chars[i];
+        }
+        return dp[chars.length];
     }
 
     /**
@@ -86,7 +114,7 @@ public class StringDealer {
         for (int len = 1; len <= n; len++) {
             for (int i = 0; i <= n - len; i++) {
                 for (int j = 0; j <= n - len; j++) {
-                    if (len == 1){
+                    if (len == 1) {
                         dp[i][j][1] = chars1[i] == chars2[j];
                         continue;
                     }
