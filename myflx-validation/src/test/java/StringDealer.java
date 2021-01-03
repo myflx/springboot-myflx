@@ -63,9 +63,64 @@ public class StringDealer {
                 System.out.println(s);
             }
         }*/
-        System.out.println(new StringDealer().numDecodings("01"));
-        System.out.println(Integer.parseInt("01"));
+        System.out.println((int) '0');
+        System.out.println((int) '9');
+        System.out.println(new StringDealer().restoreIpAddresses("101023"));
     }
+
+
+    public List<String> restoreIpAddresses(String s) {
+        return doRestoreIpAddresses(s, 4);
+    }
+
+    public List<String> doRestoreIpAddresses(String s, int num) {
+        List<String> ret = new ArrayList<>();
+        if (num == 0 || s.length() == 0) {
+            return ret;
+        }
+        if (num == 1 && (s.length() > 3 || (s.length() > 1 && s.charAt(0) == '0'))) {
+            return ret;
+        }
+        List<String> current = new ArrayList<>();
+        char[] chars = s.toCharArray();
+        if (num == 1) {
+            for (char aChar : chars) {
+                if ((int) aChar < 48 || (int) aChar > 57) {
+                    return ret;
+                }
+            }
+            if (Integer.parseInt(s) <= 255) {
+                ret.add(s);
+            }
+            return ret;
+        }
+        int i = 0;
+        while (i < chars.length && i < 3) {
+            if ((int) chars[i] < 48 || (int) chars[i] > 57) {
+                return ret;
+            }
+            char[] chars1 = new char[i + 1];
+            System.arraycopy(chars, 0, chars1, 0, i + 1);
+            if (i == 0 && chars[i] == '0') {
+                current.add(new String(chars1));
+                break;
+            }
+            String s1 = new String(chars1);
+            if (Integer.parseInt(s1) > 255) {
+                break;
+            }
+            current.add(s1);
+            i++;
+        }
+        for (String s1 : current) {
+            List<String> strings = doRestoreIpAddresses(s.substring(s1.length()), num - 1);
+            for (String string : strings) {
+                ret.add(s1 + "." + string);
+            }
+        }
+        return ret;
+    }
+
 
     public int numDecodings(String s) {
         if (s == null || s.length() == 0 || (s.charAt(0) == '0')) {
