@@ -62,10 +62,54 @@ public class StringDealer {
             if (new StringDealer().isNumber(s)) {
                 System.out.println(s);
             }
-        }*/
+        }
         System.out.println((int) '0');
         System.out.println((int) '9');
-        System.out.println(new StringDealer().restoreIpAddresses("101023"));
+        System.out.println(new StringDealer().restoreIpAddresses("101023"));*/
+
+        System.out.println(new StringDealer().isInterleave("bbbbbabbbbabaababaaaabbababbaaabbabbaaabaaaaababbbababbbbbabbbbababbabaabababbbaabababababbbaaababaa",
+                "babaaaabbababbbabbbbaabaabbaabbbbaabaaabaababaaaabaaabbaaabaaaabaabaabbbbbbbbbbbabaaabbababbabbabaab",
+                "babbbabbbaaabbababbbbababaabbabaabaaabbbbabbbaaabbbaaaaabbbbaabbaaabababbaaaaaabababbababaababbababbbababbbbaaaabaabbabbaaaaabbabbaaaabbbaabaaabaababaababbaaabbbbbabbbbaabbabaabbbbabaaabbababbabbabbab"));
+    }
+
+
+    final HashMap<String, Boolean> cacheMap = new HashMap<>();
+
+    public boolean isInterleave(String s1, String s2, String s3) {
+        String cacheKey = s1 + "-" + s2 + "-" + s3;
+        Boolean aBoolean = cacheMap.get(cacheKey);
+        if (aBoolean != null) {
+            return aBoolean;
+        }
+        if ((s1.length() + s2.length() - s3.length()) != 0) {
+            cacheMap.put(cacheKey, false);
+            return false;
+        }
+        if ("".equals(s1) || "".equals(s2)) {
+            boolean result = (s1 + s2).equals(s3);
+            cacheMap.put(cacheKey, result);
+            return result;
+        }
+        if ((s1 + s2).equals(s3) || (s2 + s1).equals(s3)) {
+            cacheMap.put(cacheKey, true);
+            return true;
+        }
+        char c1 = s1.charAt(0);
+        char c2 = s2.charAt(0);
+        char c3 = s3.charAt(0);
+        if (c1 != c3 && c2 != c3) {
+            cacheMap.put(cacheKey, false);
+            return false;
+        }
+        String s3sub = s3.substring(1);
+        if (c1 == c3 && c2 == c3) {
+            boolean result = isInterleave(s1.substring(1), s2, s3sub) || isInterleave(s1, s2.substring(1), s3sub);
+            cacheMap.put(cacheKey, result);
+            return result;
+        }
+        boolean result = (c1 == c3) ? isInterleave(s1.substring(1), s2, s3sub) : isInterleave(s1, s2.substring(1), s3sub);
+        cacheMap.put(cacheKey, result);
+        return result;
     }
 
 
