@@ -74,17 +74,15 @@ public class StringDealer {
     public boolean isPalindrome(String s) {
         int i = 0, j = s.length() - 1;
         while (j - i >= 1) {
-            char c1 = Character.toUpperCase(s.charAt(i));
+            char c1 = s.charAt(i);
             while (j - i >= 1 && !Character.isLetter(c1) && !Character.isDigit(c1)) {
-                i++;
-                c1 = Character.toUpperCase(s.charAt(i));
+                c1 = s.charAt(++i);
             }
-            char c2 = Character.toUpperCase(s.charAt(j));
+            char c2 = s.charAt(j);
             while (j - i >= 1 && !Character.isLetter(c2) && !Character.isDigit(c2)) {
-                j--;
-                c2 = Character.toUpperCase(s.charAt(j));
+                c2 = s.charAt(--j);
             }
-            if (c1 != c2) {
+            if (Character.toUpperCase(c1) != Character.toUpperCase(c2)) {
                 return false;
             }
             i++;
