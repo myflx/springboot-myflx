@@ -67,11 +67,63 @@ public class StringDealer {
         System.out.println((int) '9');
         System.out.println(new StringDealer().restoreIpAddresses("101023"));*/
 
-        System.out.println(new StringDealer().isInterleave("bbbbbabbbbabaababaaaabbababbaaabbabbaaabaaaaababbbababbbbbabbbbababbabaabababbbaabababababbbaaababaa",
-                "babaaaabbababbbabbbbaabaabbaabbbbaabaaabaababaaaabaaabbaaabaaaabaabaabbbbbbbbbbbabaaabbababbabbabaab",
-                "babbbabbbaaabbababbbbababaabbabaabaaabbbbabbbaaabbbaaaaabbbbaabbaaabababbaaaaaabababbababaababbababbbababbbbaaaabaabbabbaaaaabbabbaaaabbbaabaaabaababaababbaaabbbbbabbbbaabbabaabbbbabaaabbababbabbabbab"));
+        System.out.println(new StringDealer().numDistinct1("babgbag", "bag"));
     }
 
+    public int numDistinct1(String s, String t) {
+        if (t.length() == 0) {
+            return 1;
+        }
+        if (s.length() == 0 || s.length() < t.length() || (s.length() == t.length() && !s.equals(t))) {
+            return 0;
+        }
+        int[][] DP = new int[t.length() + 1][s.length() + 1];
+        for (int i = 0; i < s.length() + 1; i++) {
+            DP[0][i] = 1;
+        }
+        for (int i = 0; i < t.length(); i++) {
+            for (int j = 0; j < s.length(); j++) {
+                DP[i + 1][j + 1] = (s.charAt(j) == t.charAt(i)) ? DP[i + 1][j] + DP[i][j] : DP[i + 1][j];
+            }
+        }
+        return DP[t.length()][s.length()];
+    }
+
+    final HashMap<String, Integer> cacheMap1 = new HashMap<>();
+
+    public int numDistinct(String s, String t) {
+        String key = s + "-" + t;
+        Integer integer1 = cacheMap1.get(key);
+        if (integer1 != null) {
+            return integer1;
+        }
+        if (t.length() == 0) {
+            cacheMap1.put(key, 1);
+            return 1;
+        }
+        if (s.length() == 0 || s.length() < t.length() || (s.length() == t.length() && !s.equals(t))) {
+            cacheMap1.put(key, 0);
+            return 0;
+        }
+        char c = t.charAt(0);
+        char[] chars = s.toCharArray();
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < chars.length; i++) {
+            if (c == chars[i]) {
+                list.add(i);
+            }
+        }
+        if (t.length() == 1) {
+            cacheMap1.put(key, list.size());
+            return list.size();
+        }
+        int count = 0;
+        for (Integer integer : list) {
+            count += numDistinct(s.substring(integer + 1), t.substring(1));
+        }
+        cacheMap1.put(key, count);
+        return count;
+    }
 
     final HashMap<String, Boolean> cacheMap = new HashMap<>();
 
