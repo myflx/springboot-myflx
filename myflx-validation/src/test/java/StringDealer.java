@@ -67,7 +67,30 @@ public class StringDealer {
         System.out.println((int) '9');
         System.out.println(new StringDealer().restoreIpAddresses("101023"));*/
 
-        System.out.println(new StringDealer().numDistinct1("babgbag", "bag"));
+        System.out.println(new StringDealer().isPalindrome("9P"));
+
+    }
+
+    public boolean isPalindrome(String s) {
+        int i = 0, j = s.length() - 1;
+        while (j - i >= 1) {
+            char c1 = Character.toUpperCase(s.charAt(i));
+            while (j - i >= 1 && !Character.isLetter(c1) && !Character.isDigit(c1)) {
+                i++;
+                c1 = Character.toUpperCase(s.charAt(i));
+            }
+            char c2 = Character.toUpperCase(s.charAt(j));
+            while (j - i >= 1 && !Character.isLetter(c2) && !Character.isDigit(c2)) {
+                j--;
+                c2 = Character.toUpperCase(s.charAt(j));
+            }
+            if (c1 != c2) {
+                return false;
+            }
+            i++;
+            j--;
+        }
+        return true;
     }
 
     public int numDistinct1(String s, String t) {
