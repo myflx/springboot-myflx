@@ -21,9 +21,9 @@ public class ExcelTest {
         try {
             excelWriter = EasyExcel.write(write_path).build();
 
-            WriteSheet writeSheet = EasyExcel.writerSheet().build();
+            WriteSheet writeSheet = EasyExcel.writerSheet().relativeHeadRowIndex(5).build();
 
-            WriteTable writeTable = EasyExcel.writerTable(0).head(Person.class).needHead(true).build();
+            WriteTable writeTable = EasyExcel.writerTable(0).head(Person.class).needHead(true).relativeHeadRowIndex(0).build();
             WriteTable writeTable2 = EasyExcel.writerTable(1).head(Fruit.class).needHead(true).build();
 
             excelWriter.write(data(), writeSheet, writeTable);
