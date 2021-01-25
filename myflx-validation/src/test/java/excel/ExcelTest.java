@@ -50,8 +50,9 @@ public class ExcelTest {
             list.add(person);
         }
         List<Object> ret = new ArrayList<>(list);
-        List<String> strings = new ArrayList<>();
+        List<Object> strings = new ArrayList<>();
         strings.add(null);
+        strings.add(new Person());
         strings.addAll(Arrays.asList("1", "2", "3", "4", "5"));
         ret.add(strings);
 
