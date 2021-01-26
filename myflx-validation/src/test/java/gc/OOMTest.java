@@ -1,3 +1,5 @@
+package gc;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class OOMTest {
      * 	at java.util.ArrayList.ensureExplicitCapacity(ArrayList.java:239)
      * 	at java.util.ArrayList.ensureCapacityInternal(ArrayList.java:231)
      * 	at java.util.ArrayList.add(ArrayList.java:462)
-     * 	at OOMTest.main(OOMTest.java:17)
+     * 	at gc.OOMTest.main(gc.OOMTest.java:17)
      *
      * @param args args
      */
