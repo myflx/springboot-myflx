@@ -17,6 +17,7 @@
         <module>myflx-eureka</module>
         <module>myflx-cache</module>
         <module>myflx-aop</module>
+        <module>myflx-easyexcel-plus</module>
     </modules>
     <properties>
         <spring-boot.version>2.0.2.RELEASE</spring-boot.version>
