@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ExcelTest {
@@ -21,9 +22,9 @@ public class ExcelTest {
         try {
             excelWriter = EasyExcel.write(write_path).build();
 
-            WriteSheet writeSheet = EasyExcel.writerSheet().build();
+            WriteSheet writeSheet = EasyExcel.writerSheet().relativeHeadRowIndex(5).build();
 
-            WriteTable writeTable = EasyExcel.writerTable(0).head(Person.class).needHead(true).build();
+            WriteTable writeTable = EasyExcel.writerTable(0).head(Person.class).needHead(true).relativeHeadRowIndex(0).build();
             WriteTable writeTable2 = EasyExcel.writerTable(1).head(Fruit.class).needHead(true).build();
 
             excelWriter.write(data(), writeSheet, writeTable);
@@ -37,7 +38,7 @@ public class ExcelTest {
 
     private static final String write_path = "e:" + File.separator + "write2.xlsx";
 
-    private static List<Person> data() {
+    private static List<Object> data() {
         List<Person> list = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
@@ -48,8 +49,14 @@ public class ExcelTest {
 
             list.add(person);
         }
+        List<Object> ret = new ArrayList<>(list);
+        List<Object> strings = new ArrayList<>();
+        strings.add(null);
+        strings.add(new Person());
+        strings.addAll(Arrays.asList("1", "2", "3", "4", "5"));
+        ret.add(strings);
 
-        return list;
+        return ret;
     }
 
     private static List<Fruit> data2() {
