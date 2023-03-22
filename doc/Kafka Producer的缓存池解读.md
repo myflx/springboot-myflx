@@ -59,6 +59,14 @@ poolableSize: 缓存对象的大小，默认 16384 （16K）
 - 获取到ByteBuffer对象直接返回。
 - 直接分配ByteBuffer对象。
 
+配置的内存大小不能少于标准尺寸
+
+```java
+int size = Math.max(this.batchSize, AbstractRecords.estimateSizeInBytesUpperBound(maxUsableMagic, compression, key, value, headers));
+```
+
+内存分配:
+
 ```java
 //分配大小为size的内存，最长阻塞等待maxTimeToBlockMs毫秒的时间
 public ByteBuffer allocate(int size, long maxTimeToBlockMs) throws InterruptedException {
